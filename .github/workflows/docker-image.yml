@@ -14,12 +14,12 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    # - name: Login to github registry
-    #   run: docker login ghcr.io -u devops -p ghp
+    - name: Login to GitHub Container Registry
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u SHKIM-98 --password-stdin
 
     - name: Set up Docker tag
       id: tag
-      run: echo "IMAGE_TAG=ghcr.io/Team-Waggle/Backend/waggle-backend:$(date +'%y%m%d%H%M')" >> $GITHUB_ENV
+      run: echo "IMAGE_TAG=ghcr.io/team-waggle/Bbckend/waggle-backend:$(date +'%y%m%d%H%M')" >> $GITHUB_ENV
 
     - name: Build Docker image
       run: docker build . --file Dockerfile --tag ${{ env.IMAGE_TAG }}
