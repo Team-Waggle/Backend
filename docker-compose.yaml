@@ -1,7 +1,8 @@
 services:
 
   app:
-    build: .
+    # build: .
+    image: ghcr.io/team-waggle/backend/waggle-backend:xxxxxx
     ports:
       - 8080:8080
     environment:
