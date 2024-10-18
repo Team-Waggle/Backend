@@ -19,7 +19,7 @@ jobs:
 
     - name: Set up Docker tag
       id: tag
-      run: echo "IMAGE_TAG=ghcr.io/team-waggle/Bbckend/waggle-backend:$(date +'%y%m%d%H%M')" >> $GITHUB_ENV
+      run: echo "IMAGE_TAG=ghcr.io/team-waggle/backend/waggle-backend:$(date +'%y%m%d%H%M')" >> $GITHUB_ENV
 
     - name: Build Docker image
       run: docker build . --file Dockerfile --tag ${{ env.IMAGE_TAG }}
