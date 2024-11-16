@@ -7,12 +7,12 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.UUID;
 
-public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
-    @Query("SELECT u FROM RefreshToken u WHERE u.userId = :userId")
+public interface RefreshTokenRepository extends JpaRepository<RefreshToken, UUID> {
+    @Query("SELECT u FROM RefreshToken u WHERE u.user.id = :userId")
     RefreshToken findByUserId(UUID userId);
 
     @Transactional
     @Modifying
-    @Query("DELETE FROM RefreshToken u WHERE u.userId = :userId")
+    @Query("DELETE FROM RefreshToken u WHERE u.user.id = :userId")
     void deleteByUserId(UUID userId);
 }

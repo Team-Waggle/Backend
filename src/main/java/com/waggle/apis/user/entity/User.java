@@ -16,12 +16,9 @@ import java.util.UUID;
 @Table(name = "users")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "users_id")
-    private Long id;
-
-    @Column(name = "users_uuid", columnDefinition = "BINARY(16)", unique = true)
-    private UUID userId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id")
+    private UUID id;
 
     @Column(name = "name", nullable = false, length = 5)
     private String name;

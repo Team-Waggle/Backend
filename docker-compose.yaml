@@ -11,7 +11,7 @@ services:
     depends_on:
       - database
     env_file:
-      - ../waggle/.env
+      - .env
 
   database:
     image: mysql:latest

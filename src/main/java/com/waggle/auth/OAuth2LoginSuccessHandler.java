@@ -75,7 +75,6 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             log.info("신규 유저입니다. 등록을 진행합니다.");
 
             user = User.builder()
-                    .userId(UUID.randomUUID())
                     .name(name)
                     .email(email)
                     .provider(provider)
@@ -85,7 +84,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         } else {
             // 기존 유저인 경우
             log.info("기존 유저입니다.");
-            refreshTokenRepository.deleteByUserId(existUser.getUserId());
+            refreshTokenRepository.deleteByUserId(existUser.getId());
             user = existUser;
         }
 
@@ -95,16 +94,16 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         log.info("PROVIDER_ID : {}", providerId);
 
         // 리프레쉬 토큰 발급 후 저장
-        String refreshToken = jwtUtil.generateRefreshToken(user.getUserId(), REFRESH_TOKEN_EXPIRATION_TIME);
+        String refreshToken = jwtUtil.generateRefreshToken(user.getId(), REFRESH_TOKEN_EXPIRATION_TIME);
 
         RefreshToken newRefreshToken = RefreshToken.builder()
-                .userId(user.getUserId())
+                .user(user)
                 .token(refreshToken)
                 .build();
         refreshTokenRepository.save(newRefreshToken);
 
         // 액세스 토큰 발급
-        String accessToken = jwtUtil.generateAccessToken(user.getUserId(), ACCESS_TOKEN_EXPIRATION_TIME);
+        String accessToken = jwtUtil.generateAccessToken(user.getId(), ACCESS_TOKEN_EXPIRATION_TIME);
 
         Cookie cookie = new Cookie("refresh_token", refreshToken);
         cookie.setHttpOnly(true);
