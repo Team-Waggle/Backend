@@ -1,5 +1,6 @@
 package com.waggle.apis.auth.entity;
 
+import com.waggle.apis.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,12 +14,13 @@ import java.util.UUID;
 @Table(name = "refresh_tokens")
 public class RefreshToken {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "refresh_tokens_id")
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id")
+    private UUID id;
 
-    @Column(name = "users_uuid", columnDefinition = "BINARY(16)", unique = true)
-    private UUID userId;
+    @OneToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id", unique = true, nullable = false)
+    private User user;
 
     @Column(name = "token", nullable = false)
     private String token;
