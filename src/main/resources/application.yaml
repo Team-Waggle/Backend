@@ -6,7 +6,7 @@ spring:
     import: optional:file:.env[.properties]
 
   datasource:
-    url: jdbc:mysql://database:${DB_EXTERNAL_PORT}/${DB_DATABASE}
+    url: jdbc:mysql://${DB_CONTAINER_NAME}:${DB_EXTERNAL_PORT}/${DB_DATABASE}
     username: ${DB_USER}
     password: ${DB_PASSWORD}
 
@@ -76,8 +76,8 @@ spring:
             user-name-attribute: response
   
   redis:
-    host: redis
-    port: 6379
+    host: ${REDIS_CONTAINER_NAME}
+    port: ${REDIS_EXTERNAL_PORT}
 
 jwt:
   secret: ${JWT_SECRET}
