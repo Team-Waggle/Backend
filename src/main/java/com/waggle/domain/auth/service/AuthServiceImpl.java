@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Service;
@@ -34,7 +35,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtUtil jwtUtil;
-
+    private final RedisTemplate<String, String> redisTemplate;
     @Override
     public AccessTokenResponse reissueAccessToken(String refreshToken) {
         String userId = jwtUtil.getUserIdFromToken(refreshToken);
@@ -52,6 +53,21 @@ public class AuthServiceImpl implements AuthService {
         return AccessTokenResponse.builder()
                 .accessToken(accessToken)
                 .build();
+    }
+
+    @Override
+    public String exchangeTemporaryToken(String temporaryToken) {
+        String key = "TEMP_TOKEN:" + temporaryToken;
+        String accessToken = redisTemplate.opsForValue().get(key);
+        
+        if (accessToken == null) {
+            throw new JwtTokenException(JwtTokenErrorResponseCode.INVALID_TEMPORARY_TOKEN);
+        }
+        
+        // 임시 토큰 삭제
+        redisTemplate.delete(key);
+        
+        return accessToken;
     }
 
     @Override

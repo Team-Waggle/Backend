@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -22,6 +23,7 @@ import com.waggle.global.secure.oauth2.adapter.NaverUserInfoAdapter;
 import com.waggle.global.secure.oauth2.adapter.OAuth2UserInfo;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Map;
 import java.util.UUID;
 
@@ -40,7 +42,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
-
+    private final RedisTemplate<String, String> redisTemplate;
     private OAuth2UserInfo oAuth2UserInfo = null;
 
     @Override
@@ -107,6 +109,16 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         // 액세스 토큰 발급
         String accessToken = jwtUtil.generateAccessToken(user.getId(), ACCESS_TOKEN_EXPIRATION_TIME);
 
+        // 임시 토큰 생성 (예: UUID + userId를 조합)
+        String temporaryToken = UUID.randomUUID().toString();
+        
+        // Redis에 임시 토큰과 액세스 토큰을 저장 (5분 만료)
+        redisTemplate.opsForValue().set(
+            "TEMP_TOKEN:" + temporaryToken,
+            accessToken,
+            Duration.ofMinutes(5)
+        );
+
         Cookie cookie = new Cookie("refresh_token", refreshToken);
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
@@ -115,7 +127,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         response.addCookie(cookie);
 
         // 액세스 토큰, 리프레쉬 토큰을 담아 리다이렉트
-        String redirectUri = String.format(REDIRECT_URI, accessToken);
+        String redirectUri = String.format(REDIRECT_URI, temporaryToken);
         getRedirectStrategy().sendRedirect(request, response, redirectUri);
     }
 }

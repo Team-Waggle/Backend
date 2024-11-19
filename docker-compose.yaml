@@ -8,8 +8,11 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://database:${DB_EXTERNAL_PORT}/${DB_DATABASE}
       SPRING_DATASOURCE_USERNAME: ${DB_USER}
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379 
     depends_on:
       - database
+      - redis
     env_file:
       - .env
 
@@ -26,5 +29,14 @@ services:
     volumes:
       - db-data:/var/lib/mysql
 
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+    volumes:
+      - redis-data:/data
 volumes:
   db-data:
+  redis-data:
