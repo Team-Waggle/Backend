@@ -10,9 +10,26 @@
         <ul>
             <li><a href = "/login">로그인</a></li>
             <li><a href = "/auth/current-user">현재 유저 정보</a></li>
-            <li><a href = "/auth/reissue/access-token">Access Token 재발급</a></li>
+            <li><a href = "/auth/token/reissue">Access Token 재발급</a></li>
         </ul>
     </li>
 </ul>
+<script>
+    window.onload = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        
+        if (token) {
+            fetch('/auth/token/exchange?temporaryToken=' + token, {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                localStorage.setItem('accessToken', data.payload);
+                window.location.href = '/';
+            });
+        }
+    }
+</script>
 </body>
 </html>

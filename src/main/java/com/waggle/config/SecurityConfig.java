@@ -1,7 +1,5 @@
 package com.waggle.config;
 
-import com.waggle.auth.OAuth2LoginFailureHandler;
-import com.waggle.auth.OAuth2LoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +10,9 @@ import org.springframework.security.config.annotation.web.configurers.HttpBasicC
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+
+import com.waggle.global.secure.oauth2.handler.OAuth2LoginFailureHandler;
+import com.waggle.global.secure.oauth2.handler.OAuth2LoginSuccessHandler;
 
 import java.util.Collections;
 
