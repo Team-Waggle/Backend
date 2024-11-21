@@ -89,10 +89,11 @@ public class AuthController {
         @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자")
     })
     public ResponseEntity<?> fetchCurrentUser() {
-        User currentUserUser = authService.getCurrentUser();
-        if (currentUserUser == null) {
+        try {
+            User currentUserUser = authService.getCurrentUser();
+            return ApiResponseEntity.onSuccess(SuccessResponseCode._OK, currentUserUser);
+        } catch (JwtTokenException e) {
             return ApiResponseEntity.onFailure(ErrorResponseCode._UNAUTHORIZED);
         }
-        return ApiResponseEntity.onSuccess(SuccessResponseCode._OK, currentUserUser);
     }
 }

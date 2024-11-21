@@ -21,6 +21,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Map;
 import java.util.UUID;
@@ -72,29 +74,22 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public User getCurrentUser() {
-        OAuth2UserInfo oAuth2UserInfo = null;
-
-        OAuth2AuthenticationToken token = (OAuth2AuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-        String provider = token.getAuthorizedClientRegistrationId();
-
-        switch (provider) {
-            case "google":
-                oAuth2UserInfo = new GoogleUserInfoAdapter(token.getPrincipal().getAttributes());
-                break;
-            case "kakao":
-                oAuth2UserInfo = new KakaoUserInfoAdapter(token.getPrincipal().getAttributes());
-                break;
-            case "naver":
-                oAuth2UserInfo = new NaverUserInfoAdapter((Map<String, Object>) token.getPrincipal().getAttributes().get("response"));
-                break;
+        String token = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+                .getRequest()
+                .getHeader("Authorization");
+        
+        if (token == null || !token.startsWith("Bearer ")) {
+            throw new JwtTokenException(JwtTokenErrorResponseCode.INVALID_ACCESS_TOKEN);
         }
 
-        User user = userRepository.findByProviderId(oAuth2UserInfo.getProviderId());
-
-        if (user == null) {
-            return null;
+        token = token.substring(7);
+        
+        String userId = jwtUtil.getUserIdFromToken(token);
+        if (userId == null) {
+            throw new JwtTokenException(JwtTokenErrorResponseCode.INVALID_ACCESS_TOKEN);
         }
 
-        return user;
+        return userRepository.findByUserId(UUID.fromString(userId))
+                .orElseThrow(() -> new JwtTokenException(JwtTokenErrorResponseCode.INVALID_ACCESS_TOKEN));
     }
 }
