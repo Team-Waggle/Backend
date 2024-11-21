@@ -9,9 +9,12 @@ import com.waggle.global.response.code.ErrorResponseCode;
 import com.waggle.global.response.code.SuccessResponseCode;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
@@ -30,7 +33,11 @@ public class AuthController {
     private final AuthService authService;
 
     @GetMapping("/token/reissue")
-    @Operation(summary = "액세스 토큰 재발급", description = "액세스 토큰을 재발급합니다.")
+    @Operation(
+        summary = "액세스 토큰 재발급", 
+        description = "액세스 토큰을 재발급합니다.",
+        security = @SecurityRequirement(name = "OAuth2")
+    )
     @ApiResponses({
         @ApiResponse(responseCode = "201", description = "토큰 재발급 성공"),
         @ApiResponse(responseCode = "401", description = "유효하지 않은 리프레시 토큰")
@@ -41,11 +48,22 @@ public class AuthController {
         }
 
         AccessTokenResponse accessToken = authService.reissueAccessToken(refreshToken);
-        return ApiResponseEntity.onSuccess(SuccessResponseCode._CREATED_ACCESS_TOKEN, accessToken);
+        return ApiResponseEntity.onSuccess(SuccessResponseCode._REISSUE_ACCESS_TOKEN, accessToken);
     }
 
     @PostMapping("/token/exchange")
-    @Operation(summary = "임시 토큰 교환", description = "임시 토큰을 교환하여 액세스 토큰을 발급합니다.")
+    @Operation(
+        summary = "임시 토큰 교환", 
+        description = "임시 토큰을 교환하여 액세스 토큰을 발급합니다.",
+        parameters = {
+            @Parameter(
+                name = "temporaryToken",
+                description = "OAuth2 로그인 성공 후 발급된 임시 토큰",
+                required = true,
+                schema = @Schema(type = "string")
+            )
+        }
+    )
     @ApiResponses({
         @ApiResponse(responseCode = "201", description = "토큰 교환 성공"),
         @ApiResponse(responseCode = "401", description = "유효하지 않은 임시 토큰")
@@ -53,7 +71,7 @@ public class AuthController {
     public ResponseEntity<?> exchangeToken(@RequestParam String temporaryToken) {
         try {
             String accessToken = authService.exchangeTemporaryToken(temporaryToken);
-            return ApiResponseEntity.onSuccess(SuccessResponseCode._CREATED_ACCESS_TOKEN, accessToken);
+            return ApiResponseEntity.onSuccess(SuccessResponseCode._CREATE_ACCESS_TOKEN, accessToken);
         } catch (JwtTokenException e) {
             return ApiResponseEntity.onFailure(ErrorResponseCode._UNAUTHORIZED);
         }

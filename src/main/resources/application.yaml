@@ -94,6 +94,12 @@ springdoc:
     operationsSorter: method
     disable-swagger-default-url: true
     display-request-duration: true
+    oauth:
+      client-id: ${GOOGLE_CLIENT_ID}
+      client-secret: ${GOOGLE_CLIENT_SECRET}
+      scopes:
+        - profile
+        - email
   api-docs:
     path: /api-docs
   show-actuator: true
