@@ -38,14 +38,24 @@ public class SwaggerConfig {
                         )
                 );
 
+        // JWT Bearer 인증 스키마
+        SecurityScheme bearerScheme = new SecurityScheme()
+                .type(SecurityScheme.Type.HTTP)
+                .scheme("bearer")
+                .bearerFormat("JWT")
+                .name("JWT");
+
         // 보안 요구사항 정의
         SecurityRequirement securityRequirement = new SecurityRequirement()
                 .addList("OAuth2");
+        SecurityRequirement jwtSecurityRequirement = new SecurityRequirement()
+                .addList("JWT");
 
         return new OpenAPI()
                 .components(new Components()
-                        .addSecuritySchemes("OAuth2", securityScheme))
-                .security(Arrays.asList(securityRequirement))
+                        .addSecuritySchemes("OAuth2", securityScheme)
+                        .addSecuritySchemes("JWT", bearerScheme))
+                .security(Arrays.asList(securityRequirement, jwtSecurityRequirement))
                 .info(info);
     }
 }

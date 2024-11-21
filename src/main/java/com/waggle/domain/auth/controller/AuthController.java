@@ -32,25 +32,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private final AuthService authService;
 
-    @GetMapping("/token/reissue")
-    @Operation(
-        summary = "액세스 토큰 재발급", 
-        description = "액세스 토큰을 재발급합니다.",
-        security = @SecurityRequirement(name = "OAuth2")
-    )
-    @ApiResponses({
-        @ApiResponse(responseCode = "201", description = "토큰 재발급 성공"),
-        @ApiResponse(responseCode = "401", description = "유효하지 않은 리프레시 토큰")
-    })
-    public ResponseEntity<ApiResponseEntity<Object>> reissueAccessToken(@CookieValue(name = "refresh_token", required = false) String refreshToken) {
-        if (refreshToken == null) {
-            return ApiResponseEntity.onFailure(ErrorResponseCode._UNAUTHORIZED);
-        }
-
-        AccessTokenResponse accessToken = authService.reissueAccessToken(refreshToken);
-        return ApiResponseEntity.onSuccess(SuccessResponseCode._REISSUE_ACCESS_TOKEN, accessToken);
-    }
-
     @PostMapping("/token/exchange")
     @Operation(
         summary = "임시 토큰 교환", 
@@ -75,6 +56,30 @@ public class AuthController {
         } catch (JwtTokenException e) {
             return ApiResponseEntity.onFailure(ErrorResponseCode._UNAUTHORIZED);
         }
+    }
+
+    @GetMapping("/token/reissue")
+    @Operation(
+        summary = "액세스 토큰 재발급", 
+        description = """
+            액세스 토큰을 재발급합니다.
+                
+            ⚠️ 실제 API 호출 시에는 쿠키의 refresh_token이 자동으로 사용됩니다.
+            Swagger UI 테스트 시에만 수동으로 refresh_token 값을 입력해주세요.
+            """,
+        security = @SecurityRequirement(name = "OAuth2")
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "201", description = "토큰 재발급 성공"),
+        @ApiResponse(responseCode = "401", description = "유효하지 않은 리프레시 토큰")
+    })
+    public ResponseEntity<ApiResponseEntity<Object>> reissueAccessToken(@CookieValue(name = "refresh_token", required = false) String refreshToken) {
+        if (refreshToken == null) {
+            return ApiResponseEntity.onFailure(ErrorResponseCode._UNAUTHORIZED);
+        }
+
+        AccessTokenResponse accessToken = authService.reissueAccessToken(refreshToken);
+        return ApiResponseEntity.onSuccess(SuccessResponseCode._REISSUE_ACCESS_TOKEN, accessToken);
     }
 
     @GetMapping("/current-user")
