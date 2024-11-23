@@ -2,6 +2,7 @@ package com.waggle.config;
 
 import java.util.Arrays;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -16,6 +17,15 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 
 @Configuration
 public class SwaggerConfig {
+
+    @Value("${MAIN_URL}")
+    private String mainUrl;
+
+    @Value("${GOOGLE_REDIRECT_URI}")
+    private String googleRedirectUri;
+
+    @Value("${GOOGLE_TOKEN_URI}")
+    private String googleTokenUri;
     
     @Bean
     public OpenAPI openAPI() {
@@ -29,8 +39,8 @@ public class SwaggerConfig {
                 .type(SecurityScheme.Type.OAUTH2)
                 .flows(new OAuthFlows()
                         .authorizationCode(new OAuthFlow()
-                                .authorizationUrl("http://localhost:8080/oauth2/authorization/google")  // OAuth2 인증 URL
-                                .tokenUrl("http://localhost:8080/login/oauth2/code/google")           // 토큰 URL
+                                .authorizationUrl(mainUrl + googleTokenUri)
+                                .tokenUrl(mainUrl + googleRedirectUri)
                                 .scopes(new Scopes()
                                         .addString("profile", "프로필 정보")
                                         .addString("email", "이메일 정보")

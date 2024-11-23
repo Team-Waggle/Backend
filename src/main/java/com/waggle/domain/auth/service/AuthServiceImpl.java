@@ -8,23 +8,16 @@ import com.waggle.domain.user.repository.UserRepository;
 import com.waggle.global.exception.JwtTokenException;
 import com.waggle.global.response.code.JwtTokenErrorResponseCode;
 import com.waggle.global.secure.jwt.JwtUtil;
-import com.waggle.global.secure.oauth2.adapter.GoogleUserInfoAdapter;
-import com.waggle.global.secure.oauth2.adapter.KakaoUserInfoAdapter;
-import com.waggle.global.secure.oauth2.adapter.NaverUserInfoAdapter;
-import com.waggle.global.secure.oauth2.adapter.OAuth2UserInfo;
 
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.util.Map;
 import java.util.UUID;
 
 @Service
