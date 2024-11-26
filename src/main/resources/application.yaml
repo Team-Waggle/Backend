@@ -95,11 +95,17 @@ springdoc:
     disable-swagger-default-url: true
     display-request-duration: true
     oauth:
-      client-id: ${GOOGLE_CLIENT_ID}
-      client-secret: ${GOOGLE_CLIENT_SECRET}
+      client-id: ${NAVER_CLIENT_ID}
+      client-secret: ${NAVER_CLIENT_SECRET}
       scopes:
-        - profile
+        - name
         - email
+        - profile_image
+        - birthyear
+        - birthday
+        - mobile
+        - nickname
+        - gender
   api-docs:
     path: /api-docs
   show-actuator: true
