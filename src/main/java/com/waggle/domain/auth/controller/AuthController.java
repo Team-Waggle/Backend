@@ -4,11 +4,10 @@ import com.waggle.domain.auth.dto.AccessTokenResponse;
 import com.waggle.domain.auth.service.AuthService;
 import com.waggle.domain.user.entity.User;
 import com.waggle.global.exception.JwtTokenException;
-import com.waggle.global.response.ApiResponseEntity;
-import com.waggle.global.response.code.ErrorResponseCode;
-import com.waggle.global.response.code.SuccessResponseCode;
+import com.waggle.global.response.*;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -52,15 +51,15 @@ public class AuthController {
         }
     )
     @ApiResponses({
-        @ApiResponse(responseCode = "201", description = "토큰 교환 성공"),
-        @ApiResponse(responseCode = "401", description = "유효하지 않은 임시 토큰")
+        @ApiResponse(responseCode = "201", description = "토큰 교환 성공", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+        @ApiResponse(responseCode = "401", description = "유효하지 않은 임시 토큰", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<ApiResponseEntity<Object>> exchangeToken(@RequestParam String temporaryToken) {
+    public ResponseEntity<BaseResponse<String>> exchangeToken(@RequestParam String temporaryToken) {
         try {
             String accessToken = authService.exchangeTemporaryToken(temporaryToken);
-            return ApiResponseEntity.onSuccess(SuccessResponseCode._CREATE_ACCESS_TOKEN, accessToken);
+            return SuccessResponse.of(ResponseStatus._CREATE_ACCESS_TOKEN, accessToken);
         } catch (JwtTokenException e) {
-            return ApiResponseEntity.onFailure(ErrorResponseCode._UNAUTHORIZED);
+            return ErrorResponse.of(ResponseStatus._UNAUTHORIZED);
         }
     }
 
@@ -76,16 +75,16 @@ public class AuthController {
         security = @SecurityRequirement(name = "OAuth2")
     )
     @ApiResponses({
-        @ApiResponse(responseCode = "201", description = "토큰 재발급 성공"),
-        @ApiResponse(responseCode = "401", description = "유효하지 않은 리프레시 토큰")
+        @ApiResponse(responseCode = "201", description = "토큰 재발급 성공", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+        @ApiResponse(responseCode = "401", description = "유효하지 않은 리프레시 토큰", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<ApiResponseEntity<Object>> reissueAccessToken(@CookieValue(name = "refresh_token", required = false) String refreshToken) {
+    public ResponseEntity<BaseResponse<Object>> reissueAccessToken(@CookieValue(name = "refresh_token", required = false) String refreshToken) {
         if (refreshToken == null) {
-            return ApiResponseEntity.onFailure(ErrorResponseCode._UNAUTHORIZED);
+            return ErrorResponse.of(ResponseStatus._UNAUTHORIZED);
         }
 
         AccessTokenResponse accessToken = authService.reissueAccessToken(refreshToken);
-        return ApiResponseEntity.onSuccess(SuccessResponseCode._REISSUE_ACCESS_TOKEN, accessToken);
+        return SuccessResponse.of(ResponseStatus._REISSUE_ACCESS_TOKEN, accessToken);
     }
 
     @GetMapping("/current-user")
@@ -95,15 +94,15 @@ public class AuthController {
         security = @SecurityRequirement(name = "JWT")
     )
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "사용자 조회 성공"),
-        @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자")
+        @ApiResponse(responseCode = "200", description = "사용자 조회 성공", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+        @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<ApiResponseEntity<Object>> fetchCurrentUser() {
+    public ResponseEntity<BaseResponse<Object>> fetchCurrentUser() {
         try {
             User currentUserUser = authService.getCurrentUser();
-            return ApiResponseEntity.onSuccess(SuccessResponseCode._OK, currentUserUser);
+            return SuccessResponse.of(ResponseStatus._OK, currentUserUser);
         } catch (JwtTokenException e) {
-            return ApiResponseEntity.onFailure(ErrorResponseCode._UNAUTHORIZED);
+            return ErrorResponse.of(ResponseStatus._UNAUTHORIZED);
         }
     }
 }

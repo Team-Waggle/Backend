@@ -6,7 +6,7 @@ import com.waggle.domain.auth.repository.RefreshTokenRepository;
 import com.waggle.domain.user.entity.User;
 import com.waggle.domain.user.repository.UserRepository;
 import com.waggle.global.exception.JwtTokenException;
-import com.waggle.global.response.code.JwtTokenErrorResponseCode;
+import com.waggle.global.response.ResponseStatus;
 import com.waggle.global.secure.jwt.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -39,7 +39,7 @@ public class AuthServiceImpl implements AuthService {
 
         if (!existRefreshToken.getToken().equals(refreshToken) || jwtUtil.isTokenExpired(refreshToken)) {
             // 리프레쉬 토큰이 다르거나, 만료된 경우
-            throw new JwtTokenException(JwtTokenErrorResponseCode.INVALID_REFRESH_TOKEN); // 401 에러를 던져 재로그인을 요청
+            throw new JwtTokenException(ResponseStatus.INVALID_REFRESH_TOKEN); // 401 에러를 던져 재로그인을 요청
         } else {
             // 액세스 토큰 재발급
             accessToken = jwtUtil.generateAccessToken(UUID.fromString(userId), ACCESS_TOKEN_EXPIRATION_TIME);
@@ -56,7 +56,7 @@ public class AuthServiceImpl implements AuthService {
         String accessToken = redisTemplate.opsForValue().get(key);
         
         if (accessToken == null) {
-            throw new JwtTokenException(JwtTokenErrorResponseCode.INVALID_TEMPORARY_TOKEN);
+            throw new JwtTokenException(ResponseStatus.INVALID_TEMPORARY_TOKEN);
         }
         
         // 임시 토큰 삭제
@@ -72,17 +72,17 @@ public class AuthServiceImpl implements AuthService {
                 .getHeader("Authorization");
         
         if (token == null || !token.startsWith("Bearer ")) {
-            throw new JwtTokenException(JwtTokenErrorResponseCode.INVALID_ACCESS_TOKEN);
+            throw new JwtTokenException(ResponseStatus.INVALID_ACCESS_TOKEN);
         }
 
         token = token.substring(7);
         
         String userId = jwtUtil.getUserIdFromToken(token);
         if (userId == null) {
-            throw new JwtTokenException(JwtTokenErrorResponseCode.INVALID_ACCESS_TOKEN);
+            throw new JwtTokenException(ResponseStatus.INVALID_ACCESS_TOKEN);
         }
 
         return userRepository.findByUserId(UUID.fromString(userId))
-                .orElseThrow(() -> new JwtTokenException(JwtTokenErrorResponseCode.INVALID_ACCESS_TOKEN));
+                .orElseThrow(() -> new JwtTokenException(ResponseStatus.INVALID_ACCESS_TOKEN));
     }
 }
