@@ -83,18 +83,23 @@ public class AuthController {
         return SuccessResponse.of(ApiStatus._REISSUE_ACCESS_TOKEN, accessToken);
     }
 
-    @GetMapping("/current-user")
+    @PostMapping("/logout")
     @Operation(
-        summary = "현재 사용자 조회", 
-        description = "현재 로그인 된 사용자를 조회합니다.",
-        security = @SecurityRequirement(name = "JWT")
+        summary = "로그아웃",
+        description = """
+            서버에서 해당 Refresh Token이 어떤 사용자의 것인지에 대한 기록을 삭제하여 최종적으로 로그아웃합니다.
+            
+            ⚠️ 로그아웃 후에는 꼭 로컬 스토리지에 저장된 토큰을 삭제하고 새로고침을 해주세요.
+            """,
+        security = @SecurityRequirement(name = "OAuth2")
     )
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "사용자 조회 성공", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
-        @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+        @ApiResponse(responseCode = "200", description = "로그아웃 성공", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+        @ApiResponse(responseCode = "401", description = "유효하지 않은 리프레시 토큰", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<BaseResponse<Object>> fetchCurrentUser() {
-        User currentUserUser = authService.getCurrentUser();
-        return SuccessResponse.of(ApiStatus._OK, currentUserUser);
+    public ResponseEntity<BaseResponse<Object>> logout(@CookieValue(name = "refresh_token", required = false) String refreshToken) {
+        authService.deleteRefreshToken(refreshToken);
+
+        return SuccessResponse.of(ApiStatus._NO_CONTENT, null);
     }
 }

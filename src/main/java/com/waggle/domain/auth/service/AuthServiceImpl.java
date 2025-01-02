@@ -3,8 +3,6 @@ package com.waggle.domain.auth.service;
 import com.waggle.domain.auth.dto.*;
 import com.waggle.domain.auth.entity.RefreshToken;
 import com.waggle.domain.auth.repository.RefreshTokenRepository;
-import com.waggle.domain.user.entity.User;
-import com.waggle.domain.user.repository.UserRepository;
 import com.waggle.global.exception.JwtTokenException;
 import com.waggle.global.response.ApiStatus;
 import com.waggle.global.secure.jwt.JwtUtil;
@@ -15,8 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.UUID;
 
@@ -27,7 +23,6 @@ public class AuthServiceImpl implements AuthService {
     @Value("${JWT_ACCESS_TOKEN_EXPIRE_TIME}")
     private long ACCESS_TOKEN_EXPIRATION_TIME; // 액세스 토큰 유효기간
 
-    private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtUtil jwtUtil;
     private final RedisTemplate<String, String> redisTemplate;
@@ -37,9 +32,9 @@ public class AuthServiceImpl implements AuthService {
         RefreshToken existRefreshToken = refreshTokenRepository.findByUserId(UUID.fromString(userId));
         String accessToken = null;
 
-        if (!existRefreshToken.getToken().equals(refreshToken) || jwtUtil.isTokenExpired(refreshToken)) {
+        if (existRefreshToken == null || !existRefreshToken.getToken().equals(refreshToken) || jwtUtil.isTokenExpired(refreshToken)) {
             // 리프레쉬 토큰이 다르거나, 만료된 경우
-            throw new JwtTokenException(ApiStatus._INVALID_REFRESH_TOKEN); // 401 에러를 던져 재로그인을 요청
+            throw new JwtTokenException(ApiStatus._INVALID_REFRESH_TOKEN);
         } else {
             // 액세스 토큰 재발급
             accessToken = jwtUtil.generateAccessToken(UUID.fromString(userId), ACCESS_TOKEN_EXPIRATION_TIME);
@@ -66,23 +61,12 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public User getCurrentUser() {
-        String token = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
-                .getRequest()
-                .getHeader("Authorization");
-        
-        if (token == null || !token.startsWith("Bearer ")) {
-            throw new JwtTokenException(ApiStatus._INVALID_ACCESS_TOKEN);
+    public void deleteRefreshToken(String refreshToken) {
+        if (refreshToken == null) {
+            throw new JwtTokenException(ApiStatus._REFRESH_TOKEN_NOT_FOUND);
         }
-
-        token = token.substring(7);
-        
-        String userId = jwtUtil.getUserIdFromToken(token);
-        if (userId == null) {
-            throw new JwtTokenException(ApiStatus._INVALID_ACCESS_TOKEN);
-        }
-
-        return userRepository.findByUserId(UUID.fromString(userId))
-                .orElseThrow(() -> new JwtTokenException(ApiStatus._INVALID_ACCESS_TOKEN));
+    
+        String userId = jwtUtil.getUserIdFromToken(refreshToken);
+        refreshTokenRepository.deleteByUserId(UUID.fromString(userId));
     }
 }

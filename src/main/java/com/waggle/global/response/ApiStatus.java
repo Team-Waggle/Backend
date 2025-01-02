@@ -11,6 +11,7 @@ public enum ApiStatus {
     _OK(HttpStatus.OK, 200, "성공입니다."),
     _CREATED(HttpStatus.CREATED, 201, "생성에 성공했습니다."),
     _ACCEPTED(HttpStatus.ACCEPTED, 202, "요청이 수락되었습니다."),
+    _NO_CONTENT(HttpStatus.NO_CONTENT, 204, "No Content"),
         // 커스텀
     _REISSUE_ACCESS_TOKEN(HttpStatus.CREATED, 201, "액세스 토큰 재발행에 성공했습니다."),
     _CREATE_ACCESS_TOKEN(HttpStatus.CREATED, 201, "액세스 토큰 발행에 성공했습니다."),
