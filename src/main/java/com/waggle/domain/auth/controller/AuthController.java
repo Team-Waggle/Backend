@@ -55,12 +55,8 @@ public class AuthController {
         @ApiResponse(responseCode = "401", description = "유효하지 않은 임시 토큰", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     public ResponseEntity<BaseResponse<String>> exchangeToken(@RequestParam String temporaryToken) {
-        try {
-            String accessToken = authService.exchangeTemporaryToken(temporaryToken);
-            return SuccessResponse.of(ResponseStatus._CREATE_ACCESS_TOKEN, accessToken);
-        } catch (JwtTokenException e) {
-            return ErrorResponse.of(ResponseStatus._UNAUTHORIZED);
-        }
+        String accessToken = authService.exchangeTemporaryToken(temporaryToken);
+        return SuccessResponse.of(ApiStatus._CREATE_ACCESS_TOKEN, accessToken);
     }
 
     @GetMapping("/token/reissue")
@@ -80,11 +76,11 @@ public class AuthController {
     })
     public ResponseEntity<BaseResponse<Object>> reissueAccessToken(@CookieValue(name = "refresh_token", required = false) String refreshToken) {
         if (refreshToken == null) {
-            return ErrorResponse.of(ResponseStatus._UNAUTHORIZED);
+            throw new JwtTokenException(ApiStatus._REFRESH_TOKEN_NOT_FOUND);
         }
 
         AccessTokenResponse accessToken = authService.reissueAccessToken(refreshToken);
-        return SuccessResponse.of(ResponseStatus._REISSUE_ACCESS_TOKEN, accessToken);
+        return SuccessResponse.of(ApiStatus._REISSUE_ACCESS_TOKEN, accessToken);
     }
 
     @GetMapping("/current-user")
@@ -98,11 +94,7 @@ public class AuthController {
         @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     public ResponseEntity<BaseResponse<Object>> fetchCurrentUser() {
-        try {
-            User currentUserUser = authService.getCurrentUser();
-            return SuccessResponse.of(ResponseStatus._OK, currentUserUser);
-        } catch (JwtTokenException e) {
-            return ErrorResponse.of(ResponseStatus._UNAUTHORIZED);
-        }
+        User currentUserUser = authService.getCurrentUser();
+        return SuccessResponse.of(ApiStatus._OK, currentUserUser);
     }
 }

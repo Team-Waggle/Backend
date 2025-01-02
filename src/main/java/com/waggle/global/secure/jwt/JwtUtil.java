@@ -1,6 +1,6 @@
 package com.waggle.global.secure.jwt;
 
-import com.waggle.global.response.ResponseStatus;
+import com.waggle.global.response.ApiStatus;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -69,7 +69,7 @@ public class JwtUtil {
         } catch (JwtException | IllegalArgumentException e) {
             // 토큰이 유효하지 않은 경우
             log.warn("유효하지 않은 토큰입니다.");
-            throw new JwtTokenException(ResponseStatus.INVALID_TOKEN);
+            throw new JwtTokenException(ApiStatus._INVALID_TOKEN);
         }
     }
 
@@ -87,7 +87,7 @@ public class JwtUtil {
         } catch (JwtException | IllegalArgumentException e) {
             // 토큰이 유효하지 않은 경우
             log.warn("유효하지 않은 토큰입니다.");
-            throw new JwtTokenException(ResponseStatus.INVALID_TOKEN);
+            throw new JwtTokenException(ApiStatus._INVALID_TOKEN);
         }
     }
 }

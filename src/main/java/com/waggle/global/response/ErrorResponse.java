@@ -24,7 +24,7 @@ public class ErrorResponse<T> extends BaseResponse<T> {
         this.message = message;
     }
 
-    public static <T> ResponseEntity<BaseResponse<T>> of(ResponseStatus code) {
+    public static <T> ResponseEntity<BaseResponse<T>> of(ApiStatus code) {
         BaseResponse<T> response = new ErrorResponse<>(code.getCode(), code.getMessage());
         return ResponseEntity.status(code.getHttpStatus()).body(response);
     }

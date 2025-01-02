@@ -25,7 +25,7 @@ public class SuccessResponse<T> extends BaseResponse<T> {
         this.payload = payload;
     }
 
-    public static <T> ResponseEntity<BaseResponse<T>> of(ResponseStatus code, T data) {
+    public static <T> ResponseEntity<BaseResponse<T>> of(ApiStatus code, T data) {
         BaseResponse<T> response = new SuccessResponse<>(code.getCode(), code.getMessage(), data);
         return ResponseEntity.status(code.getHttpStatus()).body(response);
     }
