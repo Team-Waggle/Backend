@@ -4,11 +4,10 @@ import com.waggle.domain.auth.dto.AccessTokenResponse;
 import com.waggle.domain.auth.service.AuthService;
 import com.waggle.domain.user.entity.User;
 import com.waggle.global.exception.JwtTokenException;
-import com.waggle.global.response.ApiResponseEntity;
-import com.waggle.global.response.code.ErrorResponseCode;
-import com.waggle.global.response.code.SuccessResponseCode;
+import com.waggle.global.response.*;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -52,16 +51,12 @@ public class AuthController {
         }
     )
     @ApiResponses({
-        @ApiResponse(responseCode = "201", description = "토큰 교환 성공"),
-        @ApiResponse(responseCode = "401", description = "유효하지 않은 임시 토큰")
+        @ApiResponse(responseCode = "201", description = "토큰 교환 성공", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+        @ApiResponse(responseCode = "401", description = "유효하지 않은 임시 토큰", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<ApiResponseEntity<Object>> exchangeToken(@RequestParam String temporaryToken) {
-        try {
-            String accessToken = authService.exchangeTemporaryToken(temporaryToken);
-            return ApiResponseEntity.onSuccess(SuccessResponseCode._CREATE_ACCESS_TOKEN, accessToken);
-        } catch (JwtTokenException e) {
-            return ApiResponseEntity.onFailure(ErrorResponseCode._UNAUTHORIZED);
-        }
+    public ResponseEntity<BaseResponse<String>> exchangeToken(@RequestParam String temporaryToken) {
+        String accessToken = authService.exchangeTemporaryToken(temporaryToken);
+        return SuccessResponse.of(ApiStatus._CREATE_ACCESS_TOKEN, accessToken);
     }
 
     @GetMapping("/token/reissue")
@@ -76,34 +71,35 @@ public class AuthController {
         security = @SecurityRequirement(name = "OAuth2")
     )
     @ApiResponses({
-        @ApiResponse(responseCode = "201", description = "토큰 재발급 성공"),
-        @ApiResponse(responseCode = "401", description = "유효하지 않은 리프레시 토큰")
+        @ApiResponse(responseCode = "201", description = "토큰 재발급 성공", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+        @ApiResponse(responseCode = "401", description = "유효하지 않은 리프레시 토큰", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<ApiResponseEntity<Object>> reissueAccessToken(@CookieValue(name = "refresh_token", required = false) String refreshToken) {
+    public ResponseEntity<BaseResponse<Object>> reissueAccessToken(@CookieValue(name = "refresh_token", required = false) String refreshToken) {
         if (refreshToken == null) {
-            return ApiResponseEntity.onFailure(ErrorResponseCode._UNAUTHORIZED);
+            throw new JwtTokenException(ApiStatus._REFRESH_TOKEN_NOT_FOUND);
         }
 
         AccessTokenResponse accessToken = authService.reissueAccessToken(refreshToken);
-        return ApiResponseEntity.onSuccess(SuccessResponseCode._REISSUE_ACCESS_TOKEN, accessToken);
+        return SuccessResponse.of(ApiStatus._REISSUE_ACCESS_TOKEN, accessToken);
     }
 
-    @GetMapping("/current-user")
+    @PostMapping("/logout")
     @Operation(
-        summary = "현재 사용자 조회", 
-        description = "현재 로그인 된 사용자를 조회합니다.",
-        security = @SecurityRequirement(name = "JWT")
+        summary = "로그아웃",
+        description = """
+            서버에서 해당 Refresh Token이 어떤 사용자의 것인지에 대한 기록을 삭제하여 최종적으로 로그아웃합니다.
+            
+            ⚠️ 로그아웃 후에는 꼭 로컬 스토리지에 저장된 토큰을 삭제하고 새로고침을 해주세요.
+            """,
+        security = @SecurityRequirement(name = "OAuth2")
     )
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "사용자 조회 성공"),
-        @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자")
+        @ApiResponse(responseCode = "200", description = "로그아웃 성공", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+        @ApiResponse(responseCode = "401", description = "유효하지 않은 리프레시 토큰", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<ApiResponseEntity<Object>> fetchCurrentUser() {
-        try {
-            User currentUserUser = authService.getCurrentUser();
-            return ApiResponseEntity.onSuccess(SuccessResponseCode._OK, currentUserUser);
-        } catch (JwtTokenException e) {
-            return ApiResponseEntity.onFailure(ErrorResponseCode._UNAUTHORIZED);
-        }
+    public ResponseEntity<BaseResponse<Object>> logout(@CookieValue(name = "refresh_token", required = false) String refreshToken) {
+        authService.deleteRefreshToken(refreshToken);
+
+        return SuccessResponse.of(ApiStatus._NO_CONTENT, null);
     }
 }
