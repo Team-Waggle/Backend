@@ -52,6 +52,9 @@ public class JwtUtil {
 
     // 응답 헤더에서 액세스 토큰을 반환하는 메서드
     public String getTokenFromHeader(String authorizationHeader) {
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            throw new JwtTokenException(ApiStatus._INVALID_ACCESS_TOKEN);
+        }
         return authorizationHeader.substring(7);
     }
 

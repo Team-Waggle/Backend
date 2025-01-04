@@ -21,15 +21,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getCurrentUser() {
-        String token = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+        String authorizationHeader = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
                 .getRequest()
                 .getHeader("Authorization");
 
-        if (token == null || !token.startsWith("Bearer ")) {
-            throw new JwtTokenException(ApiStatus._INVALID_ACCESS_TOKEN);
-        }
-
-        token = token.substring(7);
+        String token = jwtUtil.getTokenFromHeader(authorizationHeader);
 
         String userId = jwtUtil.getUserIdFromToken(token);
         if (userId == null) {
