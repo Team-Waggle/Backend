@@ -1,17 +1,18 @@
 package com.waggle.global.exception;
 
-import com.waggle.global.response.code.JwtTokenErrorResponseCode;
+import com.waggle.global.response.ApiStatus;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Getter
 @RequiredArgsConstructor
 public class JwtTokenException extends RuntimeException {
-    private final JwtTokenErrorResponseCode jwtTokenErrorStatus;
+    private final ApiStatus status;
 
     @Override
     public String getMessage() {
-        return jwtTokenErrorStatus.getMessage();
+        return status.getMessage();
     }
 }

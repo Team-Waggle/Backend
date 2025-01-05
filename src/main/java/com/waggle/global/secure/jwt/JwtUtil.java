@@ -1,5 +1,6 @@
 package com.waggle.global.secure.jwt;
 
+import com.waggle.global.response.ApiStatus;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -9,7 +10,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.waggle.global.exception.JwtTokenException;
-import com.waggle.global.response.code.JwtTokenErrorResponseCode;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -52,6 +52,9 @@ public class JwtUtil {
 
     // 응답 헤더에서 액세스 토큰을 반환하는 메서드
     public String getTokenFromHeader(String authorizationHeader) {
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            throw new JwtTokenException(ApiStatus._INVALID_ACCESS_TOKEN);
+        }
         return authorizationHeader.substring(7);
     }
 
@@ -69,7 +72,7 @@ public class JwtUtil {
         } catch (JwtException | IllegalArgumentException e) {
             // 토큰이 유효하지 않은 경우
             log.warn("유효하지 않은 토큰입니다.");
-            throw new JwtTokenException(JwtTokenErrorResponseCode.INVALID_TOKEN);
+            throw new JwtTokenException(ApiStatus._INVALID_TOKEN);
         }
     }
 
@@ -87,7 +90,7 @@ public class JwtUtil {
         } catch (JwtException | IllegalArgumentException e) {
             // 토큰이 유효하지 않은 경우
             log.warn("유효하지 않은 토큰입니다.");
-            throw new JwtTokenException(JwtTokenErrorResponseCode.INVALID_TOKEN);
+            throw new JwtTokenException(ApiStatus._INVALID_TOKEN);
         }
     }
 }
