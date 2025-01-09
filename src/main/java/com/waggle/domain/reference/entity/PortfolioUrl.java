@@ -20,7 +20,7 @@ public class PortfolioUrl {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "img_url")
+    @Column(name = "img_url", length = 1000)
     private String imgUrl;
 
     @Column(name = "name", nullable = false)

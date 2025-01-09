@@ -20,7 +20,7 @@ public class Skill {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "img_url", nullable = false)
+    @Column(name = "img_url", length = 1000, nullable = false)
     private String imgUrl;
 
     @Column(name = "name", nullable = false)
