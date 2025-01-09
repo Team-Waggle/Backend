@@ -3,6 +3,7 @@ package com.waggle.domain.reference.service;
 import com.waggle.domain.reference.entity.*;
 import com.waggle.domain.reference.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,31 +21,55 @@ public class ReferenceServiceImpl implements ReferenceService {
 
     @Override
     public List<PortfolioUrl> getPortfolioUrls() {
-        return portfolioUrlRepository.findAll();
+        List<PortfolioUrl> portfolioUrls = portfolioUrlRepository.findAll();
+        if (portfolioUrls.isEmpty()) {
+            throw new EmptyResultDataAccessException(1);
+        }
+        return portfolioUrls;
     }
 
     @Override
     public List<Industrial> getIndustrials() {
-        return industrialRepository.findAll();
+        List<Industrial> industrials = industrialRepository.findAll();
+        if (industrials.isEmpty()) {
+            throw new EmptyResultDataAccessException(1);
+        }
+        return industrials;
     }
 
     @Override
     public List<Job> getJobs() {
-        return jobRepository.findAll();
+        List<Job> jobs = jobRepository.findAll();
+        if (jobs.isEmpty()) {
+            throw new EmptyResultDataAccessException(1);
+        }
+        return jobs;
     }
 
     @Override
     public List<Skill> getSkills() {
-        return skillRepository.findAll();
+        List<Skill> skills = skillRepository.findAll();
+        if (skills.isEmpty()) {
+            throw new EmptyResultDataAccessException(1);
+        }
+        return skills;
     }
 
     @Override
     public List<DurationOfWorking> getDurationOfWorkings() {
-        return durationOfWorkingRepository.findAll();
+        List<DurationOfWorking> durationOfWorkings = durationOfWorkingRepository.findAll();
+        if (durationOfWorkings.isEmpty()) {
+            throw new EmptyResultDataAccessException(1);
+        }
+        return durationOfWorkings;
     }
 
     @Override
     public List<WaysOfWorking> getWaysOfWorkings() {
-        return waysOfWorkingRepository.findAll();
+        List<WaysOfWorking> waysOfWorkings = waysOfWorkingRepository.findAll();
+        if (waysOfWorkings.isEmpty()) {
+            throw new EmptyResultDataAccessException(1);
+        }
+        return waysOfWorkings;
     }
 }
