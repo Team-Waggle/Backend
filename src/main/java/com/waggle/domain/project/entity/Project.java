@@ -1,10 +1,7 @@
 package com.waggle.domain.project.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -13,6 +10,7 @@ import java.util.UUID;
 
 @Entity
 @Getter //getter: 값을 가져올 수 있게 해주는 것, setter: 값을 수정할 수 있게 해주는 것
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -40,10 +38,10 @@ public class Project {
     private int bookmarkCnt; //북마크 수(스크랩)
 
     @CreationTimestamp
-    @Column(name = "create_at", nullable = false)
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt; //생성일자
 
     @UpdateTimestamp
-    @Column(name = "update_at")
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt; //수정일자
 }
