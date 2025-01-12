@@ -7,7 +7,7 @@ import java.util.List;
 public interface ReferenceService {
 
     List<PortfolioUrl> getPortfolioUrls();
-    List<Industrial> getIndustrials();
+    List<Industry> getIndustrials();
     List<Job> getJobs();
     List<Skill> getSkills();
     List<DurationOfWorking> getDurationOfWorkings();

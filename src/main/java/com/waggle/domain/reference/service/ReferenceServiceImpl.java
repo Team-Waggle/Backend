@@ -14,7 +14,7 @@ public class ReferenceServiceImpl implements ReferenceService {
 
     private final DurationOfWorkingRepository durationOfWorkingRepository;
     private final PortfolioUrlRepository portfolioUrlRepository;
-    private final IndustrialRepository industrialRepository;
+    private final IndustryRepository industryRepository;
     private final JobRepository jobRepository;
     private final SkillRepository skillRepository;
     private final WaysOfWorkingRepository waysOfWorkingRepository;
@@ -29,12 +29,12 @@ public class ReferenceServiceImpl implements ReferenceService {
     }
 
     @Override
-    public List<Industrial> getIndustrials() {
-        List<Industrial> industrials = industrialRepository.findAll();
-        if (industrials.isEmpty()) {
+    public List<Industry> getIndustrials() {
+        List<Industry> industries = industryRepository.findAll();
+        if (industries.isEmpty()) {
             throw new EmptyResultDataAccessException(1);
         }
-        return industrials;
+        return industries;
     }
 
     @Override
