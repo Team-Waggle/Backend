@@ -118,4 +118,10 @@ public class UserServiceImpl implements UserService {
         user.setUserPortfolioUrls(userPortfolioUrls);
         return userRepository.save(user);
     }
+
+    @Override
+    public void deleteUser() {
+        User user = getCurrentUser();
+        userRepository.delete(user);
+    }
 }

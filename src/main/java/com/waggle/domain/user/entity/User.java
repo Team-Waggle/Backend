@@ -1,6 +1,8 @@
 package com.waggle.domain.user.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.waggle.domain.auth.entity.RefreshToken;
 import com.waggle.domain.reference.entity.Sido;
 import com.waggle.domain.reference.entity.TimeOfWorking;
 import com.waggle.domain.reference.entity.WaysOfWorking;
@@ -92,6 +94,10 @@ public class User {
     @Column(name = "updated_at")
     @JsonProperty("updated_at")
     private LocalDateTime updatedAt;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference
+    private RefreshToken refreshToken;
 
     public void clearInfo() {
         this.userJobs.clear();

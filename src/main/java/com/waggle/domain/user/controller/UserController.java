@@ -55,4 +55,19 @@ public class UserController {
         User updatedUser = userService.updateUser(updateUserDto);
         return SuccessResponse.of(ApiStatus._OK, updatedUser);
     }
+
+    @DeleteMapping("/me")
+    @Operation(
+            summary = "현재 사용자 삭제",
+            description = "현재 로그인 된 사용자를 삭제합니다.",
+            security = @SecurityRequirement(name = "JWT")
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "사용자 삭제 성공", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    public ResponseEntity<BaseResponse<Object>> deleteUser() {
+        userService.deleteUser();
+        return SuccessResponse.of(ApiStatus._NO_CONTENT, null);
+    }
 }

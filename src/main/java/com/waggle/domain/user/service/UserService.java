@@ -6,4 +6,5 @@ import com.waggle.domain.user.entity.User;
 public interface UserService {
     User getCurrentUser();
     User updateUser(UpdateUserDto updateUserDto);
+    void deleteUser();
 }
