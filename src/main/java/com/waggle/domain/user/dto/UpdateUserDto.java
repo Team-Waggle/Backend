@@ -33,4 +33,6 @@ public class UpdateUserDto {
     @JsonProperty("detail")
     private String detail;
 
+    @JsonProperty("portfolio_urls")
+    private List<UserPortfolioUrlDto> portfolioUrls;
 }
