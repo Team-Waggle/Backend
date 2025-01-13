@@ -1,25 +1,27 @@
 package com.waggle.domain.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
 
-import java.util.List;
+import java.util.Set;
 
+@Getter
 public class UpdateUserDto {
 
     @JsonProperty("name")
     private String name;
 
     @JsonProperty("jobs")
-    private List<UserJobDto> jobs;
+    private Set<UserJobDto> jobs;
 
     @JsonProperty("industries")
-    private List<Long> industries;
+    private Set<Long> industries;
 
     @JsonProperty("skills")
-    private List<Long> skills;
+    private Set<Long> skills;
 
     @JsonProperty("prefer_week_days")
-    private List<Long> preferWeekDays;
+    private Set<Long> preferWeekDays;
 
     @JsonProperty("prefer_tow_id")
     private Long preferTowId;
@@ -34,5 +36,5 @@ public class UpdateUserDto {
     private String detail;
 
     @JsonProperty("portfolio_urls")
-    private List<UserPortfolioUrlDto> portfolioUrls;
+    private Set<UserPortfolioUrlDto> portfolioUrls;
 }
