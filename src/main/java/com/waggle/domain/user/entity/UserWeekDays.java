@@ -1,6 +1,7 @@
 package com.waggle.domain.user.entity;
 
 import com.waggle.domain.reference.entity.Skill;
+import com.waggle.domain.reference.entity.WeekDays;
 import jakarta.persistence.*;
 
 import java.util.UUID;
@@ -18,5 +19,5 @@ public class UserWeekDays {
 
     @ManyToOne
     @JoinColumn(name = "week_days_id")
-    private Skill weekDays;
+    private WeekDays weekDays;
 }
