@@ -104,4 +104,14 @@ public class ReferenceController {
     public ResponseEntity<BaseResponse<Object>> fetchTimezone() {
         return SuccessResponse.of(ApiStatus._OK, referenceService.getTimezones());
     }
+
+    @GetMapping("/area/sido")
+    @Operation(summary = "시/도 조회", description = "시/도 목록을 전부 조회합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "시/도 조회 성공", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "404", description = "시/도가 존재하지 않음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    public ResponseEntity<BaseResponse<Object>> fetchSido() {
+        return SuccessResponse.of(ApiStatus._OK, referenceService.getSidoes());
+    }
 }

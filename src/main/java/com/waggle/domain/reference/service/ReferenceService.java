@@ -14,4 +14,5 @@ public interface ReferenceService {
     List<WaysOfWorking> getWaysOfWorkings();
     List<WeekDays> getWeekDays();
     List<Timezone> getTimezones();
+    List<Sido> getSidoes();
 }

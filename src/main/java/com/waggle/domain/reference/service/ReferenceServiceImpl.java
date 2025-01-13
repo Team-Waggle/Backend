@@ -20,6 +20,7 @@ public class ReferenceServiceImpl implements ReferenceService {
     private final WaysOfWorkingRepository waysOfWorkingRepository;
     private final WeekDaysRepository weekDaysRepository;
     private final TimezoneRepository timezoneRepository;
+    private final SidoRepository sidoRepository;
 
     @Override
     public List<PortfolioUrl> getPortfolioUrls() {
@@ -91,5 +92,14 @@ public class ReferenceServiceImpl implements ReferenceService {
             throw new EmptyResultDataAccessException(1);
         }
         return timezones;
+    }
+
+    @Override
+    public List<Sido> getSidoes() {
+        List<Sido> sidoes = sidoRepository.findAll();
+        if (sidoes.isEmpty()) {
+            throw new EmptyResultDataAccessException(1);
+        }
+        return sidoes;
     }
 }
