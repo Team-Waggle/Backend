@@ -55,14 +55,24 @@ public class ReferenceController {
         return SuccessResponse.of(ApiStatus._OK, referenceService.getJobs());
     }
 
-    @GetMapping("/wow")
-    @Operation(summary = "진행 방식 조회", description = "진행 방식 목록을 전부 조회합니다.")
+    @GetMapping("/week-days")
+    @Operation(summary = "요일 조회", description = "요일 목록을 전부 조회합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "근무 방식 조회 성공", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
-            @ApiResponse(responseCode = "404", description = "근무 방식이 존재하지 않음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            @ApiResponse(responseCode = "200", description = "요일 조회 성공", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "404", description = "요일이 존재하지 않음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<BaseResponse<Object>> fetchWaysOfWorking() {
-        return SuccessResponse.of(ApiStatus._OK, referenceService.getWaysOfWorkings());
+    public ResponseEntity<BaseResponse<Object>> fetchWeekDays() {
+        return SuccessResponse.of(ApiStatus._OK, referenceService.getWeekDays());
+    }
+
+    @GetMapping("/tow")
+    @Operation(summary = "진행 시간대 조회", description = "진행 시간대 목록을 전부 조회합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "진행 시간대 조회 성공", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "404", description = "진행 시간대가 존재하지 않음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    public ResponseEntity<BaseResponse<Object>> fetchTimezone() {
+        return SuccessResponse.of(ApiStatus._OK, referenceService.getTows());
     }
 
     @GetMapping("/dow")
@@ -75,34 +85,14 @@ public class ReferenceController {
         return SuccessResponse.of(ApiStatus._OK, referenceService.getDurationOfWorkings());
     }
 
-    @GetMapping("/portfolio-url")
-    @Operation(summary = "포트폴리오 링크 종류 조회", description = "포트폴리오 링크 종류를 전부 조회합니다.")
+    @GetMapping("/wow")
+    @Operation(summary = "진행 방식 조회", description = "진행 방식 목록을 전부 조회합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "포트폴리오 링크 종류 조회 성공", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
-            @ApiResponse(responseCode = "404", description = "포트폴리오 링크 종류가 존재하지 않음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            @ApiResponse(responseCode = "200", description = "근무 방식 조회 성공", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "404", description = "근무 방식이 존재하지 않음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<BaseResponse<Object>> fetchPortfolioUrl() {
-        return SuccessResponse.of(ApiStatus._OK, referenceService.getPortfolioUrls());
-    }
-
-    @GetMapping("/week-days")
-    @Operation(summary = "요일 조회", description = "요일 목록을 전부 조회합니다.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "요일 조회 성공", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
-            @ApiResponse(responseCode = "404", description = "요일이 존재하지 않음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    })
-    public ResponseEntity<BaseResponse<Object>> fetchWeekDays() {
-        return SuccessResponse.of(ApiStatus._OK, referenceService.getWeekDays());
-    }
-
-    @GetMapping("/timezone")
-    @Operation(summary = "선호 시간대 조회", description = "선호 시간대 목록을 전부 조회합니다.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "시간대 조회 성공", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
-            @ApiResponse(responseCode = "404", description = "시간대가 존재하지 않음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    })
-    public ResponseEntity<BaseResponse<Object>> fetchTimezone() {
-        return SuccessResponse.of(ApiStatus._OK, referenceService.getTimezones());
+    public ResponseEntity<BaseResponse<Object>> fetchWaysOfWorking() {
+        return SuccessResponse.of(ApiStatus._OK, referenceService.getWaysOfWorkings());
     }
 
     @GetMapping("/area/sido")
@@ -113,5 +103,15 @@ public class ReferenceController {
     })
     public ResponseEntity<BaseResponse<Object>> fetchSido() {
         return SuccessResponse.of(ApiStatus._OK, referenceService.getSidoes());
+    }
+
+    @GetMapping("/portfolio-url")
+    @Operation(summary = "포트폴리오 링크 종류 조회", description = "포트폴리오 링크 종류를 전부 조회합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "포트폴리오 링크 종류 조회 성공", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "404", description = "포트폴리오 링크 종류가 존재하지 않음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    public ResponseEntity<BaseResponse<Object>> fetchPortfolioUrl() {
+        return SuccessResponse.of(ApiStatus._OK, referenceService.getPortfolioUrls());
     }
 }

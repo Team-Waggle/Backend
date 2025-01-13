@@ -1,5 +1,8 @@
 package com.waggle.domain.user.entity;
 
+import com.waggle.domain.reference.entity.Sido;
+import com.waggle.domain.reference.entity.TimeOfWorking;
+import com.waggle.domain.reference.entity.WaysOfWorking;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -45,6 +48,18 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<UserWeekDays> userWeekDays = new HashSet<>();
+
+    @ManyToOne
+    @JoinColumn(name = "prefer_tow_id")
+    private TimeOfWorking preferTow;
+
+    @ManyToOne
+    @JoinColumn(name = "prefer_wow_id")
+    private WaysOfWorking preferWow;
+
+    @ManyToOne
+    @JoinColumn(name = "prefer_sido_id")
+    private Sido preferSido;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)

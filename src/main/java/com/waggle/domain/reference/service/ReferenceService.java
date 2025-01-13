@@ -13,6 +13,6 @@ public interface ReferenceService {
     List<DurationOfWorking> getDurationOfWorkings();
     List<WaysOfWorking> getWaysOfWorkings();
     List<WeekDays> getWeekDays();
-    List<Timezone> getTimezones();
+    List<TimeOfWorking> getTows();
     List<Sido> getSidoes();
 }

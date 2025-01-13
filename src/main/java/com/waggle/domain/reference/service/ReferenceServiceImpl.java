@@ -19,7 +19,7 @@ public class ReferenceServiceImpl implements ReferenceService {
     private final SkillRepository skillRepository;
     private final WaysOfWorkingRepository waysOfWorkingRepository;
     private final WeekDaysRepository weekDaysRepository;
-    private final TimezoneRepository timezoneRepository;
+    private final TimeOfWorkingRepository timeOfWorkingRepository;
     private final SidoRepository sidoRepository;
 
     @Override
@@ -86,12 +86,12 @@ public class ReferenceServiceImpl implements ReferenceService {
     }
 
     @Override
-    public List<Timezone> getTimezones() {
-        List<Timezone> timezones = timezoneRepository.findAll();
-        if (timezones.isEmpty()) {
+    public List<TimeOfWorking> getTows() {
+        List<TimeOfWorking> timeOfWorkings = timeOfWorkingRepository.findAll();
+        if (timeOfWorkings.isEmpty()) {
             throw new EmptyResultDataAccessException(1);
         }
-        return timezones;
+        return timeOfWorkings;
     }
 
     @Override
