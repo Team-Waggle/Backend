@@ -17,8 +17,6 @@ services:
       - redis
     env_file:
       - .env
-    networks:
-      - nginx_waggle_net
 
   database:
     image: mysql:latest
@@ -32,8 +30,6 @@ services:
       - '${DB_EXTERNAL_PORT}:${DB_INTERNAL_PORT}'
     volumes:
       - db-data:/var/lib/mysql
-    networks:
-      - nginx_waggle_net
 
   redis:
     image: redis:latest
@@ -43,13 +39,7 @@ services:
       test: ["CMD", "redis-cli", "ping"]
     volumes:
       - redis-data:/data
-    networks:
-      - nginx_waggle_net
 
 volumes:
   db-data:
   redis-data:
-
-networks:
-  nginx_waggle_net:
-    external: true
