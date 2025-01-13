@@ -85,4 +85,13 @@ public class ReferenceController {
         return SuccessResponse.of(ApiStatus._OK, referenceService.getPortfolioUrls());
     }
 
+    @GetMapping("/week-days")
+    @Operation(summary = "요일 조회", description = "요일 목록을 전부 조회합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "요일 조회 성공", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "404", description = "요일이 존재하지 않음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    public ResponseEntity<BaseResponse<Object>> fetchWeekDays() {
+        return SuccessResponse.of(ApiStatus._OK, referenceService.getWeekDays());
+    }
 }

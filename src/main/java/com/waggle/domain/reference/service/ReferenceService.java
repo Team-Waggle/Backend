@@ -12,4 +12,5 @@ public interface ReferenceService {
     List<Skill> getSkills();
     List<DurationOfWorking> getDurationOfWorkings();
     List<WaysOfWorking> getWaysOfWorkings();
+    List<WeekDays> getWeekDays();
 }

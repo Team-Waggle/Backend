@@ -18,6 +18,7 @@ public class ReferenceServiceImpl implements ReferenceService {
     private final JobRepository jobRepository;
     private final SkillRepository skillRepository;
     private final WaysOfWorkingRepository waysOfWorkingRepository;
+    private final WeekDaysRepository weekDaysRepository;
 
     @Override
     public List<PortfolioUrl> getPortfolioUrls() {
@@ -71,5 +72,14 @@ public class ReferenceServiceImpl implements ReferenceService {
             throw new EmptyResultDataAccessException(1);
         }
         return waysOfWorkings;
+    }
+
+    @Override
+    public List<WeekDays> getWeekDays() {
+        List<WeekDays> weekDays = weekDaysRepository.findAll();
+        if (weekDays.isEmpty()) {
+            throw new EmptyResultDataAccessException(1);
+        }
+        return weekDays;
     }
 }
