@@ -32,12 +32,24 @@ public class ReferenceServiceImpl implements ReferenceService {
     }
 
     @Override
+    public PortfolioUrl getPortfolioUrlById(Long id) {
+        return portfolioUrlRepository.findById(id)
+                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+    }
+
+    @Override
     public List<Industry> getIndustrials() {
         List<Industry> industries = industryRepository.findAll();
         if (industries.isEmpty()) {
             throw new EmptyResultDataAccessException(1);
         }
         return industries;
+    }
+
+    @Override
+    public Industry getIndustryById(Long id) {
+        return industryRepository.findById(id)
+                .orElseThrow(() -> new EmptyResultDataAccessException(1));
     }
 
     @Override
@@ -50,12 +62,24 @@ public class ReferenceServiceImpl implements ReferenceService {
     }
 
     @Override
+    public Job getJobById(Long id) {
+        return jobRepository.findById(id)
+                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+    }
+
+    @Override
     public List<Skill> getSkills() {
         List<Skill> skills = skillRepository.findAll();
         if (skills.isEmpty()) {
             throw new EmptyResultDataAccessException(1);
         }
         return skills;
+    }
+
+    @Override
+    public Skill getSkillById(Long id) {
+        return skillRepository.findById(id)
+                .orElseThrow(() -> new EmptyResultDataAccessException(1));
     }
 
     @Override
@@ -68,12 +92,24 @@ public class ReferenceServiceImpl implements ReferenceService {
     }
 
     @Override
+    public DurationOfWorking getDurationOfWorkingById(Long id) {
+        return durationOfWorkingRepository.findById(id)
+                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+    }
+
+    @Override
     public List<WaysOfWorking> getWaysOfWorkings() {
         List<WaysOfWorking> waysOfWorkings = waysOfWorkingRepository.findAll();
         if (waysOfWorkings.isEmpty()) {
             throw new EmptyResultDataAccessException(1);
         }
         return waysOfWorkings;
+    }
+
+    @Override
+    public WaysOfWorking getWaysOfWorkingById(Long id) {
+        return waysOfWorkingRepository.findById(id)
+                .orElseThrow(() -> new EmptyResultDataAccessException(1));
     }
 
     @Override
@@ -86,12 +122,24 @@ public class ReferenceServiceImpl implements ReferenceService {
     }
 
     @Override
-    public List<TimeOfWorking> getTows() {
+    public WeekDays getWeekDaysById(Long id) {
+        return weekDaysRepository.findById(id)
+                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+    }
+
+    @Override
+    public List<TimeOfWorking> getTimeOfWorkings() {
         List<TimeOfWorking> timeOfWorkings = timeOfWorkingRepository.findAll();
         if (timeOfWorkings.isEmpty()) {
             throw new EmptyResultDataAccessException(1);
         }
         return timeOfWorkings;
+    }
+
+    @Override
+    public TimeOfWorking getTimeOfWorkingById(Long id) {
+        return timeOfWorkingRepository.findById(id)
+                .orElseThrow(() -> new EmptyResultDataAccessException(1));
     }
 
     @Override
@@ -101,5 +149,11 @@ public class ReferenceServiceImpl implements ReferenceService {
             throw new EmptyResultDataAccessException(1);
         }
         return sidoes;
+    }
+
+    @Override
+    public Sido getSidoesById(String id) {
+        return sidoRepository.findById(id)
+                .orElseThrow(() -> new EmptyResultDataAccessException(1));
     }
 }

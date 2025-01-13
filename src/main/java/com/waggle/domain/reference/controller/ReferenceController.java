@@ -72,7 +72,7 @@ public class ReferenceController {
             @ApiResponse(responseCode = "404", description = "진행 시간대가 존재하지 않음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     public ResponseEntity<BaseResponse<Object>> fetchTimezone() {
-        return SuccessResponse.of(ApiStatus._OK, referenceService.getTows());
+        return SuccessResponse.of(ApiStatus._OK, referenceService.getTimeOfWorkings());
     }
 
     @GetMapping("/dow")

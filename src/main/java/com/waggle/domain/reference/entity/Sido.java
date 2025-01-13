@@ -1,5 +1,6 @@
 package com.waggle.domain.reference.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.waggle.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -28,8 +29,10 @@ public class Sido {
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
+    @JsonIgnore
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "preferSido")
+    @JsonIgnore
     private Set<User> users = new HashSet<>();
 }

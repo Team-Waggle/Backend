@@ -1,5 +1,6 @@
 package com.waggle.domain.reference.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.waggle.domain.user.entity.UserSkill;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -31,8 +32,10 @@ public class Skill {
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
+    @JsonIgnore
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "skill", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<UserSkill> userSkills = new HashSet<>();
 }

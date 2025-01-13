@@ -1,5 +1,6 @@
 package com.waggle.domain.reference.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.waggle.domain.user.entity.UserSkill;
 import com.waggle.domain.user.entity.UserWeekDays;
 import jakarta.persistence.*;
@@ -32,8 +33,10 @@ public class WeekDays {
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
+    @JsonIgnore
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "weekDays", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<UserWeekDays> userWeekDays = new HashSet<>();
 }
