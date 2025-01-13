@@ -1,5 +1,6 @@
 package com.waggle.domain.reference.entity;
 
+import com.waggle.domain.user.entity.UserPortfolioUrl;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -8,6 +9,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "portfolio_url_type")
@@ -29,4 +32,7 @@ public class PortfolioUrl {
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
+
+    @OneToMany(mappedBy = "portfolioUrl", cascade = CascadeType.ALL)
+    private Set<UserPortfolioUrl> userPortfolioUrls = new HashSet<>();
 }

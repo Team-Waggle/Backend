@@ -61,6 +61,12 @@ public class User {
     @JoinColumn(name = "prefer_sido_id")
     private Sido preferSido;
 
+    @Column(name = "detail")
+    private String detail;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<UserPortfolioUrl> userPortfolioUrl = new HashSet<>();
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
