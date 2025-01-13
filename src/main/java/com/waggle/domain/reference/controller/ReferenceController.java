@@ -94,4 +94,14 @@ public class ReferenceController {
     public ResponseEntity<BaseResponse<Object>> fetchWeekDays() {
         return SuccessResponse.of(ApiStatus._OK, referenceService.getWeekDays());
     }
+
+    @GetMapping("/timezone")
+    @Operation(summary = "선호 시간대 조회", description = "선호 시간대 목록을 전부 조회합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "시간대 조회 성공", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "404", description = "시간대가 존재하지 않음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    public ResponseEntity<BaseResponse<Object>> fetchTimezone() {
+        return SuccessResponse.of(ApiStatus._OK, referenceService.getTimezones());
+    }
 }
