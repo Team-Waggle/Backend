@@ -39,6 +39,7 @@ services:
       test: ["CMD", "redis-cli", "ping"]
     volumes:
       - redis-data:/data
+
 volumes:
   db-data:
   redis-data:

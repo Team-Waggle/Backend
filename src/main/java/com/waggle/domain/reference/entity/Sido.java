@@ -1,7 +1,7 @@
 package com.waggle.domain.reference.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.waggle.domain.user.entity.UserSkill;
+import com.waggle.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -14,18 +14,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "skill_type")
+@Table(name = "sido_type")
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
-public class Skill {
+public class Sido {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "img_url", length = 1000, nullable = false)
-    private String imgUrl;
+    @Column(name = "id", length = 2, nullable = false)
+    private String id;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -35,7 +32,7 @@ public class Skill {
     @JsonIgnore
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "skill", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "preferSido")
     @JsonIgnore
-    private Set<UserSkill> userSkills = new HashSet<>();
+    private Set<User> users = new HashSet<>();
 }

@@ -1,5 +1,7 @@
 package com.waggle.domain.reference.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.waggle.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -8,6 +10,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "wow_type")
@@ -25,5 +29,10 @@ public class WaysOfWorking {
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
+    @JsonIgnore
     private LocalDateTime createdAt;
+
+    @OneToMany(mappedBy = "preferWow", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Set<User> users = new HashSet<>();
 }

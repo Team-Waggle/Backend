@@ -2,6 +2,7 @@ package com.waggle.domain.reference.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.waggle.domain.user.entity.UserSkill;
+import com.waggle.domain.user.entity.UserWeekDays;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -14,28 +15,28 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "skill_type")
+@Table(name = "week_days_type")
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
-public class Skill {
+public class WeekDays {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "img_url", length = 1000, nullable = false)
-    private String imgUrl;
+    @Column(name = "short_name", nullable = false)
+    private String shortName;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+    @Column(name = "full_name", nullable = false)
+    private String fullName;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     @JsonIgnore
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "skill", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "weekDays", cascade = CascadeType.ALL)
     @JsonIgnore
-    private Set<UserSkill> userSkills = new HashSet<>();
+    private Set<UserWeekDays> userWeekDays = new HashSet<>();
 }

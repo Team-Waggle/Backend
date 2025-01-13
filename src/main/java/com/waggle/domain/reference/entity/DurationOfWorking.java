@@ -1,5 +1,6 @@
 package com.waggle.domain.reference.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -25,5 +26,6 @@ public class DurationOfWorking {
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
+    @JsonIgnore
     private LocalDateTime createdAt;
 }
