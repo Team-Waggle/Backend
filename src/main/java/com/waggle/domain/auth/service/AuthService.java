@@ -5,6 +5,6 @@ import com.waggle.domain.user.entity.User;
 
 public interface AuthService {
     AccessTokenResponse reissueAccessToken(String refreshToken);
-    String exchangeTemporaryToken(String temporaryToken);
+    AccessTokenResponse exchangeTemporaryToken(String temporaryToken);
     void deleteRefreshToken(String refreshToken);
 }

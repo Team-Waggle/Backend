@@ -76,7 +76,6 @@ public class SwaggerConfig {
                 .components(new Components()
                         .addSecuritySchemes("OAuth2", securityScheme)
                         .addSecuritySchemes("JWT", bearerScheme))
-                .security(Arrays.asList(securityRequirement, jwtSecurityRequirement))
                 .info(info);
     }
 
