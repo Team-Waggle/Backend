@@ -1,7 +1,12 @@
 package com.waggle.config;
 
 import java.util.Arrays;
+import java.util.Map;
+import java.util.TreeMap;
 
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.models.media.Schema;
+import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -73,5 +78,13 @@ public class SwaggerConfig {
                         .addSecuritySchemes("JWT", bearerScheme))
                 .security(Arrays.asList(securityRequirement, jwtSecurityRequirement))
                 .info(info);
+    }
+
+    @Bean
+    public OpenApiCustomizer sortSchemasAlphabetically() {
+        return openApi -> {
+            Map<String, Schema> schemas = openApi.getComponents().getSchemas();
+            openApi.getComponents().setSchemas(new TreeMap<>(schemas));
+        };
     }
 }
