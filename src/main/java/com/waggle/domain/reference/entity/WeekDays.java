@@ -1,6 +1,7 @@
 package com.waggle.domain.reference.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.waggle.domain.user.entity.UserSkill;
 import com.waggle.domain.user.entity.UserWeekDays;
 import jakarta.persistence.*;
@@ -23,12 +24,15 @@ public class WeekDays {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonProperty("id")
     private Long id;
 
     @Column(name = "short_name", nullable = false)
+    @JsonProperty("short_name")
     private String shortName;
 
     @Column(name = "full_name", nullable = false)
+    @JsonProperty("full_name")
     private String fullName;
 
     @CreationTimestamp

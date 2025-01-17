@@ -114,4 +114,24 @@ public class ReferenceController {
     public ResponseEntity<BaseResponse<Object>> fetchPortfolioUrl() {
         return SuccessResponse.of(ApiStatus._OK, referenceService.getPortfolioUrls());
     }
+
+    @GetMapping("/main-introduce")
+    @Operation(summary = "자기소개 키워드 대분류 조회", description = "자기소개 키워드의 대분류 목록을 전부 조회합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "메인 자기소개 조회 성공", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "404", description = "메인 자기소개가 존재하지 않음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    public ResponseEntity<BaseResponse<Object>> fetchMainIntroduce() {
+        return SuccessResponse.of(ApiStatus._OK, referenceService.getMainIntroduces());
+    }
+
+    @GetMapping("/sub-introduce")
+    @Operation(summary = "자기소개 키워드 소분류 조회", description = "자기소개 키워드의 소분류 목록을 전부 조회합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "서브 자기소개 조회 성공", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "404", description = "서브 자기소개가 존재하지 않음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    public ResponseEntity<BaseResponse<Object>> fetchSubIntroduce() {
+        return SuccessResponse.of(ApiStatus._OK, referenceService.getSubIntroduces());
+    }
 }

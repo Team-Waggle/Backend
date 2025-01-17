@@ -24,4 +24,8 @@ public interface ReferenceService {
     TimeOfWorking getTimeOfWorkingById(Long id);
     List<Sido> getSidoes();
     Sido getSidoesById(String id);
+    List<MainIntroduce> getMainIntroduces();
+    MainIntroduce getMainIntroduceById(Long id);
+    List<SubIntroduce> getSubIntroduces();
+    SubIntroduce getSubIntroduceById(Long id);
 }

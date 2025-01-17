@@ -41,7 +41,7 @@ public class UserController {
         return SuccessResponse.of(ApiStatus._OK, currentUserUser);
     }
 
-    @PatchMapping("/me")
+    @PutMapping("/me")
     @Operation(
             summary = "현재 사용자 정보 수정",
             description = "현재 로그인 된 사용자의 정보를 수정합니다.",
@@ -63,7 +63,7 @@ public class UserController {
             security = @SecurityRequirement(name = "JWT")
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "사용자 삭제 성공", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "204", description = "사용자 삭제 성공", content = @Content()),
             @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     public ResponseEntity<BaseResponse<Object>> deleteUser() {

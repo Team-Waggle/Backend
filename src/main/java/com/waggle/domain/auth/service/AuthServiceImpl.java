@@ -46,7 +46,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public String exchangeTemporaryToken(String temporaryToken) {
+    public AccessTokenResponse exchangeTemporaryToken(String temporaryToken) {
         String key = "TEMP_TOKEN:" + temporaryToken;
         String accessToken = redisTemplate.opsForValue().get(key);
         
@@ -56,8 +56,10 @@ public class AuthServiceImpl implements AuthService {
         
         // 임시 토큰 삭제
         redisTemplate.delete(key);
-        
-        return accessToken;
+
+        return AccessTokenResponse.builder()
+                .accessToken(accessToken)
+                .build();
     }
 
     @Override

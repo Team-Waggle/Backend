@@ -77,6 +77,10 @@ public class User {
     @JsonProperty("prefer_sido")
     private Sido preferSido;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JsonProperty("introduces")
+    private Set<UserIntroduce> userIntroduces = new HashSet<>();
+
     @Column(name = "detail")
     @JsonProperty("detail")
     private String detail;
@@ -104,6 +108,7 @@ public class User {
         this.userIndustries.clear();
         this.userSkills.clear();
         this.userWeekDays.clear();
+        this.userIndustries.clear();
         this.userPortfolioUrls.clear();
     }
 }

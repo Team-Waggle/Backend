@@ -48,7 +48,27 @@ public class UserServiceImpl implements UserService {
         user.clearInfo();
 
         user.setName(updateUserDto.getName());
+        user.setUserJobs(getUserJobs(updateUserDto, user));
+        user.setUserIndustries(getUserIndustries(updateUserDto, user));
+        user.setUserSkills(getUserSkills(updateUserDto, user));
+        user.setUserWeekDays(getUserWeekDays(updateUserDto, user));
+        user.setPreferTow(referenceService.getTimeOfWorkingById(updateUserDto.getPreferTowId()));
+        user.setPreferWow(referenceService.getWaysOfWorkingById(updateUserDto.getPreferWowId()));
+        user.setPreferSido(referenceService.getSidoesById(updateUserDto.getPreferSidoId()));
+        user.setUserIntroduces(getIntroduces(updateUserDto, user));
+        user.setDetail(updateUserDto.getDetail());
+        user.setUserPortfolioUrls(getUserPortfolioUrls(updateUserDto, user));
 
+        return userRepository.save(user);
+    }
+
+    @Override
+    public void deleteUser() {
+        User user = getCurrentUser();
+        userRepository.delete(user);
+    }
+
+    private Set<UserJob> getUserJobs(UpdateUserDto updateUserDto, User user) {
         Set<UserJob> userJobs = new HashSet<>();
         updateUserDto.getJobs().forEach(userJobDto -> {
             Job job = referenceService.getJobById(userJobDto.getJobId());
@@ -59,8 +79,10 @@ public class UserServiceImpl implements UserService {
                     .build();
             userJobs.add(userJob);
         });
-        user.setUserJobs(userJobs);
+        return userJobs;
+    }
 
+    private Set<UserIndustry> getUserIndustries(UpdateUserDto updateUserDto, User user) {
         Set<UserIndustry> userIndustries = new HashSet<>();
         updateUserDto.getIndustries().forEach(industryId -> {
             Industry industry = referenceService.getIndustryById(industryId);
@@ -70,8 +92,10 @@ public class UserServiceImpl implements UserService {
                     .build();
             userIndustries.add(userIndustry);
         });
-        user.setUserIndustries(userIndustries);
+        return userIndustries;
+    }
 
+    private Set<UserSkill> getUserSkills(UpdateUserDto updateUserDto, User user) {
         Set<UserSkill> userSkills = new HashSet<>();
         updateUserDto.getSkills().forEach(skillId -> {
             Skill skill = referenceService.getSkillById(skillId);
@@ -81,8 +105,10 @@ public class UserServiceImpl implements UserService {
                     .build();
             userSkills.add(userSkill);
         });
-        user.setUserSkills(userSkills);
+        return userSkills;
+    }
 
+    private Set<UserWeekDays> getUserWeekDays(UpdateUserDto updateUserDto, User user) {
         Set<UserWeekDays> userWeekDays = new HashSet<>();
         updateUserDto.getPreferWeekDays().forEach(userWeekDayId -> {
             WeekDays weekDays = referenceService.getWeekDaysById(userWeekDayId);
@@ -92,19 +118,10 @@ public class UserServiceImpl implements UserService {
                     .build();
             userWeekDays.add(userWeekDay);
         });
-        user.setUserWeekDays(userWeekDays);
+        return userWeekDays;
+    }
 
-        TimeOfWorking preferTow = referenceService.getTimeOfWorkingById(updateUserDto.getPreferTowId());
-        user.setPreferTow(preferTow);
-
-        WaysOfWorking preferWow = referenceService.getWaysOfWorkingById(updateUserDto.getPreferWowId());
-        user.setPreferWow(preferWow);
-
-        Sido preferSido = referenceService.getSidoesById(updateUserDto.getPreferSidoId());
-        user.setPreferSido(preferSido);
-
-        user.setDetail(updateUserDto.getDetail());
-
+    private Set<UserPortfolioUrl> getUserPortfolioUrls(UpdateUserDto updateUserDto, User user) {
         Set<UserPortfolioUrl> userPortfolioUrls = new HashSet<>();
         updateUserDto.getPortfolioUrls().forEach(portfolioUrlDto -> {
             PortfolioUrl portfolioUrl = referenceService.getPortfolioUrlById(portfolioUrlDto.getPortfolioUrlId());
@@ -115,13 +132,20 @@ public class UserServiceImpl implements UserService {
                     .build();
             userPortfolioUrls.add(userPortfolioUrl);
         });
-        user.setUserPortfolioUrls(userPortfolioUrls);
-        return userRepository.save(user);
+        return userPortfolioUrls;
     }
 
-    @Override
-    public void deleteUser() {
-        User user = getCurrentUser();
-        userRepository.delete(user);
+    private Set<UserIntroduce> getIntroduces(UpdateUserDto updateUserDto, User user) {
+        Set<UserIntroduce> introduces = new HashSet<>();
+        updateUserDto.getIntroduces().forEach(introduceId -> {
+            SubIntroduce introduce = referenceService.getSubIntroduceById(introduceId);
+            UserIntroduce userIntroduce = UserIntroduce.builder()
+                    .user(user)
+                    .subIntroduce(introduce)
+                    .build();
+            introduces.add(userIntroduce);
+        });
+        return introduces;
     }
+
 }

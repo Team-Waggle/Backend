@@ -48,14 +48,15 @@ public class AuthController {
                 required = true,
                 schema = @Schema(type = "string")
             )
-        }
+        },
+        security = @SecurityRequirement(name = "OAuth2")
     )
     @ApiResponses({
         @ApiResponse(responseCode = "201", description = "토큰 교환 성공", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
         @ApiResponse(responseCode = "401", description = "유효하지 않은 임시 토큰", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<BaseResponse<String>> exchangeToken(@RequestParam String temporaryToken) {
-        String accessToken = authService.exchangeTemporaryToken(temporaryToken);
+    public ResponseEntity<BaseResponse<AccessTokenResponse>> exchangeToken(@RequestParam String temporaryToken) {
+        AccessTokenResponse accessToken = authService.exchangeTemporaryToken(temporaryToken);
         return SuccessResponse.of(ApiStatus._CREATE_ACCESS_TOKEN, accessToken);
     }
 
