@@ -34,5 +34,6 @@ public class SubIntroduce {
 
     @ManyToOne
     @JoinColumn(name = "main_id")
+    @JsonProperty("main_introduce")
     private MainIntroduce mainIntroduce;
 }

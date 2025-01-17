@@ -2,6 +2,7 @@ package com.waggle.domain.user.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.waggle.domain.reference.entity.Industry;
 import com.waggle.domain.reference.entity.SubIntroduce;
 import jakarta.persistence.*;
@@ -28,5 +29,6 @@ public class UserIntroduce {
 
     @ManyToOne
     @JoinColumn(name = "sub_introduce_id")
+    @JsonProperty("sub_introduce")
     private SubIntroduce subIntroduce;
 }

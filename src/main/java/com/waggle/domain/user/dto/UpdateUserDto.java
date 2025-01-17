@@ -26,7 +26,7 @@ public class UpdateUserDto {
     @Schema(description = "보유 기술 고유키 목록", example = "[2, 4, 7]")
     private Set<Long> skills;
 
-    @JsonProperty("prefer_week_days")
+    @JsonProperty("prefer_week_days_ids")
     @Schema(description = "선호 요일 고유키 목록", example = "[1, 2, 3]")
     private Set<Long> preferWeekDays;
 
@@ -42,8 +42,12 @@ public class UpdateUserDto {
     @Schema(description = "선호 지역 고유키", example = "11")
     private String preferSidoId;
 
+    @JsonProperty("introduce_ids")
+    @Schema(description = "자기소개 키워드", example = "[3,13,26,31,45]")
+    private Set<Long> introduces;
+
     @JsonProperty("detail")
-    @Schema(description = "자기소개", example = "안녕하세요.")
+    @Schema(description = "자기소개 텍스트", example = "안녕하세요.")
     private String detail;
 
     @JsonProperty("portfolio_urls")

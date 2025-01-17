@@ -55,6 +55,7 @@ public class UserServiceImpl implements UserService {
         user.setPreferTow(referenceService.getTimeOfWorkingById(updateUserDto.getPreferTowId()));
         user.setPreferWow(referenceService.getWaysOfWorkingById(updateUserDto.getPreferWowId()));
         user.setPreferSido(referenceService.getSidoesById(updateUserDto.getPreferSidoId()));
+        user.setUserIntroduces(getIntroduces(updateUserDto, user));
         user.setDetail(updateUserDto.getDetail());
         user.setUserPortfolioUrls(getUserPortfolioUrls(updateUserDto, user));
 
@@ -132,6 +133,19 @@ public class UserServiceImpl implements UserService {
             userPortfolioUrls.add(userPortfolioUrl);
         });
         return userPortfolioUrls;
+    }
+
+    private Set<UserIntroduce> getIntroduces(UpdateUserDto updateUserDto, User user) {
+        Set<UserIntroduce> introduces = new HashSet<>();
+        updateUserDto.getIntroduces().forEach(introduceId -> {
+            SubIntroduce introduce = referenceService.getSubIntroduceById(introduceId);
+            UserIntroduce userIntroduce = UserIntroduce.builder()
+                    .user(user)
+                    .subIntroduce(introduce)
+                    .build();
+            introduces.add(userIntroduce);
+        });
+        return introduces;
     }
 
 }
