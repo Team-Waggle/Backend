@@ -1,6 +1,7 @@
 package com.waggle.domain.reference.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.waggle.domain.user.entity.UserPortfolioUrl;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -22,12 +23,15 @@ public class PortfolioUrl {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonProperty("id")
     private Long id;
 
     @Column(name = "img_url", length = 1000)
+    @JsonProperty("img_url")
     private String imgUrl;
 
     @Column(name = "name", nullable = false)
+    @JsonProperty("name")
     private String name;
 
     @CreationTimestamp

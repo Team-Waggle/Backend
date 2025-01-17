@@ -1,6 +1,7 @@
 package com.waggle.domain.reference.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.waggle.domain.user.entity.UserJob;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -22,9 +23,11 @@ public class Job {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonProperty("id")
     private Long id;
 
     @Column(name = "name", nullable = false)
+    @JsonProperty("name")
     private String name;
 
     @CreationTimestamp
