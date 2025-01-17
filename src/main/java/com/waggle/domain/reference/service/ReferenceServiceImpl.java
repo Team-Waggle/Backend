@@ -21,6 +21,8 @@ public class ReferenceServiceImpl implements ReferenceService {
     private final WeekDaysRepository weekDaysRepository;
     private final TimeOfWorkingRepository timeOfWorkingRepository;
     private final SidoRepository sidoRepository;
+    private final MainIntroduceRepository mainIntroduceRepository;
+    private final SubIntroduceRepository subIntroduceRepository;
 
     @Override
     public List<PortfolioUrl> getPortfolioUrls() {
@@ -154,6 +156,36 @@ public class ReferenceServiceImpl implements ReferenceService {
     @Override
     public Sido getSidoesById(String id) {
         return sidoRepository.findById(id)
+                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+    }
+
+    @Override
+    public List<MainIntroduce> getMainIntroduces() {
+        List<MainIntroduce> mainIntroduces = mainIntroduceRepository.findAll();
+        if (mainIntroduces.isEmpty()) {
+            throw new EmptyResultDataAccessException(1);
+        }
+        return mainIntroduces;
+    }
+
+    @Override
+    public MainIntroduce getMainIntroduceById(Long id) {
+        return mainIntroduceRepository.findById(id)
+                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+    }
+
+    @Override
+    public List<SubIntroduce> getSubIntroduces() {
+        List<SubIntroduce> subIntroduces = subIntroduceRepository.findAll();
+        if (subIntroduces.isEmpty()) {
+            throw new EmptyResultDataAccessException(1);
+        }
+        return subIntroduces;
+    }
+
+    @Override
+    public SubIntroduce getSubIntroduceById(Long id) {
+        return subIntroduceRepository.findById(id)
                 .orElseThrow(() -> new EmptyResultDataAccessException(1));
     }
 }
