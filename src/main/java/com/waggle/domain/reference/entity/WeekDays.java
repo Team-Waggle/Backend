@@ -32,6 +32,7 @@ public class WeekDays {
     private String shortName;
 
     @Column(name = "full_name", nullable = false)
+    @JsonProperty("full_name")
     private String fullName;
 
     @CreationTimestamp
