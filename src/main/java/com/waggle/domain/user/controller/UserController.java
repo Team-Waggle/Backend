@@ -7,9 +7,12 @@ import com.waggle.global.response.ApiStatus;
 import com.waggle.global.response.BaseResponse;
 import com.waggle.global.response.ErrorResponse;
 import com.waggle.global.response.SuccessResponse;
+import com.waggle.global.response.swagger.UserSuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.SchemaProperty;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -33,10 +36,22 @@ public class UserController {
             security = @SecurityRequirement(name = "JWT")
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "사용자 조회 성공", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
-            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "사용자 조회 성공",
+                    content = @Content(
+                            schema = @Schema(implementation = UserSuccessResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "인증되지 않은 사용자",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
     })
-    public ResponseEntity<BaseResponse<Object>> fetchCurrentUser() {
+    public ResponseEntity<BaseResponse<User>> fetchCurrentUser() {
         User currentUserUser = userService.getCurrentUser();
         return SuccessResponse.of(ApiStatus._OK, currentUserUser);
     }
@@ -48,8 +63,20 @@ public class UserController {
             security = @SecurityRequirement(name = "JWT")
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "사용자 정보 수정 성공", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
-            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "사용자 정보 수정 성공",
+                    content = @Content(
+                            schema = @Schema(implementation = UserSuccessResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "인증되지 않은 사용자",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
     })
     public ResponseEntity<BaseResponse<Object>> updateUser(@RequestBody UpdateUserDto updateUserDto) {
         User updatedUser = userService.updateUser(updateUserDto);
