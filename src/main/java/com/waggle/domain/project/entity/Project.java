@@ -1,11 +1,15 @@
 package com.waggle.domain.project.entity;
 
+import com.waggle.domain.reference.entity.Industry;
+import com.waggle.domain.reference.entity.WaysOfWorking;
+import com.waggle.domain.reference.entity.DurationOfWorking;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -44,4 +48,25 @@ public class Project {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt; //수정일자
+
+    //cascade=강제삭제방식
+    //mappedBy=연결된 필드 변수 명
+    //set=배열(gpt 추천)
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    private Set<ProjectSkill> projectSkills;
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    private Set<ProjectJob> projectJobs;
+
+    @ManyToOne
+    @JoinColumn(name = "industry_id")
+    private Industry industry;
+
+    @ManyToOne
+    @JoinColumn(name = "wow_id")
+    private WaysOfWorking waysOfWorking;
+
+    @ManyToOne
+    @JoinColumn(name = "dow_id")
+    private DurationOfWorking durationOfWorking;
 }

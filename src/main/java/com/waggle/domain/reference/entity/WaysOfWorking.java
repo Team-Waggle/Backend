@@ -2,6 +2,7 @@ package com.waggle.domain.reference.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.waggle.domain.project.entity.Project;
 import com.waggle.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -38,4 +39,7 @@ public class WaysOfWorking {
     @OneToMany(mappedBy = "preferWow", fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<User> users = new HashSet<>();
+
+    @OneToMany(mappedBy = "waysOfWorking", cascade = CascadeType.ALL)
+    private Set<Project> projects = new HashSet<>();
 }
