@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.waggle.domain.project.entity.ProjectSkill;
 import com.waggle.domain.user.entity.UserSkill;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -17,6 +18,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "skill_type")
+@Schema(description = "스킬")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -24,23 +26,28 @@ public class Skill {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     @JsonProperty("id")
     private Long id;
 
     @Column(name = "img_url", length = 1000, nullable = false)
+    @Schema(description = "스킬 이미지 URL", example = "https://waggle.s3.ap-northeast-2.amazonaws.com/skill/1.png")
     @JsonProperty("img_url")
     private String imgUrl;
 
     @Column(name = "name", nullable = false)
+    @Schema(description = "스킬명", example = "Java")
     @JsonProperty("name")
     private String name;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
+    @Schema(description = "생성일자", example = "2021-07-01T00:00:00")
     @JsonIgnore
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "skill", cascade = CascadeType.ALL)
+    @Schema(description = "해당 스킬을 보유한 사용자 목록")
     @JsonIgnore
     private Set<UserSkill> userSkills = new HashSet<>();
 

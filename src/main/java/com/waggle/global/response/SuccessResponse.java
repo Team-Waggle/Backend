@@ -15,7 +15,7 @@ public class SuccessResponse<T> extends BaseResponse<T> {
     @Schema(description = "응답 메시지", example = "성공적으로 처리되었습니다.")
     protected final String message;
 
-    @Schema(description = "응답 데이터", example = "{'id': 1, 'name': '홍길동'}")
+    @Schema(description = "응답 데이터")
     protected final T payload;
 
     public SuccessResponse(int code, String message, T payload) {

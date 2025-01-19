@@ -1,10 +1,9 @@
 package com.waggle.domain.auth.service;
 
-import com.waggle.domain.auth.dto.AccessTokenResponse;
-import com.waggle.domain.user.entity.User;
+import com.waggle.domain.auth.dto.AccessTokenVo;
 
 public interface AuthService {
-    AccessTokenResponse reissueAccessToken(String refreshToken);
-    AccessTokenResponse exchangeTemporaryToken(String temporaryToken);
+    AccessTokenVo reissueAccessToken(String refreshToken);
+    AccessTokenVo exchangeTemporaryToken(String temporaryToken);
     void deleteRefreshToken(String refreshToken);
 }

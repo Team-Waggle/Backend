@@ -27,7 +27,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtUtil jwtUtil;
     private final RedisTemplate<String, String> redisTemplate;
     @Override
-    public AccessTokenResponse reissueAccessToken(String refreshToken) {
+    public AccessTokenVo reissueAccessToken(String refreshToken) {
         String userId = jwtUtil.getUserIdFromToken(refreshToken);
         RefreshToken existRefreshToken = refreshTokenRepository.findByUserId(UUID.fromString(userId));
         String accessToken = null;
@@ -40,13 +40,13 @@ public class AuthServiceImpl implements AuthService {
             accessToken = jwtUtil.generateAccessToken(UUID.fromString(userId), ACCESS_TOKEN_EXPIRATION_TIME);
         }
 
-        return AccessTokenResponse.builder()
+        return AccessTokenVo.builder()
                 .accessToken(accessToken)
                 .build();
     }
 
     @Override
-    public AccessTokenResponse exchangeTemporaryToken(String temporaryToken) {
+    public AccessTokenVo exchangeTemporaryToken(String temporaryToken) {
         String key = "TEMP_TOKEN:" + temporaryToken;
         String accessToken = redisTemplate.opsForValue().get(key);
         
@@ -57,7 +57,7 @@ public class AuthServiceImpl implements AuthService {
         // 임시 토큰 삭제
         redisTemplate.delete(key);
 
-        return AccessTokenResponse.builder()
+        return AccessTokenVo.builder()
                 .accessToken(accessToken)
                 .build();
     }

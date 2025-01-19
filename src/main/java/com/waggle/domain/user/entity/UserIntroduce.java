@@ -25,6 +25,7 @@ public class UserIntroduce {
     @ManyToOne
     @JoinColumn(name = "user_id")
     @JsonBackReference
+    @JsonIgnore
     private User user;
 
     @ManyToOne
