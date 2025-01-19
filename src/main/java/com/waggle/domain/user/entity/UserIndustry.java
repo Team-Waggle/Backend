@@ -23,6 +23,7 @@ public class UserIndustry {
     @ManyToOne
     @JoinColumn(name = "user_id")
     @JsonBackReference
+    @JsonIgnore
     private User user;
 
     @ManyToOne
