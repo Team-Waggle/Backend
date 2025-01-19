@@ -2,6 +2,7 @@ package com.waggle.domain.reference.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.waggle.domain.project.entity.Project;
 import com.waggle.domain.user.entity.UserIndustry;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -38,4 +39,7 @@ public class Industry {
     @OneToMany(mappedBy = "industry", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<UserIndustry> userIndustries = new HashSet<>();
+
+    @OneToMany(mappedBy = "industry", cascade = CascadeType.ALL)
+    private Set<Project> projects = new HashSet<>(); //중간 테이블 없이 project와 직접 연결
 }

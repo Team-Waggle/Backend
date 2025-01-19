@@ -2,6 +2,7 @@ package com.waggle.domain.reference.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.waggle.domain.project.entity.ProjectJob;
 import com.waggle.domain.user.entity.UserJob;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -38,4 +39,8 @@ public class Job {
     @OneToMany(mappedBy = "job", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<UserJob> userJobs = new HashSet<>();
+
+    //new HashSet<>() = 빈 배열
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL) //job이 여러개 올 수 있고, 중간테이블은 project를 1개씩밖에 못가져서
+    private Set<ProjectJob> projectJobs = new HashSet<>();
 }
