@@ -2,6 +2,7 @@ package com.waggle.domain.reference.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.waggle.domain.project.entity.Project;
 import com.waggle.domain.user.entity.UserIndustry;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -45,4 +46,7 @@ public class Industry {
     @Schema(description = "해당 산업 분야를 선택한 사용자 목록")
     @JsonIgnore
     private Set<UserIndustry> userIndustries = new HashSet<>();
+
+    @OneToMany(mappedBy = "industry", cascade = CascadeType.ALL)
+    private Set<Project> projects = new HashSet<>(); //중간 테이블 없이 project와 직접 연결
 }

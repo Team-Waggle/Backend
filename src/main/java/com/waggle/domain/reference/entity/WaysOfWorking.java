@@ -2,6 +2,7 @@ package com.waggle.domain.reference.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.waggle.domain.project.entity.Project;
 import com.waggle.domain.user.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -45,4 +46,7 @@ public class WaysOfWorking {
     @Schema(description = "해당 진행 방식을 선호하는 사용자 목록")
     @JsonIgnore
     private Set<User> users = new HashSet<>();
+
+    @OneToMany(mappedBy = "waysOfWorking", cascade = CascadeType.ALL)
+    private Set<Project> projects = new HashSet<>();
 }
