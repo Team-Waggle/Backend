@@ -42,5 +42,6 @@ public class Job {
 
     //new HashSet<>() = 빈 배열
     @OneToMany(mappedBy = "job", cascade = CascadeType.ALL) //job이 여러개 올 수 있고, 중간테이블은 project를 1개씩밖에 못가져서
+    @JsonIgnore //manyTomany로 연결되었을 때 무한 반복되는 것을 끊어내기 위해 사용
     private Set<ProjectJob> projectJobs = new HashSet<>();
 }
