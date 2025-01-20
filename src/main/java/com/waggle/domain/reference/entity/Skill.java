@@ -17,11 +17,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "skill_type")
-@Schema(description = "스킬")
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
+@Table(name = "skill_type")
+@Schema(description = "스킬")
 public class Skill {
 
     @Id

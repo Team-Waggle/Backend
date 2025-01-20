@@ -16,11 +16,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "portfolio_url_type")
-@Schema(description = "포트폴리오 링크 종류")
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
+@Table(name = "portfolio_url_type")
+@Schema(description = "포트폴리오 링크 종류")
 public class PortfolioUrl {
 
     @Id

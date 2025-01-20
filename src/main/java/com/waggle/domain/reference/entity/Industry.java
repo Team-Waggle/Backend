@@ -17,11 +17,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "industrial_type")
-@Schema(description = "산업 분야")
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
+@Table(name = "industry_type")
+@Schema(description = "산업 분야")
 public class Industry {
 
     @Id

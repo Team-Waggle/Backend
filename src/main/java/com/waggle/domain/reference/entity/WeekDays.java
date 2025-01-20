@@ -17,11 +17,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "week_days_type")
-@Schema(description = "요일")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "week_days_type")
+@Schema(description = "요일")
 public class WeekDays {
 
     @Id

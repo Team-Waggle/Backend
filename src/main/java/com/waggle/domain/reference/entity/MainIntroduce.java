@@ -15,11 +15,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "introduce_main_type")
-@Schema(description = "자기소개 키워드(대분류)")
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
+@Table(name = "introduce_main_type")
+@Schema(description = "자기소개 키워드(대분류)")
 public class MainIntroduce {
 
     @Id

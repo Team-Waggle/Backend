@@ -13,11 +13,11 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "introduce_sub_type")
-@Schema(description = "자기소개 키워드(소분류)")
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
+@Table(name = "introduce_sub_type")
+@Schema(description = "자기소개 키워드(소분류)")
 public class SubIntroduce {
 
     @Id

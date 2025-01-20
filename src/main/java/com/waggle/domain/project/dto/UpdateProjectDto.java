@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 @Schema(description = "프로젝트 수정 dto")
 public class UpdateProjectDto {
+
     @Schema(description = "제목", example = "Waggle 백엔드 모집합니다.")
     @JsonProperty("title")
     private String title;

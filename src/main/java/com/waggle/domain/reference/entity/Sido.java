@@ -16,11 +16,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "sido_type")
-@Schema(description = "지역(시/도)")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "sido_type")
+@Schema(description = "지역(시/도)")
 public class Sido {
 
     @Id

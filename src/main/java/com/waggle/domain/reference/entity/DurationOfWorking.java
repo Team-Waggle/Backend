@@ -16,11 +16,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "dow_type")
-@Schema(description = "프로젝트 진행 기간")
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
+@Table(name = "dow_type")
+@Schema(description = "프로젝트 진행 기간")
 public class DurationOfWorking {
 
     @Id
