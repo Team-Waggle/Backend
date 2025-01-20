@@ -42,5 +42,7 @@ public class DurationOfWorking {
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "durationOfWorking", cascade = CascadeType.ALL)
+    @Schema(description = "해당 기간 항목을 선택한 프로젝트 목록")
+    @JsonIgnore
     private Set<Project> projects = new HashSet<>();
 }

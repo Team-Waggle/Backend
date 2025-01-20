@@ -48,5 +48,7 @@ public class Industry {
     private Set<UserIndustry> userIndustries = new HashSet<>();
 
     @OneToMany(mappedBy = "industry", cascade = CascadeType.ALL)
+    @Schema(description = "해당 산업 분야를 선택한 프로젝트 목록")
+    @JsonIgnore
     private Set<Project> projects = new HashSet<>(); //중간 테이블 없이 project와 직접 연결
 }

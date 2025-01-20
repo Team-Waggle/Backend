@@ -48,5 +48,7 @@ public class WaysOfWorking {
     private Set<User> users = new HashSet<>();
 
     @OneToMany(mappedBy = "waysOfWorking", cascade = CascadeType.ALL)
+    @Schema(description = "해당 진행 방식을 선택한 프로젝트 목록")
+    @JsonIgnore
     private Set<Project> projects = new HashSet<>();
 }
