@@ -59,11 +59,11 @@ public class Project {
     //cascade=강제삭제방식
     //mappedBy=연결된 필드 변수 명
     //set=배열(gpt 추천)
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JsonProperty("recruitment_jobs")
     private Set<ProjectJob> projectJobs; //모집 직무
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JsonProperty("skills")
     private Set<ProjectSkill> projectSkills; //사용 스킬
 
