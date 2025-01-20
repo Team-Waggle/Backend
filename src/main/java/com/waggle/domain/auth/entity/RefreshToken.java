@@ -8,12 +8,13 @@ import java.util.UUID;
 import com.waggle.domain.user.entity.User;
 
 @Entity
+@Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder
-@Getter
 @Table(name = "refresh_tokens")
 public class RefreshToken {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id")

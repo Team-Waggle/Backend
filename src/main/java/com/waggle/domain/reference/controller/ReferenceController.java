@@ -119,8 +119,8 @@ public class ReferenceController {
     @GetMapping("/main-introduce")
     @Operation(summary = "자기소개 키워드 대분류 조회", description = "자기소개 키워드의 대분류 목록을 전부 조회합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "메인 자기소개 조회 성공", content = @Content(schema = @Schema(implementation = MainIntroducesSuccessResponse.class))),
-            @ApiResponse(responseCode = "404", description = "메인 자기소개가 존재하지 않음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            @ApiResponse(responseCode = "200", description = "대분류 키워드 조회 성공", content = @Content(schema = @Schema(implementation = MainIntroducesSuccessResponse.class))),
+            @ApiResponse(responseCode = "404", description = "자기소개 대분류 키워드가 존재하지 않음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     public ResponseEntity<BaseResponse<Object>> fetchMainIntroduce() {
         return SuccessResponse.of(ApiStatus._OK, referenceService.getMainIntroduces());
@@ -129,8 +129,8 @@ public class ReferenceController {
     @GetMapping("/sub-introduce")
     @Operation(summary = "자기소개 키워드 소분류 조회", description = "자기소개 키워드의 소분류 목록을 전부 조회합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "서브 자기소개 조회 성공", content = @Content(schema = @Schema(implementation = SubIntroducesSuccessResponse.class))),
-            @ApiResponse(responseCode = "404", description = "서브 자기소개가 존재하지 않음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            @ApiResponse(responseCode = "200", description = "자기소개 소분류 키워드 조회 성공", content = @Content(schema = @Schema(implementation = SubIntroducesSuccessResponse.class))),
+            @ApiResponse(responseCode = "404", description = "자기소개 소분류 키워드가 존재하지 않음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     public ResponseEntity<BaseResponse<Object>> fetchSubIntroduce() {
         return SuccessResponse.of(ApiStatus._OK, referenceService.getSubIntroduces());

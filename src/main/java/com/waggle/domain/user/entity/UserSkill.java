@@ -2,6 +2,7 @@ package com.waggle.domain.user.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.waggle.domain.reference.entity.Skill;
 import jakarta.persistence.*;
 import lombok.*;
@@ -28,5 +29,6 @@ public class UserSkill {
 
     @ManyToOne
     @JoinColumn(name = "skill_id")
+    @JsonProperty("skill")
     private Skill skill;
 }

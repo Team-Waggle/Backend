@@ -2,6 +2,7 @@ package com.waggle.domain.project.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.waggle.domain.reference.entity.Job;
 import com.waggle.domain.reference.entity.Skill;
 import jakarta.persistence.*;
@@ -15,6 +16,7 @@ public class ProjectJob {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @JsonIgnore
     private UUID id;
 
     @ManyToOne
@@ -27,5 +29,6 @@ public class ProjectJob {
 
     @ManyToOne
     @JoinColumn(name = "job_id")
+    @JsonProperty("job")
     private Job job;
 }

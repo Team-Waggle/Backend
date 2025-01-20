@@ -2,6 +2,7 @@ package com.waggle.domain.user.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.waggle.domain.reference.entity.Industry;
 import jakarta.persistence.*;
 import lombok.*;
@@ -28,5 +29,6 @@ public class UserIndustry {
 
     @ManyToOne
     @JoinColumn(name = "industry_id")
+    @JsonProperty("industry")
     private Industry industry;
 }
