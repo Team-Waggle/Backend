@@ -5,6 +5,7 @@ import com.waggle.domain.project.dto.UpdateProjectDto;
 import com.waggle.domain.project.entity.Project;
 import com.waggle.domain.project.service.ProjectService;
 import com.waggle.global.response.*;
+import com.waggle.global.response.swagger.ProjectSuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
