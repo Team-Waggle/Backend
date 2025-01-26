@@ -1,6 +1,7 @@
 package com.waggle.domain.reference.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -40,8 +41,10 @@ public class MainIntroduce {
     @JsonIgnore
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "mainIntroduce", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "mainIntroduce", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Schema(description = "해당 키워드에 속하는 자기소개 소분류 키워드")
-    @JsonIgnore
+    @JsonProperty("sub_introduces")
+    @JsonIgnoreProperties("main_introduce")
+    @OrderBy("id ASC")
     private Set<SubIntroduce> subIntroduces = new HashSet<>();
 }
