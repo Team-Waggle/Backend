@@ -30,7 +30,13 @@ public enum ApiStatus {
     _INVALID_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, 401, "유효하지 않은 액세스 토큰입니다."),
     _INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, 401, "유효하지 않은 리프레쉬 토큰입니다."),
     _INVALID_TEMPORARY_TOKEN(HttpStatus.UNAUTHORIZED, 401, "유효하지 않은 임시 토큰입니다."),
-    _REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, 404, "해당 유저 ID의 리프레쉬 토큰이 없습니다.");
+    _REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, 404, "해당 유저 ID의 리프레쉬 토큰이 없습니다."),
+    // S3 관련 에러 (4xx)
+    _S3_UPLOAD_FAILED(HttpStatus.BAD_REQUEST, 400, "파일 업로드에 실패했습니다."),
+    _S3_DELETE_FAILED(HttpStatus.BAD_REQUEST, 400, "파일 삭제에 실패했습니다."),
+    _S3_FILE_NOT_FOUND(HttpStatus.BAD_REQUEST, 404, "파일을 찾을 수 없습니다."),
+    _S3_INVALID_FILE_TYPE(HttpStatus.BAD_REQUEST, 400, "지원하지 않는 파일 형식입니다."),
+    _S3_FILE_SIZE_EXCEEDED(HttpStatus.BAD_REQUEST, 400, "파일 크기가 제한을 초과했습니다.");
 
     private final HttpStatus httpStatus;
     private final int code;
