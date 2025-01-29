@@ -6,13 +6,17 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.waggle.global.exception.S3Exception;
 import com.waggle.global.response.ApiStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Set;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class S3Service {
@@ -43,14 +47,28 @@ public class S3Service {
 
     public void deleteFile(String fileUrl) {
         try {
-            String fileName = extractFileNameFromUrl(fileUrl);
+            String fileName = extractfilenamefromurl(fileUrl);
             if (!amazonS3.doesObjectExist(bucket, fileName)) {
                 throw new S3Exception(ApiStatus._S3_FILE_NOT_FOUND);
             }
             amazonS3.deleteObject(bucket, fileName);
-        } catch (AmazonS3Exception e) {
-            throw new S3Exception(ApiStatus._S3_DELETE_FAILED, e);
+        } catch (Exception e) {
+            log.info("deleteFile: {}", e);
+            //throw new S3Exception(ApiStatus._S3_DELETE_FAILED, e);
         }
+    }
+
+    public boolean isFileExist(String fileUrl) {
+        try {
+            String fileName = extractfilenamefromurl(fileUrl);
+            return amazonS3.doesObjectExist(bucket, fileName);
+        } catch (AmazonS3Exception e) {
+            throw new S3Exception(ApiStatus._S3_FILE_NOT_FOUND);
+        }
+    }
+
+    public String getUrlFromFileName(String fileName) {
+        return amazonS3.getUrl(bucket, fileName).toString();
     }
 
     private void validateFile(MultipartFile file) {
@@ -67,11 +85,14 @@ public class S3Service {
         }
     }
 
-    private String extractFileNameFromUrl(String fileUrl) {
+    private String extractfilenamefromurl(String fileUrl) {
         try {
-            return fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
+            URL url = new URL(fileUrl);
+            return url.getPath().substring(1);
         } catch (StringIndexOutOfBoundsException e) {
             throw new S3Exception(ApiStatus._S3_FILE_NOT_FOUND);
+        } catch (MalformedURLException e) {
+            throw new S3Exception(ApiStatus._S3_INVALID_URL);
         }
     }
 }
