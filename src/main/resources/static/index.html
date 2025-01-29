@@ -5,15 +5,50 @@
     <title>Title</title>
 </head>
 <body>
-<ul>
-    <li>테스트 페이지
-        <ul>
-            <li><a href = "/login">로그인</a></li>
-            <li><a href = "/auth/current-user">현재 유저 정보</a></li>
-            <li><a href = "/auth/token/reissue">Access Token 재발급</a></li>
-        </ul>
-    </li>
-</ul>
+<h1>벡엔드 테스트 페이지</h1>
+<a href = "/login">로그인</a>      <a href = "/logout">로그아웃</a>
+<h2>현재 사용자 정보</h2>
+<div class="user-info" id="userInfo">
+    <img style="width: 200px; height: 200px; object-fit: cover" id="profileImage" src="" alt="프로필 이미지">
+    <p><strong>이름:</strong> <span id="userName"></span></p>
+    <p><strong>이메일:</strong> <span id="userEmail"></span></p>
+    <p><strong>가입 제공자:</strong> <span id="userProvider"></span></p>
+    
+    <div class="jobs">
+        <h3>직무</h3>
+        <ul id="userJobs"></ul>
+    </div>
+
+    <div class="industries">
+        <h3>관심 산업</h3>
+        <ul id="userIndustries"></ul>
+    </div>
+
+    <div class="skills">
+        <h3>보유 기술</h3>
+        <ul id="userSkills"></ul>
+    </div>
+
+    <div class="week-days">
+        <h3>선호 요일</h3>
+        <ul id="userWeekDays"></ul>
+    </div>
+
+    <div class="introduces">
+        <h3>자기소개 키워드</h3>
+        <ul id="userIntroduces"></ul>
+    </div>
+
+    <div class="portfolio-urls">
+        <h3>포트폴리오 링크</h3>
+        <ul id="userPortfolioUrls"></ul>
+    </div>
+
+    <div class="detail">
+        <h3>자기소개</h3>
+        <p id="userDetail"></p>
+    </div>
+</div>
 <script>
     window.onload = function() {
         const urlParams = new URLSearchParams(window.location.search);
@@ -25,10 +60,116 @@
             })
             .then(response => response.json())
             .then(data => {
-                localStorage.setItem('accessToken', data.payload);
+                localStorage.setItem('accessToken', data.payload.access_token);
                 window.location.href = '/';
             });
         }
+
+        fetch('reference/main-introduce', {
+            method: 'GET'
+        })
+        .then(response => response.json())
+        .then(data => {
+            const keywords = data.payload;
+            const introducesList = document.getElementById('userIntroduces');
+            keywords.forEach(keyword => {
+                const li = document.createElement('li');
+                li.id = keyword.id;
+                li.setAttribute('data-type', 'main');
+                li.innerText = keyword.name;
+                introducesList.appendChild(li);
+
+                if (keyword.sub_introduces) {
+                    const subUl = document.createElement('ul');
+                    keyword.sub_introduces.forEach(subIntroduce => {
+                        const subLi = document.createElement('li');
+                        subLi.id = subIntroduce.id;
+                        subLi.setAttribute('data-type', 'sub');
+                        subLi.innerText = subIntroduce.name;
+                        subUl.appendChild(subLi);
+                    });
+                    li.appendChild(subUl);
+                }
+            });
+        });
+
+        fetch('/user/me', {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken') // 토큰을 로컬 스토리지에서 가져옴
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('네트워크 응답이 좋지 않습니다.');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const user = data.payload;
+                document.getElementById('profileImage').src = user.profile_img_url;
+                document.getElementById('userName').innerText = user.name;
+                document.getElementById('userEmail').innerText = user.email;
+                document.getElementById('userProvider').innerText = user.provider;
+
+                // 직무
+                const jobsList = document.getElementById('userJobs');
+                user.jobs.forEach(job => {
+                    const li = document.createElement('li');
+                    li.innerText = `${job.job.name}, 경력: ${job.year_cnt}년`;
+                    jobsList.appendChild(li);
+                });
+
+                // 관심 산업
+                const industriesList = document.getElementById('userIndustries');
+                user.industries.forEach(industry => {
+                    const li = document.createElement('li');
+                    li.innerText = industry.industry.name;
+                    industriesList.appendChild(li);
+                });
+
+                // 보유 기술
+                const skillsList = document.getElementById('userSkills');
+                user.skills.forEach(skill => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<img style="height: 50px; width: 50px" src="${skill.skill.img_url}" alt="${skill.skill.name}"> ${skill.skill.name}`;
+                    skillsList.appendChild(li);
+                });
+
+                // 선호 요일
+                const weekDaysList = document.getElementById('userWeekDays');
+                user.week_days.forEach(weekDay => {
+                    const li = document.createElement('li');
+                    li.innerText = weekDay.week_days.full_name;
+                    weekDaysList.appendChild(li);
+                });
+
+                // 자기소개 키워드
+                const subItems = document.querySelectorAll('li[data-type="sub"]');
+                user.introduces.forEach(userIntroduce => {
+                    const subIntroduceId = userIntroduce.sub_introduce.id;
+                    subItems.forEach(subItem => {
+                        if (parseInt(subItem.id) === subIntroduceId) {
+                            subItem.style.color = 'blue';
+                            subItem.style.fontWeight = 'bold';
+                        }
+                    });
+                });
+
+                // 포트폴리오 링크
+                const portfolioUrlsList = document.getElementById('userPortfolioUrls');
+                user.portfolio_urls.forEach(portfolio => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<img style="height: 50px; width: 50px" src="${portfolio.url_type.img_url}" alt="${portfolio.url_type.name}"> <a href="${portfolio.url.startsWith('http') ? portfolio.url : 'https://' + portfolio.url}" target="_blank">${portfolio.url_type.name}</a>`;
+                    portfolioUrlsList.appendChild(li);
+                });
+
+                // 자기소개
+                document.getElementById('userDetail').innerText = user.detail;
+            })
+            .catch(error => {
+                console.error('문제가 발생했습니다:', error);
+            });
     }
 </script>
 </body>
