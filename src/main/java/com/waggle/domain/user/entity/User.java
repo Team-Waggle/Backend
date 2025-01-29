@@ -45,6 +45,11 @@ public class User {
     @JsonProperty("provider_id")
     private String providerId;
 
+    @Column(name = "profile_img_url")
+    @Schema(description = "프로필 이미지 URL")
+    @JsonProperty("profile_img_url")
+    private String profileImageUrl;
+
     @Column(name = "name", nullable = false)
     @Schema(description = "사용자 이름", example = "홍길동")
     @JsonProperty("name")

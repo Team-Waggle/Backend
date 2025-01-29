@@ -1,6 +1,7 @@
 package com.waggle.global.exception.handler;
 
 import com.waggle.global.exception.JwtTokenException;
+import com.waggle.global.exception.S3Exception;
 import com.waggle.global.response.ApiStatus;
 import com.waggle.global.response.BaseResponse;
 import com.waggle.global.response.ErrorResponse;
@@ -20,5 +21,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(EmptyResultDataAccessException.class)
     public ResponseEntity<BaseResponse<String>> handleEmptyResultDataAccessException(EmptyResultDataAccessException ex) {
         return ErrorResponse.of(ApiStatus._NOT_FOUND);
+    }
+
+    @ExceptionHandler(S3Exception.class)
+    public ResponseEntity<BaseResponse<Object>> handleS3Exception(S3Exception ex) {
+        return ErrorResponse.of(ex.getStatus());
     }
 }

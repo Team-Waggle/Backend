@@ -5,18 +5,22 @@ import com.waggle.domain.reference.service.ReferenceService;
 import com.waggle.domain.user.dto.UpdateUserDto;
 import com.waggle.domain.user.entity.*;
 import com.waggle.domain.user.repository.UserRepository;
+import com.waggle.global.aws.service.S3Service;
 import com.waggle.global.exception.JwtTokenException;
 import com.waggle.global.response.ApiStatus;
 import com.waggle.global.secure.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -24,6 +28,7 @@ public class UserServiceImpl implements UserService {
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
     private final ReferenceService referenceService;
+    private final S3Service s3Service;
 
     @Override
     public User getCurrentUser() {
@@ -43,10 +48,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(UpdateUserDto updateUserDto) {
+    public User updateUser(MultipartFile profileImage, UpdateUserDto updateUserDto) {
         User user = getCurrentUser();
         user.clearInfo();
 
+        user.setProfileImageUrl(getProfileImageUrl(profileImage, user));
         user.setName(updateUserDto.getName());
         user.setUserJobs(getUserJobs(updateUserDto, user));
         user.setUserIndustries(getUserIndustries(updateUserDto, user));
@@ -65,6 +71,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser() {
         User user = getCurrentUser();
+        s3Service.deleteFile(user.getProfileImageUrl());
         userRepository.delete(user);
     }
 
@@ -148,4 +155,19 @@ public class UserServiceImpl implements UserService {
         return introduces;
     }
 
+    private String getProfileImageUrl(MultipartFile profileImage, User user) {
+        String checkUrl = s3Service.getUrlFromFileName("user/profile_img/" + user.getId());
+        if (s3Service.isFileExist(checkUrl)) {
+            s3Service.deleteFile(checkUrl);
+        }
+
+        if (profileImage != null && !profileImage.isEmpty()) {
+            if (user.getProfileImageUrl() != null) {
+                s3Service.deleteFile(user.getProfileImageUrl());
+            }
+
+            return s3Service.uploadFile(profileImage, "user/profile_img/" + user.getId());
+        }
+        return null;
+    }
 }
