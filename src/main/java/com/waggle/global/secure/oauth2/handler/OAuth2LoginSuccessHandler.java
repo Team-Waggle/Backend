@@ -70,6 +70,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         String providerId = oAuth2UserInfo.getProviderId();
         String name = oAuth2UserInfo.getName();
         String email = oAuth2UserInfo.getEmail();
+        String profileImage = oAuth2UserInfo.getProfileImage();
 
         User existUser = userRepository.findByProviderId(providerId);
         User user;
@@ -81,6 +82,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             user = User.builder()
                     .name(name)
                     .email(email)
+                    .profileImageUrl(profileImage)
                     .provider(provider)
                     .providerId(providerId)
                     .build();

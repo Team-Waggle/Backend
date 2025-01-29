@@ -29,4 +29,10 @@ public class KakaoUserInfoAdapter implements OAuth2UserInfo{
     public String getEmail() {
         return (String) ((Map<String, Object>) attributes.get("kakao_account")).get("email");
     }
+
+    @Override
+    public String getProfileImage() {
+        Map<String, Object> profile = (Map<String, Object>) ((Map<String, Object>) attributes.get("kakao_account")).get("profile");
+        return (String) profile.get("profile_image_url");
+    }
 }
