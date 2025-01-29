@@ -71,6 +71,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser() {
         User user = getCurrentUser();
+        s3Service.deleteFile(user.getProfileImageUrl());
         userRepository.delete(user);
     }
 
