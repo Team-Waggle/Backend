@@ -3,12 +3,17 @@ package com.waggle.domain.user.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Set;
 
 @Getter
 @Schema(description = "사용자 정보 수정을 위한 DTO")
 public class UpdateUserDto {
+
+    @JsonProperty("profile_image")
+    @Schema(description = "프로필 이미지 URL", type = "string", format = "binary")
+    private MultipartFile profileImage;
 
     @JsonProperty("name")
     @Schema(description = "사용자 이름", example = "홍길동")

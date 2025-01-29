@@ -9,6 +9,8 @@ import com.waggle.global.response.ErrorResponse;
 import com.waggle.global.response.SuccessResponse;
 import com.waggle.global.response.swagger.UserSuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -18,6 +20,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,7 +59,7 @@ public class UserController {
         return SuccessResponse.of(ApiStatus._OK, currentUserUser);
     }
 
-    @PutMapping("/me")
+    @PutMapping(value = "/me", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(
             summary = "현재 사용자 정보 수정",
             description = "현재 로그인 된 사용자의 정보를 수정합니다.",
@@ -78,7 +81,7 @@ public class UserController {
                     )
             )
     })
-    public ResponseEntity<BaseResponse<Object>> updateUser(@RequestBody UpdateUserDto updateUserDto) {
+    public ResponseEntity<BaseResponse<Object>> updateUser(@ModelAttribute UpdateUserDto updateUserDto) {
         User updatedUser = userService.updateUser(updateUserDto);
         return SuccessResponse.of(ApiStatus._OK, updatedUser);
     }
