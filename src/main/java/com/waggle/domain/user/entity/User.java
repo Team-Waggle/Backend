@@ -1,9 +1,6 @@
 package com.waggle.domain.user.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import com.waggle.domain.auth.entity.RefreshToken;
 import com.waggle.domain.project.entity.ProjectUser;
 import com.waggle.domain.reference.entity.Sido;
@@ -28,6 +25,7 @@ import java.util.UUID;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "users")
 @Schema(description = "사용자 정보")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class User {
 
     @Id
@@ -118,7 +116,6 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @Schema(description = "사용자가 참여한 프로젝트 정보")
     @JsonProperty("projects")
-    @JsonIgnoreProperties("user")
     private Set<ProjectUser> projectUsers = new HashSet<>();
 
     @CreationTimestamp

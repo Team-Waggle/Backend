@@ -89,6 +89,7 @@ public class Project {
     private int bookmarkCnt; //북마크 수(스크랩)
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @Schema(description = "참여한 사용자 정보")
     @JsonProperty("users")
     @JsonIgnoreProperties("project")
     private Set<ProjectUser> projectUsers; //참여자
