@@ -31,4 +31,7 @@ public class ProjectJob {
     @JoinColumn(name = "job_id")
     @JsonProperty("job")
     private Job job;
+
+    @JsonProperty("recruitment_cnt")
+    private int recruitmentCnt;
 }
