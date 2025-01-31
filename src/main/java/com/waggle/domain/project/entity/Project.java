@@ -1,5 +1,6 @@
 package com.waggle.domain.project.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.waggle.domain.reference.entity.Industry;
 import com.waggle.domain.reference.entity.WaysOfWorking;
@@ -86,6 +87,11 @@ public class Project {
     @Schema(description = "북마크 수(스크랩)", example = "0")
     @JsonProperty("bookmark_cnt")
     private int bookmarkCnt; //북마크 수(스크랩)
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JsonProperty("users")
+    @JsonIgnoreProperties("project")
+    private Set<ProjectUser> projectUsers; //참여자
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)

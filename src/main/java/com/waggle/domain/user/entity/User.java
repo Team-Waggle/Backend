@@ -2,8 +2,10 @@ package com.waggle.domain.user.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.waggle.domain.auth.entity.RefreshToken;
+import com.waggle.domain.project.entity.ProjectUser;
 import com.waggle.domain.reference.entity.Sido;
 import com.waggle.domain.reference.entity.TimeOfWorking;
 import com.waggle.domain.reference.entity.WaysOfWorking;
@@ -112,6 +114,12 @@ public class User {
     @Schema(description = "사용자 포트폴리오 링크 정보")
     @JsonProperty("portfolio_urls")
     private Set<UserPortfolioUrl> userPortfolioUrls = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @Schema(description = "사용자가 참여한 프로젝트 정보")
+    @JsonProperty("projects")
+    @JsonIgnoreProperties("user")
+    private Set<ProjectUser> projectUsers = new HashSet<>();
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)
