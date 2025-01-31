@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ import java.util.UUID;
 
 //get: 조회, post: 생성, put: 수정, delete: 삭제
 //put은 전체 다 수정, patch는 일부만 수정
+@Tag(name = "프로젝트 모집", description = "프로젝트 모집 관련 API")
 @RestController
 @RequestMapping("/project")
 @RequiredArgsConstructor
