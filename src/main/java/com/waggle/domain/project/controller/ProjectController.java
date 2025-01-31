@@ -1,7 +1,6 @@
 package com.waggle.domain.project.controller;
 
-import com.waggle.domain.project.dto.CreateProjectDto;
-import com.waggle.domain.project.dto.UpdateProjectDto;
+import com.waggle.domain.project.dto.ProjectDto;
 import com.waggle.domain.project.entity.Project;
 import com.waggle.domain.project.service.ProjectService;
 import com.waggle.global.response.*;
@@ -50,8 +49,8 @@ public class ProjectController {
                     )
             )
     })
-    public ResponseEntity<BaseResponse<Project>> createProject(@RequestBody CreateProjectDto createProjectDto) {
-        Project newProject = projectService.create(createProjectDto);
+    public ResponseEntity<BaseResponse<Project>> createProject(@RequestBody ProjectDto projectDto) {
+        Project newProject = projectService.create(projectDto);
         return SuccessResponse.of(ApiStatus._CREATED, newProject);
     }
     @PutMapping("/post/{id}")
@@ -76,8 +75,8 @@ public class ProjectController {
                     )
             )
     })
-    public ResponseEntity<BaseResponse<Project>> updateProject(@PathVariable String id, @RequestBody UpdateProjectDto updateProjectDto) {
-        Project updateProject = projectService.update(UUID.fromString(id), updateProjectDto);
+    public ResponseEntity<BaseResponse<Project>> updateProject(@PathVariable String id, @RequestBody ProjectDto projectDto) {
+        Project updateProject = projectService.update(UUID.fromString(id), projectDto);
         return SuccessResponse.of(ApiStatus._OK, updateProject);
     }
 

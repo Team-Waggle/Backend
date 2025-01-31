@@ -1,7 +1,6 @@
 package com.waggle.domain.project.service;
 
-import com.waggle.domain.project.dto.CreateProjectDto;
-import com.waggle.domain.project.dto.UpdateProjectDto;
+import com.waggle.domain.project.dto.ProjectDto;
 import com.waggle.domain.project.entity.Project;
 import com.waggle.domain.project.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,13 +16,13 @@ public class ProjectServiceImpl implements ProjectService{
     private final ProjectRepository projectRepository;
 
     @Override
-    public Project create(CreateProjectDto createProjectDto) {
+    public Project create(ProjectDto projectDto) {
         Project newProject = Project.builder()
-                .title(createProjectDto.getTitle())
-                .recruitmentDate(createProjectDto.getRecruitmentDate())
-                .detail(createProjectDto.getDetail())
-                .connectUrl(createProjectDto.getConnectUrl())
-                .referenceUrl(createProjectDto.getReferenceUrl())
+                .title(projectDto.getTitle())
+                .recruitmentDate(projectDto.getRecruitmentDate())
+                .detail(projectDto.getDetail())
+                .connectUrl(projectDto.getConnectUrl())
+                .referenceUrl(projectDto.getReferenceUrl())
                 .bookmarkCnt(0)
                 .build();
         projectRepository.save(newProject);
@@ -31,14 +30,14 @@ public class ProjectServiceImpl implements ProjectService{
     }
 
     @Override
-    public Project update(UUID id, UpdateProjectDto updateProjectDto) {
+    public Project update(UUID id, ProjectDto projectDto) {
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new EmptyResultDataAccessException(1));
-        project.setTitle(updateProjectDto.getTitle());
-        project.setDetail(updateProjectDto.getDetail());
-        project.setConnectUrl(updateProjectDto.getConnectUrl());
-        project.setReferenceUrl(updateProjectDto.getReferenceUrl());
-        project.setRecruitmentDate(updateProjectDto.getRecruitmentDate());
+        project.setTitle(projectDto.getTitle());
+        project.setDetail(projectDto.getDetail());
+        project.setConnectUrl(projectDto.getConnectUrl());
+        project.setReferenceUrl(projectDto.getReferenceUrl());
+        project.setRecruitmentDate(projectDto.getRecruitmentDate());
         projectRepository.save(project);
         return project;
     }

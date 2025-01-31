@@ -10,7 +10,7 @@ import java.util.Set;
 
 @Getter
 @Schema(description = "프로젝트 생성 dto")
-public class CreateProjectDto {
+public class ProjectDto {
 
     @Schema(description = "제목", example = "Waggle 백엔드 모집합니다.")
     @JsonProperty("title")
