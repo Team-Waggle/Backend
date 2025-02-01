@@ -7,7 +7,10 @@ import com.waggle.domain.project.entity.ProjectSkill;
 import com.waggle.domain.project.entity.ProjectUser;
 import com.waggle.domain.project.repository.ProjectRepository;
 import com.waggle.domain.reference.service.ReferenceService;
+import com.waggle.domain.user.entity.User;
 import com.waggle.domain.user.service.UserService;
+import com.waggle.global.exception.AccessDeniedException;
+import com.waggle.global.response.ApiStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -59,6 +62,12 @@ public class ProjectServiceImpl implements ProjectService{
     public Project update(UUID id, ProjectDto projectDto) {
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new EmptyResultDataAccessException(1));
+        User currentUser = userService.getCurrentUser();
+
+        if (!project.getProjectUsers().stream().anyMatch(projectUser -> projectUser.getUser().getId().equals(currentUser.getId()))) {
+            throw new AccessDeniedException(ApiStatus._UPDATE_ACCESS_DENIED);
+        }
+
         project.setTitle(projectDto.getTitle());
         project.setIndustry(referenceService.getIndustryById(projectDto.getIndustryId()));
         project.setWaysOfWorking(referenceService.getWaysOfWorkingById(projectDto.getWayOfWorkingId()));
@@ -84,6 +93,12 @@ public class ProjectServiceImpl implements ProjectService{
         //id 기준
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new EmptyResultDataAccessException(1));
+        User currentUser = userService.getCurrentUser();
+
+        if (!project.getProjectUsers().stream().anyMatch(projectUser -> projectUser.getUser().getId().equals(currentUser.getId()))) {
+            throw new AccessDeniedException(ApiStatus._DELETE_ACCESS_DENIED);
+        }
+
         projectRepository.delete(project);
     }
 
