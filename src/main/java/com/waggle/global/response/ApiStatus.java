@@ -37,7 +37,10 @@ public enum ApiStatus {
     _S3_DELETE_FAILED(HttpStatus.BAD_REQUEST, 400, "파일 삭제에 실패했습니다."),
     _S3_FILE_NOT_FOUND(HttpStatus.BAD_REQUEST, 404, "파일을 찾을 수 없습니다."),
     _S3_INVALID_FILE_TYPE(HttpStatus.BAD_REQUEST, 400, "지원하지 않는 파일 형식입니다."),
-    _S3_FILE_SIZE_EXCEEDED(HttpStatus.BAD_REQUEST, 400, "파일 크기가 제한을 초과했습니다.");
+    _S3_FILE_SIZE_EXCEEDED(HttpStatus.BAD_REQUEST, 400, "파일 크기가 제한을 초과했습니다."),
+
+    _UPDATE_ACCESS_DENIED(HttpStatus.FORBIDDEN, 403, "수정 권한이 없습니다."),
+    _DELETE_ACCESS_DENIED(HttpStatus.FORBIDDEN, 403, "삭제 권한이 없습니다.");
 
     private final HttpStatus httpStatus;
     private final int code;

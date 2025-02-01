@@ -48,9 +48,9 @@ public class S3Service {
     public void deleteFile(String fileUrl) {
         try {
             String fileName = extractfilenamefromurl(fileUrl);
-            if (!amazonS3.doesObjectExist(bucket, fileName)) {
-                throw new S3Exception(ApiStatus._S3_FILE_NOT_FOUND);
-            }
+//            if (!amazonS3.doesObjectExist(bucket, fileName)) {
+//                throw new S3Exception(ApiStatus._S3_FILE_NOT_FOUND);
+//            }
             amazonS3.deleteObject(bucket, fileName);
         } catch (Exception e) {
             log.info("deleteFile: {}", e);

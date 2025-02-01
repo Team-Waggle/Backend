@@ -1,7 +1,6 @@
 package com.waggle.domain.project.controller;
 
-import com.waggle.domain.project.dto.CreateProjectDto;
-import com.waggle.domain.project.dto.UpdateProjectDto;
+import com.waggle.domain.project.dto.ProjectDto;
 import com.waggle.domain.project.entity.Project;
 import com.waggle.domain.project.service.ProjectService;
 import com.waggle.global.response.*;
@@ -12,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +20,7 @@ import java.util.UUID;
 
 //get: 조회, post: 생성, put: 수정, delete: 삭제
 //put은 전체 다 수정, patch는 일부만 수정
+@Tag(name = "프로젝트 모집", description = "프로젝트 모집 관련 API")
 @RestController
 @RequestMapping("/project")
 @RequiredArgsConstructor
@@ -50,8 +51,8 @@ public class ProjectController {
                     )
             )
     })
-    public ResponseEntity<BaseResponse<Project>> createProject(@RequestBody CreateProjectDto createProjectDto) {
-        Project newProject = projectService.create(createProjectDto);
+    public ResponseEntity<BaseResponse<Project>> createProject(@RequestBody ProjectDto projectDto) {
+        Project newProject = projectService.create(projectDto);
         return SuccessResponse.of(ApiStatus._CREATED, newProject);
     }
     @PutMapping("/post/{id}")
@@ -76,8 +77,8 @@ public class ProjectController {
                     )
             )
     })
-    public ResponseEntity<BaseResponse<Project>> updateProject(@PathVariable String id, @RequestBody UpdateProjectDto updateProjectDto) {
-        Project updateProject = projectService.update(UUID.fromString(id), updateProjectDto);
+    public ResponseEntity<BaseResponse<Project>> updateProject(@PathVariable String id, @RequestBody ProjectDto projectDto) {
+        Project updateProject = projectService.update(UUID.fromString(id), projectDto);
         return SuccessResponse.of(ApiStatus._OK, updateProject);
     }
 
