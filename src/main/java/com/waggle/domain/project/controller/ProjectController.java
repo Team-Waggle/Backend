@@ -75,6 +75,13 @@ public class ProjectController {
                     content = @Content(
                             schema = @Schema(implementation = ErrorResponse.class)
                     )
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "수정 권한이 없습니다.",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
             )
     })
     public ResponseEntity<BaseResponse<Project>> updateProject(@PathVariable String id, @RequestBody ProjectDto projectDto) {
@@ -97,6 +104,13 @@ public class ProjectController {
             @ApiResponse(
                     responseCode = "401",
                     description = "인증되지 않은 사용자입니다.",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "삭제 권한이 없습니다.",
                     content = @Content(
                             schema = @Schema(implementation = ErrorResponse.class)
                     )
