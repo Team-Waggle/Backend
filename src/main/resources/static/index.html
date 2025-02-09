@@ -56,13 +56,13 @@
         const token = urlParams.get('token');
         
         if (token) {
-            fetch('api/auth/token/exchange?temporaryToken=' + token, {
+            fetch('/api/auth/token/exchange?temporaryToken=' + token, {
                 method: 'POST'
             })
             .then(response => response.json())
             .then(data => {
                 localStorage.setItem('accessToken', data.payload.access_token);
-                window.location.href = '/';
+                window.location.href = window.location.pathname;
             });
         }
 
@@ -94,7 +94,7 @@
             });
         });
 
-        fetch('api/user/me', {
+        fetch('/api/user/me', {
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('accessToken') // 토큰을 로컬 스토리지에서 가져옴
