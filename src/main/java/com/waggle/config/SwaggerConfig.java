@@ -1,11 +1,10 @@
 package com.waggle.config;
 
-import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
 
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.servers.Server;
 import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -19,21 +18,24 @@ import io.swagger.v3.oas.models.security.OAuthFlows;
 import io.swagger.v3.oas.models.security.Scopes;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import org.springframework.context.annotation.Profile;
 
 @Configuration
 public class SwaggerConfig {
-
-    @Value("${MAIN_URL}")
-    private String mainUrl;
 
     @Value("${NAVER_REDIRECT_URI}")
     private String naverRedirectUri;
 
     @Value("${NAVER_TOKEN_URI}")
     private String naverTokenUri;
-    
-    @Bean
-    public OpenAPI openAPI() {
+
+    @Value("${LOCAL_FULL_URL}")
+    private String localServerUrl;
+
+    @Value("${PROD_HTTPS_FULL_URL}")
+    private String productionServerUrl;
+
+    private OpenAPI createOpenAPI(String serverUrl) {
         Info info = new Info()
                 .title("Waggle API Document")
                 .version("v0.0.1")
@@ -44,17 +46,12 @@ public class SwaggerConfig {
                 .type(SecurityScheme.Type.OAUTH2)
                 .flows(new OAuthFlows()
                         .authorizationCode(new OAuthFlow()
-                                .authorizationUrl(mainUrl + naverTokenUri)
-                                .tokenUrl(mainUrl + naverRedirectUri)
+                                .authorizationUrl(serverUrl + naverTokenUri)
+                                .tokenUrl(serverUrl + naverRedirectUri)
                                 .scopes(new Scopes()
                                         .addString("name", "이름 정보")
                                         .addString("email", "이메일 정보")
                                         .addString("profile_image", "프로필 이미지 정보")
-                                        .addString("birthyear", "생년 정보")
-                                        .addString("birthday", "생일 정보")
-                                        .addString("mobile", "휴대폰 번호 정보")
-                                        .addString("nickname", "닉네임 정보")
-                                        .addString("gender", "성별 정보")
                                 )
                         )
                 );
@@ -76,7 +73,20 @@ public class SwaggerConfig {
                 .components(new Components()
                         .addSecuritySchemes("OAuth2", securityScheme)
                         .addSecuritySchemes("JWT", bearerScheme))
-                .info(info);
+                .info(info)
+                .addServersItem(new Server().url(serverUrl));
+    }
+
+    @Bean
+    @Profile("local")
+    public OpenAPI openAPIForLocal() {
+        return createOpenAPI(localServerUrl);
+    }
+
+    @Bean
+    @Profile("prod")
+    public OpenAPI openAPIForProduction() {
+        return createOpenAPI(productionServerUrl);
     }
 
     @Bean

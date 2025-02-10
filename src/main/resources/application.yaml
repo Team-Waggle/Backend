@@ -2,11 +2,11 @@ spring:
   application:
     name: waggle
 
-  profiles:
-    active: ${SPRING_PROFILES_ACTIVE}
-
   config:
     import: optional:file:.env[.properties]
+
+  profiles:
+    active: ${SPRING_ACTIVE_PROFILE}
 
   datasource:
     url: jdbc:mysql://${DB_CONTAINER_NAME}:${DB_EXTERNAL_PORT}/${DB_DATABASE}
@@ -35,7 +35,6 @@ spring:
             scope:
               - email
               - profile
-            redirect-uri: ${MAIN_URL}${GOOGLE_REDIRECT_URI}
 
           kakao:
             client-name: kakao
@@ -43,7 +42,6 @@ spring:
             client-id: ${KAKAO_CLIENT_ID}
             client-secret: ${KAKAO_CLIENT_SECRET}
             client-authentication-method: client_secret_post
-            redirect-uri: ${MAIN_URL}${KAKAO_REDIRECT_URI}
             scope:
               - profile_nickname
               - account_email
@@ -62,7 +60,6 @@ spring:
               - gender
             client-name: Naver
             authorization-grant-type: authorization_code
-            redirect-uri: ${MAIN_URL}${NAVER_REDIRECT_URI}
 
         provider:
           kakao:
@@ -85,7 +82,6 @@ spring:
 
 jwt:
   secret: ${JWT_SECRET}
-  redirect: ${JWT_REDIRECT_URI}
   access-token:
     expiration-time: ${JWT_ACCESS_TOKEN_EXPIRATION_TIME}
   refresh-token:
@@ -127,22 +123,3 @@ cloud:
       bucket: ${AWS_BUCKET}
     stack:
       auto: false
-
----
-spring:
-  profiles:
-    active: dev
-
-server:
-  servlet:
-    context-path: /
-
----
-spring:
-  config:
-    activate:
-      on-profile: prod
-
-server:
-  servlet:
-    context-path: /api
