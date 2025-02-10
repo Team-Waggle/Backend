@@ -1,0 +1,21 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            redirect-uri: ${LOCAL_FULL_URL}${GOOGLE_REDIRECT_URI}
+
+          kakao:
+            redirect-uri: ${LOCAL_FULL_URL}${KAKAO_REDIRECT_URI}
+
+          naver:
+            redirect-uri: ${LOCAL_FULL_URL}${NAVER_REDIRECT_URI}
+
+server:
+  servlet:
+    context-path: ${LOCAL_ENDPOINT}

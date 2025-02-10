@@ -32,12 +32,16 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    @Value("${JWT_REDIRECT_URI}")
-    private String REDIRECT_URI; // 프론트엔드로 Jwt 토큰을 리다이렉트할 URI
     @Value("${JWT_ACCESS_TOKEN_EXPIRE_TIME}")
     private long ACCESS_TOKEN_EXPIRATION_TIME; // 액세스 토큰 유효기간
     @Value("${JWT_REFRESH_TOKEN_EXPIRE_TIME}")
     private long REFRESH_TOKEN_EXPIRATION_TIME; // 리프레쉬 토큰 유효기간
+    @Value("${SPRING_PROFILES_ACTIVE}")
+    private String profile; // 현재 프로파일
+    @Value("${LOCAL_FULL_URL}")
+    private String localUrl; // 로컬 서버 URL
+    @Value("${PROD_HTTPS_FULL_URL}")
+    private String prodUrl; // 프로덕션 서버 URL
 
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
@@ -129,7 +133,13 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         response.addCookie(cookie);
 
         // 액세스 토큰, 리프레쉬 토큰을 담아 리다이렉트
-        String redirectUri = String.format(REDIRECT_URI, temporaryToken);
+        String redirectUri = "";
+        if (profile.equals("prod")) {
+            redirectUri = prodUrl + "?token=" + temporaryToken;
+        }
+        if (profile.equals("local")) {
+            redirectUri = localUrl + "?token=" + temporaryToken;
+        }
         getRedirectStrategy().sendRedirect(request, response, redirectUri);
     }
 }
