@@ -52,11 +52,6 @@ public class SwaggerConfig {
                                         .addString("name", "이름 정보")
                                         .addString("email", "이메일 정보")
                                         .addString("profile_image", "프로필 이미지 정보")
-                                        .addString("birthyear", "생년 정보")
-                                        .addString("birthday", "생일 정보")
-                                        .addString("mobile", "휴대폰 번호 정보")
-                                        .addString("nickname", "닉네임 정보")
-                                        .addString("gender", "성별 정보")
                                 )
                         )
                 );
