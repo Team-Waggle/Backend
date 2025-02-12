@@ -62,7 +62,11 @@ public class Project {
     //set=배열(gpt 추천)
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JsonProperty("recruitment_jobs")
-    private Set<ProjectJob> projectJobs; //모집 직무
+    private Set<ProjectRecruitmentJob> recruitmentJobs; //모집 직무
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JsonProperty("member_jobs")
+    private Set<ProjectMemberJob> memberJobs; //멤버 직무
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JsonProperty("skills")

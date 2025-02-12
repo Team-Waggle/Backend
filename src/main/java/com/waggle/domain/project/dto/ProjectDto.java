@@ -34,8 +34,12 @@ public class ProjectDto {
     private Long durationOfWorkingId;
 
     @Schema(description = "모집 직무 및 인원")
-    @JsonProperty("jobs")
-    private Set<ProjectJobDto> jobs;
+    @JsonProperty("recruitment_jobs")
+    private Set<ProjectJobDto> recruitmentJobs;
+
+    @Schema(description = "참여한 멤버 직무 및 인원")
+    @JsonProperty("member_jobs")
+    private Set<ProjectJobDto> memberJobs;
 
     @Schema(description = "사용 스킬 고유키 목록", example = "[2, 4, 7]")
     @JsonProperty("skill_ids")

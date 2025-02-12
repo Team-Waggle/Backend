@@ -14,7 +14,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class ProjectJob {
+public class ProjectMemberJob {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -34,6 +34,6 @@ public class ProjectJob {
     @JsonProperty("job")
     private Job job;
 
-    @JsonProperty("recruitment_cnt")
-    private int recruitmentCnt;
+    @JsonProperty("member_cnt")
+    private int memberCnt;
 }

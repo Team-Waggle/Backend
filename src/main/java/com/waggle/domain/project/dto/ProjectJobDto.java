@@ -11,7 +11,7 @@ public class ProjectJobDto {
     @Schema(description = "직무 고유키", example = "1")
     private Long jobId;
 
-    @JsonProperty("recruitment_cnt")
-    @Schema(description = "모집 인원", example = "3")
-    private int recruitmentCnt;
+    @JsonProperty("cnt")
+    @Schema(description = "인원", example = "3")
+    private int cnt;
 }
