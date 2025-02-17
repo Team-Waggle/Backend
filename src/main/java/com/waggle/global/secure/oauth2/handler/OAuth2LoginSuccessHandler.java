@@ -140,6 +140,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         if (profile.equals("local")) {
             redirectUri = localUrl + "?token=" + temporaryToken;
         }
+        redirectUri = "http://localhost:5173?token=" + temporaryToken;
         getRedirectStrategy().sendRedirect(request, response, redirectUri);
     }
 }
