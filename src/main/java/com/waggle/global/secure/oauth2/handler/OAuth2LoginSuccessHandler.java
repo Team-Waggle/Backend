@@ -12,8 +12,6 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import com.waggle.domain.auth.entity.RefreshToken;
-import com.waggle.domain.auth.repository.RefreshTokenRepository;
 import com.waggle.domain.user.entity.User;
 import com.waggle.domain.user.repository.UserRepository;
 import com.waggle.global.secure.jwt.JwtUtil;
@@ -45,7 +43,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
+    //private final RefreshTokenRepository refreshTokenRepository;
     private final RedisTemplate<String, String> redisTemplate;
     private OAuth2UserInfo oAuth2UserInfo = null;
 
@@ -78,6 +76,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
         User existUser = userRepository.findByProviderId(providerId);
         User user;
+        boolean isExistUser = existUser != null;
 
         if (existUser == null) {
             // 신규 유저인 경우
@@ -94,7 +93,8 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         } else {
             // 기존 유저인 경우
             log.info("기존 유저입니다.");
-            refreshTokenRepository.deleteByUserId(existUser.getId());
+            //refreshTokenRepository.deleteByUserId(existUser.getId());
+            redisTemplate.delete("REFRESH_TOKEN:" + existUser.getId());
             user = existUser;
         }
 
@@ -105,12 +105,16 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
         // 리프레쉬 토큰 발급 후 저장
         String refreshToken = jwtUtil.generateRefreshToken(user.getId(), REFRESH_TOKEN_EXPIRATION_TIME);
-
-        RefreshToken newRefreshToken = RefreshToken.builder()
-                .user(user)
-                .token(refreshToken)
-                .build();
-        refreshTokenRepository.save(newRefreshToken);
+        //        RefreshToken newRefreshToken = RefreshToken.builder()
+        //                .user(user)
+        //                .token(refreshToken)
+        //                .build();
+        //        refreshTokenRepository.save(newRefreshToken);
+        redisTemplate.opsForValue().set(
+                "REFRESH_TOKEN:" + user.getId(),
+                refreshToken,
+                Duration.ofMillis(REFRESH_TOKEN_EXPIRATION_TIME)
+        );
 
         // 액세스 토큰 발급
         String accessToken = jwtUtil.generateAccessToken(user.getId(), ACCESS_TOKEN_EXPIRATION_TIME);
@@ -136,11 +140,11 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         String redirectUri = "";
         if (profile.equals("prod")) {
             redirectUri = prodUrl + "?token=" + temporaryToken;
+            redirectUri = "http://localhost:5173?token=" + temporaryToken;
         }
         if (profile.equals("local")) {
             redirectUri = localUrl + "?token=" + temporaryToken;
         }
-        redirectUri = "http://localhost:5173?token=" + temporaryToken;
         getRedirectStrategy().sendRedirect(request, response, redirectUri);
     }
 }

@@ -1,8 +1,6 @@
 package com.waggle.domain.auth.service;
 
 import com.waggle.domain.auth.dto.*;
-import com.waggle.domain.auth.entity.RefreshToken;
-import com.waggle.domain.auth.repository.RefreshTokenRepository;
 import com.waggle.global.exception.JwtTokenException;
 import com.waggle.global.response.ApiStatus;
 import com.waggle.global.secure.jwt.JwtUtil;
@@ -23,16 +21,16 @@ public class AuthServiceImpl implements AuthService {
     @Value("${JWT_ACCESS_TOKEN_EXPIRE_TIME}")
     private long ACCESS_TOKEN_EXPIRATION_TIME; // 액세스 토큰 유효기간
 
-    private final RefreshTokenRepository refreshTokenRepository;
+    //private final RefreshTokenRepository refreshTokenRepository;
     private final JwtUtil jwtUtil;
     private final RedisTemplate<String, String> redisTemplate;
     @Override
     public AccessTokenVo reissueAccessToken(String refreshToken) {
         String userId = jwtUtil.getUserIdFromToken(refreshToken);
-        RefreshToken existRefreshToken = refreshTokenRepository.findByUserId(UUID.fromString(userId));
+        String storedRefreshToken = redisTemplate.opsForValue().get("REFRESH_TOKEN:" + userId);
         String accessToken = null;
 
-        if (existRefreshToken == null || !existRefreshToken.getToken().equals(refreshToken) || jwtUtil.isTokenExpired(refreshToken)) {
+        if (storedRefreshToken == null || !storedRefreshToken.equals(refreshToken) || jwtUtil.isTokenExpired(refreshToken)) {
             // 리프레쉬 토큰이 다르거나, 만료된 경우
             throw new JwtTokenException(ApiStatus._INVALID_REFRESH_TOKEN);
         } else {
@@ -69,6 +67,6 @@ public class AuthServiceImpl implements AuthService {
         }
     
         String userId = jwtUtil.getUserIdFromToken(refreshToken);
-        refreshTokenRepository.deleteByUserId(UUID.fromString(userId));
+        redisTemplate.delete("REFRESH_TOKEN:" + userId);
     }
 }
