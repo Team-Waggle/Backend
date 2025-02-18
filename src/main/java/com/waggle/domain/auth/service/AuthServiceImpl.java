@@ -21,7 +21,6 @@ public class AuthServiceImpl implements AuthService {
     @Value("${JWT_ACCESS_TOKEN_EXPIRE_TIME}")
     private long ACCESS_TOKEN_EXPIRATION_TIME; // 액세스 토큰 유효기간
 
-    //private final RefreshTokenRepository refreshTokenRepository;
     private final JwtUtil jwtUtil;
     private final RedisTemplate<String, String> redisTemplate;
     @Override
