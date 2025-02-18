@@ -29,6 +29,7 @@ public class WebConfig implements WebMvcConfigurer {
                 //.allowedOrigins("https://waggle.o-r.kr")
                 .allowedOriginPatterns("*")
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
+                .allowCredentials(true)
                 .allowedHeaders("*")
                 .allowCredentials(true);
     }
