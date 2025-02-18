@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Processing...</h1>
+<script>
+    window.onload = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const isExistUser = urlParams.get('is_exist_user');
+
+        fetch('auth/token/reissue', { method: 'GET' })
+            .then(response => response.json())
+            .then(data => {
+                localStorage.setItem('accessToken', data.payload.access_token);
+                window.location.href = '/';
+            });
+    }
+</script>
+</body>
+</html>

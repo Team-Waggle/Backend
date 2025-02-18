@@ -31,34 +31,34 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private final AuthService authService;
 
-    @PostMapping("/token/exchange")
-    @Operation(
-        summary = "임시 토큰 교환", 
-        description = """
-            임시 토큰을 교환하여 액세스 토큰을 발급합니다.
-            
-            ⚠️ 로그인 시 Redirect URL의 파라미터 중 token 값이 임시 토큰입니다.\n
-            실제 API 호출 시에는 리다이렉트된 후 token 파라미터가 있으면 자동으로 사용한 후 홈페이지로 리다이렉트되도록 해주세요.\n
-            Swagger UI 테스트 시에만 수동으로 temporary_token 값을 입력해주세요.
-            """,
-        parameters = {
-            @Parameter(
-                name = "temporaryToken",
-                description = "OAuth2 로그인 성공 후 발급된 임시 토큰",
-                required = true,
-                schema = @Schema(type = "string")
-            )
-        },
-        security = @SecurityRequirement(name = "OAuth2")
-    )
-    @ApiResponses({
-        @ApiResponse(responseCode = "201", description = "토큰 교환 성공", content = @Content(schema = @Schema(implementation = AccessTokenSuccessResponse.class))),
-        @ApiResponse(responseCode = "401", description = "유효하지 않은 임시 토큰", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    })
-    public ResponseEntity<BaseResponse<AccessTokenVo>> exchangeToken(@RequestParam String temporaryToken) {
-        AccessTokenVo accessToken = authService.exchangeTemporaryToken(temporaryToken);
-        return SuccessResponse.of(ApiStatus._CREATE_ACCESS_TOKEN, accessToken);
-    }
+//    @PostMapping("/token/exchange")
+//    @Operation(
+//        summary = "임시 토큰 교환",
+//        description = """
+//            임시 토큰을 교환하여 액세스 토큰을 발급합니다.
+//
+//            ⚠️ 로그인 시 Redirect URL의 파라미터 중 token 값이 임시 토큰입니다.\n
+//            실제 API 호출 시에는 리다이렉트된 후 token 파라미터가 있으면 자동으로 사용한 후 홈페이지로 리다이렉트되도록 해주세요.\n
+//            Swagger UI 테스트 시에만 수동으로 temporary_token 값을 입력해주세요.
+//            """,
+//        parameters = {
+//            @Parameter(
+//                name = "temporaryToken",
+//                description = "OAuth2 로그인 성공 후 발급된 임시 토큰",
+//                required = true,
+//                schema = @Schema(type = "string")
+//            )
+//        },
+//        security = @SecurityRequirement(name = "OAuth2")
+//    )
+//    @ApiResponses({
+//        @ApiResponse(responseCode = "201", description = "토큰 교환 성공", content = @Content(schema = @Schema(implementation = AccessTokenSuccessResponse.class))),
+//        @ApiResponse(responseCode = "401", description = "유효하지 않은 임시 토큰", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+//    })
+//    public ResponseEntity<BaseResponse<AccessTokenVo>> exchangeToken(@RequestParam String temporaryToken) {
+//        AccessTokenVo accessToken = authService.exchangeTemporaryToken(temporaryToken);
+//        return SuccessResponse.of(ApiStatus._CREATE_ACCESS_TOKEN, accessToken);
+//    }
 
     @GetMapping("/token/reissue")
     @Operation(

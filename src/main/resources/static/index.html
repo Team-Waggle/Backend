@@ -52,20 +52,6 @@
 </div>
 <script>
     window.onload = function() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const token = urlParams.get('token');
-        
-        if (token) {
-            fetch('auth/token/exchange?temporaryToken=' + token, {
-                method: 'POST'
-            })
-            .then(response => response.json())
-            .then(data => {
-                localStorage.setItem('accessToken', data.payload.access_token);
-                window.location.href = window.location.pathname;
-            });
-        }
-
         fetch('reference/main-introduce', {
             method: 'GET'
         })
@@ -172,8 +158,17 @@
                 console.error('문제가 발생했습니다:', error);
             });
 
+        // 로그아웃 처리
         document.getElementById('logoutLink').addEventListener('click', function() {
             localStorage.removeItem('accessToken');
+            fetch('auth/logout', {
+                method: 'POST'})
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('네트워크 응답이 좋지 않습니다.');
+                    }
+                    location.href = '/';
+                })
         });
     }
 </script>
