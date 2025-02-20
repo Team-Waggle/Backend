@@ -1,11 +1,13 @@
 package com.waggle.domain.project.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.waggle.domain.reference.entity.Job;
+import com.waggle.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.UUID;
 
@@ -14,7 +16,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class ProjectJob {
+public class ProjectBookmark {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -23,17 +25,15 @@ public class ProjectJob {
 
     @ManyToOne
     @JoinColumn(name = "project_id")
-    //BackReference가 무한 반복 끊어내는거고, Ignore는 실제로는 안에 데이터가 있지만 Json에서만 안 보여줌.
-    //중간 테이블에는 JsonBackReference를 해줘야 함.
-    @JsonBackReference
-    @JsonIgnore
+    @JsonProperty("project")
+    @JsonIgnoreProperties("users")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Project project;
 
     @ManyToOne
-    @JoinColumn(name = "job_id")
-    @JsonProperty("job")
-    private Job job;
-
-    @JsonProperty("recruitment_cnt")
-    private int recruitmentCnt;
+    @JoinColumn(name = "user_id")
+    @JsonProperty("user")
+    @JsonIgnoreProperties("projects")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private User user;
 }

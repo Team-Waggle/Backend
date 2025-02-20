@@ -1,5 +1,8 @@
 package com.waggle.domain.user.service;
 
+import com.waggle.domain.project.entity.Project;
+import com.waggle.domain.project.entity.ProjectBookmark;
+import com.waggle.domain.project.repository.ProjectRepository;
 import com.waggle.domain.reference.entity.*;
 import com.waggle.domain.reference.service.ReferenceService;
 import com.waggle.domain.user.dto.UpdateUserDto;
@@ -11,6 +14,7 @@ import com.waggle.global.response.ApiStatus;
 import com.waggle.global.secure.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -27,6 +31,7 @@ public class UserServiceImpl implements UserService {
 
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
+    private final ProjectRepository projectRepository;
     private final ReferenceService referenceService;
     private final S3Service s3Service;
 
@@ -73,6 +78,32 @@ public class UserServiceImpl implements UserService {
         User user = getCurrentUser();
         s3Service.deleteFile(user.getProfileImageUrl());
         userRepository.delete(user);
+    }
+
+    @Override
+    public boolean toggleBookmark(String projectId) {
+        User user = getCurrentUser();
+        Project project = projectRepository.findById(UUID.fromString(projectId))
+                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+        boolean isBookmarked;
+
+        if (user.getProjectBookmarks().stream().anyMatch(projectBookmark -> projectBookmark.getProject().getId().equals(project.getId()))) {
+            user.getProjectBookmarks().removeIf(projectBookmark -> projectBookmark.getProject().getId().equals(project.getId()));
+            project.setBookmarkCnt(project.getBookmarkCnt() - 1);
+            isBookmarked = false;
+        } else {
+            user.getProjectBookmarks().add(ProjectBookmark.builder()
+                    .project(project)
+                    .user(user)
+                    .build());
+            project.setBookmarkCnt(project.getBookmarkCnt() + 1);
+            isBookmarked = true;
+        }
+
+        userRepository.save(user);
+        projectRepository.save(project);
+
+        return isBookmarked;
     }
 
     private Set<UserJob> getUserJobs(UpdateUserDto updateUserDto, User user) {

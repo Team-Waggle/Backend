@@ -1,10 +1,7 @@
 package com.waggle.domain.project.service;
 
-import com.waggle.domain.project.dto.ProjectDto;
-import com.waggle.domain.project.entity.Project;
-import com.waggle.domain.project.entity.ProjectJob;
-import com.waggle.domain.project.entity.ProjectSkill;
-import com.waggle.domain.project.entity.ProjectUser;
+import com.waggle.domain.project.dto.ProjectInputDto;
+import com.waggle.domain.project.entity.*;
 import com.waggle.domain.project.repository.ProjectRepository;
 import com.waggle.domain.reference.service.ReferenceService;
 import com.waggle.domain.user.entity.User;
@@ -31,16 +28,16 @@ public class ProjectServiceImpl implements ProjectService{
     private final ReferenceService referenceService;
 
     @Override
-    public Project create(ProjectDto projectDto) {
+    public Project create(ProjectInputDto projectInputDto) {
         Project newProject = Project.builder()
-                .title(projectDto.getTitle())
-                .industry(referenceService.getIndustryById(projectDto.getIndustryId()))
-                .waysOfWorking(referenceService.getWaysOfWorkingById(projectDto.getWayOfWorkingId()))
-                .recruitmentDate(projectDto.getRecruitmentDate())
-                .durationOfWorking(referenceService.getDurationOfWorkingById(projectDto.getDurationOfWorkingId()))
-                .detail(projectDto.getDetail())
-                .connectUrl(projectDto.getConnectUrl())
-                .referenceUrl(projectDto.getReferenceUrl())
+                .title(projectInputDto.getTitle())
+                .industry(referenceService.getIndustryById(projectInputDto.getIndustryId()))
+                .waysOfWorking(referenceService.getWaysOfWorkingById(projectInputDto.getWayOfWorkingId()))
+                .recruitmentDate(projectInputDto.getRecruitmentDate())
+                .durationOfWorking(referenceService.getDurationOfWorkingById(projectInputDto.getDurationOfWorkingId()))
+                .detail(projectInputDto.getDetail())
+                .connectUrl(projectInputDto.getConnectUrl())
+                .referenceUrl(projectInputDto.getReferenceUrl())
                 .bookmarkCnt(0)
                 .build();
         newProject = projectRepository.save(newProject);
@@ -51,15 +48,16 @@ public class ProjectServiceImpl implements ProjectService{
                 .user(userService.getCurrentUser())
                 .build());
         newProject.setProjectUsers(projectUsers);
-        newProject.setProjectJobs(getProjectJobs(projectDto, newProject));
-        newProject.setProjectSkills(getProjectSkills(projectDto, newProject));
+        newProject.setRecruitmentJobs(getProjectRecruitmentJobs(projectInputDto, newProject));
+        newProject.setMemberJobs(getProjectMemberJobs(projectInputDto, newProject));
+        newProject.setProjectSkills(getProjectSkills(projectInputDto, newProject));
         projectRepository.save(newProject);
 
         return newProject;
     }
 
     @Override
-    public Project update(UUID id, ProjectDto projectDto) {
+    public Project update(UUID id, ProjectInputDto projectInputDto) {
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new EmptyResultDataAccessException(1));
         User currentUser = userService.getCurrentUser();
@@ -68,16 +66,17 @@ public class ProjectServiceImpl implements ProjectService{
             throw new AccessDeniedException(ApiStatus._UPDATE_ACCESS_DENIED);
         }
 
-        project.setTitle(projectDto.getTitle());
-        project.setIndustry(referenceService.getIndustryById(projectDto.getIndustryId()));
-        project.setWaysOfWorking(referenceService.getWaysOfWorkingById(projectDto.getWayOfWorkingId()));
-        project.setRecruitmentDate(projectDto.getRecruitmentDate());
-        project.setDurationOfWorking(referenceService.getDurationOfWorkingById(projectDto.getDurationOfWorkingId()));
-        project.setProjectJobs(getProjectJobs(projectDto, project));
-        project.setProjectSkills(getProjectSkills(projectDto, project));
-        project.setDetail(projectDto.getDetail());
-        project.setConnectUrl(projectDto.getConnectUrl());
-        project.setReferenceUrl(projectDto.getReferenceUrl());
+        project.setTitle(projectInputDto.getTitle());
+        project.setIndustry(referenceService.getIndustryById(projectInputDto.getIndustryId()));
+        project.setWaysOfWorking(referenceService.getWaysOfWorkingById(projectInputDto.getWayOfWorkingId()));
+        project.setRecruitmentDate(projectInputDto.getRecruitmentDate());
+        project.setDurationOfWorking(referenceService.getDurationOfWorkingById(projectInputDto.getDurationOfWorkingId()));
+        project.setRecruitmentJobs(getProjectRecruitmentJobs(projectInputDto, project));
+        project.setMemberJobs(getProjectMemberJobs(projectInputDto, project));
+        project.setProjectSkills(getProjectSkills(projectInputDto, project));
+        project.setDetail(projectInputDto.getDetail());
+        project.setConnectUrl(projectInputDto.getConnectUrl());
+        project.setReferenceUrl(projectInputDto.getReferenceUrl());
         projectRepository.save(project);
         return project;
     }
@@ -108,22 +107,35 @@ public class ProjectServiceImpl implements ProjectService{
                 .orElseThrow(() -> new EmptyResultDataAccessException(1));
     }
 
-    private Set<ProjectJob> getProjectJobs(ProjectDto projectDto, Project project) {
-        Set<ProjectJob> projectJobs = new HashSet<>();
-        projectDto.getJobs().forEach(jobDto -> {
-            ProjectJob projectJob = ProjectJob.builder()
+    private Set<ProjectRecruitmentJob> getProjectRecruitmentJobs(ProjectInputDto projectInputDto, Project project) {
+        Set<ProjectRecruitmentJob> projectRecruitmentJobs = new HashSet<>();
+        projectInputDto.getRecruitmentJobs().forEach(jobDto -> {
+            ProjectRecruitmentJob projectRecruitmentJob = ProjectRecruitmentJob.builder()
                     .project(project)
                     .job(referenceService.getJobById(jobDto.getJobId()))
-                    .recruitmentCnt(jobDto.getRecruitmentCnt())
+                    .recruitmentCnt(jobDto.getCnt())
                     .build();
-            projectJobs.add(projectJob);
+            projectRecruitmentJobs.add(projectRecruitmentJob);
         });
-        return projectJobs;
+        return projectRecruitmentJobs;
     }
 
-    private Set<ProjectSkill> getProjectSkills(ProjectDto projectDto, Project project) {
+    private Set<ProjectMemberJob> getProjectMemberJobs(ProjectInputDto projectInputDto, Project project) {
+        Set<ProjectMemberJob> projectMemberJobs = new HashSet<>();
+        projectInputDto.getMemberJobs().forEach(jobDto -> {
+            ProjectMemberJob projectMemberJob = ProjectMemberJob.builder()
+                    .project(project)
+                    .job(referenceService.getJobById(jobDto.getJobId()))
+                    .memberCnt(jobDto.getCnt())
+                    .build();
+            projectMemberJobs.add(projectMemberJob);
+        });
+        return projectMemberJobs;
+    }
+
+    private Set<ProjectSkill> getProjectSkills(ProjectInputDto projectInputDto, Project project) {
         Set<ProjectSkill> projectSkills = new HashSet<>();
-        projectDto.getSkillIds().forEach(skillId -> {
+        projectInputDto.getSkillIds().forEach(skillId -> {
             ProjectSkill projectSkill = ProjectSkill.builder()
                     .project(project)
                     .skill(referenceService.getSkillById(skillId))

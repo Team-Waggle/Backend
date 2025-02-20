@@ -2,7 +2,7 @@ package com.waggle.domain.reference.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.waggle.domain.project.entity.ProjectJob;
+import com.waggle.domain.project.entity.ProjectRecruitmentJob;
 import com.waggle.domain.user.entity.UserJob;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -50,5 +50,5 @@ public class Job {
     //new HashSet<>() = 빈 배열
     @OneToMany(mappedBy = "job", cascade = CascadeType.ALL) //job이 여러개 올 수 있고, 중간테이블은 project를 1개씩밖에 못가져서
     @JsonIgnore //manyTomany로 연결되었을 때 무한 반복되는 것을 끊어내기 위해 사용
-    private Set<ProjectJob> projectJobs = new HashSet<>();
+    private Set<ProjectRecruitmentJob> projectRecruitmentJobs = new HashSet<>();
 }

@@ -1,6 +1,7 @@
 package com.waggle.domain.user.entity;
 
 import com.fasterxml.jackson.annotation.*;
+import com.waggle.domain.project.entity.ProjectBookmark;
 import com.waggle.domain.project.entity.ProjectUser;
 import com.waggle.domain.reference.entity.Sido;
 import com.waggle.domain.reference.entity.TimeOfWorking;
@@ -114,8 +115,13 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @Schema(description = "사용자가 참여한 프로젝트 정보")
-    @JsonProperty("projects")
+    @JsonProperty("join_projects")
     private Set<ProjectUser> projectUsers = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @Schema(description = "사용자가 북마크한 프로젝트 정보")
+    @JsonProperty("bookmark_projects")
+    private Set<ProjectBookmark> projectBookmarks = new HashSet<>();
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)
