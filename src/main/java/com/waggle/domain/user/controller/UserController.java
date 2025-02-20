@@ -102,4 +102,45 @@ public class UserController {
         userService.deleteUser();
         return SuccessResponse.of(ApiStatus._NO_CONTENT, null);
     }
+
+    @PostMapping(value = "/project/bookmark")
+    @Operation(
+            summary = "프로젝트 북마크 토글",
+            description = """
+                프로젝트가 북마크 되어있지 않다면 북마크를 추가하고, 북마크 되어있다면 북마크를 제거합니다.
+                
+                 ⚠️ 프로젝트가 이미 북마크 되어있으면 북마크를 해제하고 payload는 false를 return합니다.\n
+                 payload의 return이 false인 것이 호출 실패를 의미하진 않습니다.
+            """,
+            security = @SecurityRequirement(name = "JWT")
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "사용자 정보 수정 성공",
+                    content = @Content(
+                            schema = @Schema(implementation = UserSuccessResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "인증되지 않은 사용자",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "프로젝트를 찾을 수 없음",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
+    })
+    public ResponseEntity<BaseResponse<Object>> toggleBookmark(
+            @RequestParam(value = "projectId") String projectId
+    ) {
+        boolean isBookmarked = userService.toggleBookmark(projectId);
+        return SuccessResponse.of(ApiStatus._OK, isBookmarked);
+    }
 }

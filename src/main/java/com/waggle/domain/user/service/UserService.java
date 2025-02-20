@@ -8,4 +8,5 @@ public interface UserService {
     User getCurrentUser();
     User updateUser(MultipartFile profileImage, UpdateUserDto updateUserDto);
     void deleteUser();
+    boolean toggleBookmark(String projectId);
 }
