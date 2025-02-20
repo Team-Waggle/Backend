@@ -1,13 +1,10 @@
 package com.waggle.domain.project.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.waggle.domain.project.entity.ProjectMemberJob;
-import com.waggle.domain.project.entity.ProjectRecruitmentJob;
-import com.waggle.domain.project.entity.ProjectSkill;
-import com.waggle.domain.project.entity.ProjectUser;
+import com.waggle.domain.project.entity.*;
 import com.waggle.domain.reference.entity.*;
-import com.waggle.domain.user.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -15,6 +12,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Getter
+@Builder
 @Schema(description = "프로젝트 응답 dto")
 public class ProjectResponseDto {
 
@@ -31,8 +29,8 @@ public class ProjectResponseDto {
     private Industry industry;
 
     @Schema(description = "진행 방식")
-    @JsonProperty("way_of_working")
-    private WaysOfWorking wayOfWorking;
+    @JsonProperty("ways_of_working")
+    private WaysOfWorking waysOfWorking;
 
     @Schema(description = "마감 일자", example = "2021-07-01T00:00:00")
     @JsonProperty("recruitment_date")
@@ -44,15 +42,15 @@ public class ProjectResponseDto {
 
     @Schema(description = "모집 직무 및 인원")
     @JsonProperty("recruitment_jobs")
-    private Set<Job> recruitmentJobs;
+    private Set<ProjectRecruitmentJob> recruitmentJobs;
 
     @Schema(description = "참여한 멤버 직무 및 인원")
     @JsonProperty("member_jobs")
-    private Set<Job> memberJobs;
+    private Set<ProjectMemberJob> memberJobs;
 
     @Schema(description = "사용 스킬 목록")
     @JsonProperty("skills")
-    private Set<Skill> projectSkills;
+    private Set<ProjectSkill> projectSkills;
 
     @Schema(description = "소개")
     @JsonProperty("detail")
