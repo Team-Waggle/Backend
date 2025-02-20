@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 @Getter
-public class ProjectJobDto {
+public class ProjectJobInputDto {
 
     @JsonProperty("job_id")
     @Schema(description = "직무 고유키", example = "1")

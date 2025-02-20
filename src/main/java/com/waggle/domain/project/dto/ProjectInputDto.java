@@ -10,7 +10,7 @@ import java.util.Set;
 
 @Getter
 @Schema(description = "프로젝트 생성 dto")
-public class ProjectDto {
+public class ProjectInputDto {
 
     @Schema(description = "제목", example = "Waggle 백엔드 모집합니다.")
     @JsonProperty("title")
@@ -35,11 +35,11 @@ public class ProjectDto {
 
     @Schema(description = "모집 직무 및 인원")
     @JsonProperty("recruitment_jobs")
-    private Set<ProjectJobDto> recruitmentJobs;
+    private Set<ProjectJobInputDto> recruitmentJobs;
 
     @Schema(description = "참여한 멤버 직무 및 인원")
     @JsonProperty("member_jobs")
-    private Set<ProjectJobDto> memberJobs;
+    private Set<ProjectJobInputDto> memberJobs;
 
     @Schema(description = "사용 스킬 고유키 목록", example = "[2, 4, 7]")
     @JsonProperty("skill_ids")
