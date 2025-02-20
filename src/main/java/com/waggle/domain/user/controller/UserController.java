@@ -1,6 +1,7 @@
 package com.waggle.domain.user.controller;
 
-import com.waggle.domain.user.dto.UpdateUserDto;
+import com.waggle.domain.user.dto.UserInputDto;
+import com.waggle.domain.user.dto.UserWithProjectResponseDto;
 import com.waggle.domain.user.entity.User;
 import com.waggle.domain.user.service.UserService;
 import com.waggle.global.response.ApiStatus;
@@ -53,9 +54,9 @@ public class UserController {
                     )
             )
     })
-    public ResponseEntity<BaseResponse<User>> fetchCurrentUser() {
+    public ResponseEntity<BaseResponse<UserWithProjectResponseDto>> fetchCurrentUser() {
         User currentUserUser = userService.getCurrentUser();
-        return SuccessResponse.of(ApiStatus._OK, currentUserUser);
+        return SuccessResponse.of(ApiStatus._OK, UserWithProjectResponseDto.from(currentUserUser));
     }
 
     @PutMapping(value = "/me", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -80,12 +81,12 @@ public class UserController {
                     )
             )
     })
-    public ResponseEntity<BaseResponse<Object>> updateUser(
+    public ResponseEntity<BaseResponse<UserWithProjectResponseDto>> updateUser(
             @RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
-            @RequestPart(value = "updateUserDto") UpdateUserDto updateUserDto
+            @RequestPart(value = "updateUserDto") UserInputDto userInputDto
     ) {
-        User updatedUser = userService.updateUser(profileImage, updateUserDto);
-        return SuccessResponse.of(ApiStatus._OK, updatedUser);
+        User updatedUser = userService.updateUser(profileImage, userInputDto);
+        return SuccessResponse.of(ApiStatus._OK, UserWithProjectResponseDto.from(updatedUser));
     }
 
     @DeleteMapping("/me")
@@ -107,10 +108,10 @@ public class UserController {
     @Operation(
             summary = "프로젝트 북마크 토글",
             description = """
-                프로젝트가 북마크 되어있지 않다면 북마크를 추가하고, 북마크 되어있다면 북마크를 제거합니다.
-                
-                 ⚠️ 프로젝트가 이미 북마크 되어있으면 북마크를 해제하고 payload는 false를 return합니다.\n
-                 payload의 return이 false인 것이 호출 실패를 의미하진 않습니다.
+            프로젝트가 북마크 되어있지 않다면 북마크를 추가하고, 북마크 되어있다면 북마크를 제거합니다.
+            
+            ⚠️ 프로젝트가 이미 북마크 되어있으면 북마크를 해제하고 payload는 false를 return합니다.\n
+            payload의 return이 false인 것이 호출 실패를 의미하진 않습니다.
             """,
             security = @SecurityRequirement(name = "JWT")
     )
@@ -119,7 +120,7 @@ public class UserController {
                     responseCode = "200",
                     description = "사용자 정보 수정 성공",
                     content = @Content(
-                            schema = @Schema(implementation = UserSuccessResponse.class)
+                            schema = @Schema(implementation = SuccessResponse.class)
                     )
             ),
             @ApiResponse(
@@ -137,7 +138,7 @@ public class UserController {
                     )
             )
     })
-    public ResponseEntity<BaseResponse<Object>> toggleBookmark(
+    public ResponseEntity<BaseResponse<Boolean>> toggleBookmark(
             @RequestParam(value = "projectId") String projectId
     ) {
         boolean isBookmarked = userService.toggleBookmark(projectId);

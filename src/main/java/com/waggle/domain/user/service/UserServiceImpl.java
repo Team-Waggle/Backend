@@ -5,7 +5,7 @@ import com.waggle.domain.project.entity.ProjectBookmark;
 import com.waggle.domain.project.repository.ProjectRepository;
 import com.waggle.domain.reference.entity.*;
 import com.waggle.domain.reference.service.ReferenceService;
-import com.waggle.domain.user.dto.UpdateUserDto;
+import com.waggle.domain.user.dto.UserInputDto;
 import com.waggle.domain.user.entity.*;
 import com.waggle.domain.user.repository.UserRepository;
 import com.waggle.global.aws.service.S3Service;
@@ -53,22 +53,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(MultipartFile profileImage, UpdateUserDto updateUserDto) {
+    public User updateUser(MultipartFile profileImage, UserInputDto userInputDto) {
         User user = getCurrentUser();
         user.clearInfo();
 
         user.setProfileImageUrl(getProfileImageUrl(profileImage, user));
-        user.setName(updateUserDto.getName());
-        user.setUserJobs(getUserJobs(updateUserDto, user));
-        user.setUserIndustries(getUserIndustries(updateUserDto, user));
-        user.setUserSkills(getUserSkills(updateUserDto, user));
-        user.setUserWeekDays(getUserWeekDays(updateUserDto, user));
-        user.setPreferTow(referenceService.getTimeOfWorkingById(updateUserDto.getPreferTowId()));
-        user.setPreferWow(referenceService.getWaysOfWorkingById(updateUserDto.getPreferWowId()));
-        user.setPreferSido(referenceService.getSidoesById(updateUserDto.getPreferSidoId()));
-        user.setUserIntroduces(getIntroduces(updateUserDto, user));
-        user.setDetail(updateUserDto.getDetail());
-        user.setUserPortfolioUrls(getUserPortfolioUrls(updateUserDto, user));
+        user.setName(userInputDto.getName());
+        user.setUserJobs(getUserJobs(userInputDto, user));
+        user.setUserIndustries(getUserIndustries(userInputDto, user));
+        user.setUserSkills(getUserSkills(userInputDto, user));
+        user.setUserWeekDays(getUserWeekDays(userInputDto, user));
+        user.setPreferTow(referenceService.getTimeOfWorkingById(userInputDto.getPreferTowId()));
+        user.setPreferWow(referenceService.getWaysOfWorkingById(userInputDto.getPreferWowId()));
+        user.setPreferSido(referenceService.getSidoesById(userInputDto.getPreferSidoId()));
+        user.setUserIntroduces(getIntroduces(userInputDto, user));
+        user.setDetail(userInputDto.getDetail());
+        user.setUserPortfolioUrls(getUserPortfolioUrls(userInputDto, user));
 
         return userRepository.save(user);
     }
@@ -106,9 +106,9 @@ public class UserServiceImpl implements UserService {
         return isBookmarked;
     }
 
-    private Set<UserJob> getUserJobs(UpdateUserDto updateUserDto, User user) {
+    private Set<UserJob> getUserJobs(UserInputDto userInputDto, User user) {
         Set<UserJob> userJobs = new HashSet<>();
-        updateUserDto.getJobs().forEach(userJobDto -> {
+        userInputDto.getJobs().forEach(userJobDto -> {
             Job job = referenceService.getJobById(userJobDto.getJobId());
             UserJob userJob = UserJob.builder()
                     .job(job)
@@ -120,9 +120,9 @@ public class UserServiceImpl implements UserService {
         return userJobs;
     }
 
-    private Set<UserIndustry> getUserIndustries(UpdateUserDto updateUserDto, User user) {
+    private Set<UserIndustry> getUserIndustries(UserInputDto userInputDto, User user) {
         Set<UserIndustry> userIndustries = new HashSet<>();
-        updateUserDto.getIndustries().forEach(industryId -> {
+        userInputDto.getIndustries().forEach(industryId -> {
             Industry industry = referenceService.getIndustryById(industryId);
             UserIndustry userIndustry = UserIndustry.builder()
                     .industry(industry)
@@ -133,9 +133,9 @@ public class UserServiceImpl implements UserService {
         return userIndustries;
     }
 
-    private Set<UserSkill> getUserSkills(UpdateUserDto updateUserDto, User user) {
+    private Set<UserSkill> getUserSkills(UserInputDto userInputDto, User user) {
         Set<UserSkill> userSkills = new HashSet<>();
-        updateUserDto.getSkills().forEach(skillId -> {
+        userInputDto.getSkills().forEach(skillId -> {
             Skill skill = referenceService.getSkillById(skillId);
             UserSkill userSkill = UserSkill.builder()
                     .skill(skill)
@@ -146,9 +146,9 @@ public class UserServiceImpl implements UserService {
         return userSkills;
     }
 
-    private Set<UserWeekDays> getUserWeekDays(UpdateUserDto updateUserDto, User user) {
+    private Set<UserWeekDays> getUserWeekDays(UserInputDto userInputDto, User user) {
         Set<UserWeekDays> userWeekDays = new HashSet<>();
-        updateUserDto.getPreferWeekDays().forEach(userWeekDayId -> {
+        userInputDto.getPreferWeekDays().forEach(userWeekDayId -> {
             WeekDays weekDays = referenceService.getWeekDaysById(userWeekDayId);
             UserWeekDays userWeekDay = UserWeekDays.builder()
                     .user(user)
@@ -159,9 +159,9 @@ public class UserServiceImpl implements UserService {
         return userWeekDays;
     }
 
-    private Set<UserPortfolioUrl> getUserPortfolioUrls(UpdateUserDto updateUserDto, User user) {
+    private Set<UserPortfolioUrl> getUserPortfolioUrls(UserInputDto userInputDto, User user) {
         Set<UserPortfolioUrl> userPortfolioUrls = new HashSet<>();
-        updateUserDto.getPortfolioUrls().forEach(portfolioUrlDto -> {
+        userInputDto.getPortfolioUrls().forEach(portfolioUrlDto -> {
             PortfolioUrl portfolioUrl = referenceService.getPortfolioUrlById(portfolioUrlDto.getPortfolioUrlId());
             UserPortfolioUrl userPortfolioUrl = UserPortfolioUrl.builder()
                     .portfolioUrl(portfolioUrl)
@@ -173,9 +173,9 @@ public class UserServiceImpl implements UserService {
         return userPortfolioUrls;
     }
 
-    private Set<UserIntroduce> getIntroduces(UpdateUserDto updateUserDto, User user) {
+    private Set<UserIntroduce> getIntroduces(UserInputDto userInputDto, User user) {
         Set<UserIntroduce> introduces = new HashSet<>();
-        updateUserDto.getIntroduces().forEach(introduceId -> {
+        userInputDto.getIntroduces().forEach(introduceId -> {
             SubIntroduce introduce = referenceService.getSubIntroduceById(introduceId);
             UserIntroduce userIntroduce = UserIntroduce.builder()
                     .user(user)
