@@ -7,8 +7,8 @@ import lombok.Getter;
 import java.util.Set;
 
 @Getter
-@Schema(description = "사용자 정보 수정을 위한 DTO")
-public class UpdateUserDto {
+@Schema(description = "사용자 정보 수정 DTO")
+public class UserInputDto {
 
     @JsonProperty("name")
     @Schema(description = "사용자 이름", example = "홍길동")
