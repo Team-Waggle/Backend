@@ -2,7 +2,10 @@ package com.waggle.domain.project.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.waggle.domain.project.entity.*;
-import com.waggle.domain.reference.entity.*;
+import com.waggle.domain.reference.entity.DurationOfWorking;
+import com.waggle.domain.reference.entity.Industry;
+import com.waggle.domain.reference.entity.WaysOfWorking;
+import com.waggle.domain.user.dto.UserResponseDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,7 +20,7 @@ import java.util.stream.Collectors;
 @Getter
 @Builder
 @Schema(description = "프로젝트 응답 dto")
-public class ProjectResponseDto {
+public class ProjectWithUserResponseDto {
 
     @Schema(description = "고유값", example = "550e8400-e29b-41d4-a716-446655440000")
     @JsonProperty("id")
@@ -71,6 +74,10 @@ public class ProjectResponseDto {
     @JsonProperty("bookmark_cnt")
     private int bookmarkCnt;
 
+    @Schema(description = "참가한 사용자")
+    @JsonProperty("users")
+    private Set<UserResponseDto> users;
+
     @Schema(description = "생성 일자", example = "2001-05-21T00:00:00")
     @JsonProperty("created_at")
     private LocalDateTime createdAt;
@@ -79,8 +86,8 @@ public class ProjectResponseDto {
     @JsonProperty("updated_at")
     private LocalDateTime updatedAt;
 
-    public static ProjectResponseDto from(Project project) {
-        return ProjectResponseDto.builder()
+    public static ProjectWithUserResponseDto from(Project project) {
+        return ProjectWithUserResponseDto.builder()
                 .id(project.getId())
                 .title(project.getTitle())
                 .industry(project.getIndustry())
@@ -100,6 +107,12 @@ public class ProjectResponseDto {
                 .connectUrl(project.getConnectUrl())
                 .referenceUrl(project.getReferenceUrl())
                 .bookmarkCnt(project.getBookmarkCnt())
+                .users(project.getProjectUsers().stream()
+                        .map(ProjectUser::getUser)
+                        .map(UserResponseDto::from)
+                        .sorted(Comparator.comparing(UserResponseDto::getUserJobs, Comparator.comparing(uj -> uj.iterator().next().getJob().getId()))
+                                .thenComparing(UserResponseDto::getName))
+                        .collect(Collectors.toCollection(LinkedHashSet::new)))
                 .createdAt(project.getCreatedAt())
                 .updatedAt(project.getUpdatedAt())
                 .build();

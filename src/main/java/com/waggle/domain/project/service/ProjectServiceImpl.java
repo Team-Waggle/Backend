@@ -110,6 +110,7 @@ public class ProjectServiceImpl implements ProjectService{
     private Set<ProjectRecruitmentJob> getProjectRecruitmentJobs(ProjectInputDto projectInputDto, Project project) {
         Set<ProjectRecruitmentJob> projectRecruitmentJobs = new HashSet<>();
         projectInputDto.getRecruitmentJobs().forEach(jobDto -> {
+            log.info("jobDto: {}", jobDto);
             ProjectRecruitmentJob projectRecruitmentJob = ProjectRecruitmentJob.builder()
                     .project(project)
                     .job(referenceService.getJobById(jobDto.getJobId()))

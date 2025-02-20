@@ -83,24 +83,4 @@ public class Project {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt; //수정일자
-
-    public ProjectResponseDto toResponseDto() {
-        return ProjectResponseDto.builder()
-                .id(id)
-                .title(title)
-                .industry(industry)
-                .waysOfWorking(waysOfWorking)
-                .recruitmentDate(recruitmentDate)
-                .durationOfWorking(durationOfWorking)
-                .recruitmentJobs(recruitmentJobs)
-                .memberJobs(memberJobs)
-                .projectSkills(projectSkills)
-                .detail(detail)
-                .connectUrl(connectUrl)
-                .referenceUrl(referenceUrl)
-                .bookmarkCnt(bookmarkCnt)
-                .createdAt(createdAt)
-                .updatedAt(updatedAt)
-                .build();
-    }
 }
