@@ -131,7 +131,7 @@ public class ProjectController {
     )
     @ApiResponses({
             @ApiResponse(
-                    responseCode = "201",
+                    responseCode = "200",
                     description = "프로젝트 모집글 조회 성공",
                     content = @Content(
                             schema = @Schema(implementation = ProjectSuccessResponse.class)
