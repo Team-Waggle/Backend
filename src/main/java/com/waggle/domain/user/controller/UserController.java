@@ -2,7 +2,7 @@ package com.waggle.domain.user.controller;
 
 import com.waggle.domain.project.dto.ProjectResponseDto;
 import com.waggle.domain.user.dto.UserInputDto;
-import com.waggle.domain.user.dto.UserWithProjectResponseDto;
+import com.waggle.domain.user.dto.UserResponseDto;
 import com.waggle.domain.user.entity.User;
 import com.waggle.domain.user.service.UserService;
 import com.waggle.global.response.ApiStatus;
@@ -19,16 +19,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Tag(name = "사용자", description = "사용자 관련 API")
 @RestController
 @RequestMapping("/user")
@@ -59,9 +58,9 @@ public class UserController {
                     )
             )
     })
-    public ResponseEntity<BaseResponse<UserWithProjectResponseDto>> fetchCurrentUser() {
+    public ResponseEntity<BaseResponse<UserResponseDto>> fetchMe() {
         User currentUserUser = userService.getCurrentUser();
-        return SuccessResponse.of(ApiStatus._OK, UserWithProjectResponseDto.from(currentUserUser));
+        return SuccessResponse.of(ApiStatus._OK, UserResponseDto.from(currentUserUser));
     }
 
     @PutMapping(value = "/me", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -86,12 +85,12 @@ public class UserController {
                     )
             )
     })
-    public ResponseEntity<BaseResponse<UserWithProjectResponseDto>> updateUser(
+    public ResponseEntity<BaseResponse<UserResponseDto>> updateMe(
             @RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
             @RequestPart(value = "updateUserDto") UserInputDto userInputDto
     ) {
-        User updatedUser = userService.updateUser(profileImage, userInputDto);
-        return SuccessResponse.of(ApiStatus._OK, UserWithProjectResponseDto.from(updatedUser));
+        User updatedUser = userService.updateCurrentUser(profileImage, userInputDto);
+        return SuccessResponse.of(ApiStatus._OK, UserResponseDto.from(updatedUser));
     }
 
     @DeleteMapping("/me")
@@ -104,14 +103,42 @@ public class UserController {
             @ApiResponse(responseCode = "204", description = "사용자 삭제 성공", content = @Content()),
             @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<BaseResponse<Object>> deleteUser() {
-        userService.deleteUser();
+    public ResponseEntity<BaseResponse<Object>> deleteMe() {
+        userService.deleteCurrentUser();
         return SuccessResponse.of(ApiStatus._NO_CONTENT, null);
     }
 
-    @PostMapping(value = "/project/bookmark")
+    @GetMapping("/me/project")
     @Operation(
-            summary = "프로젝트 북마크 토글",
+            summary = "내가 작성한 프로젝트 모집글 조회",
+            description = "현재 로그인 된 사용자가 작성한 프로젝트 모집글을 조회합니다.",
+            security = @SecurityRequirement(name = "JWT")
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "사용자 정보 수정 성공",
+                    content = @Content(
+                            schema = @Schema(implementation = ProjectsSuccessResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "인증되지 않은 사용자",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
+    })
+    public ResponseEntity<BaseResponse<Set<ProjectResponseDto>>> fetchMyProjects() {
+        return SuccessResponse.of(ApiStatus._OK, userService.getCurrentUserProjects().stream()
+                .map(ProjectResponseDto::from)
+                .collect(Collectors.toCollection(LinkedHashSet::new)));
+    }
+
+    @PostMapping(value = "/me/project/bookmark")
+    @Operation(
+            summary = "프로젝트 북마크 추가/제거",
             description = """
             프로젝트가 북마크 되어있지 않다면 북마크를 추가하고, 북마크 되어있다면 북마크를 제거합니다.
             
@@ -143,14 +170,14 @@ public class UserController {
                     )
             )
     })
-    public ResponseEntity<BaseResponse<Boolean>> toggleBookmark(
+    public ResponseEntity<BaseResponse<Boolean>> toggleMyBookmark(
             @RequestParam(value = "projectId") String projectId
     ) {
-        boolean isBookmarked = userService.toggleBookmark(projectId);
+        boolean isBookmarked = userService.toggleCurrentUserBookmark(projectId);
         return SuccessResponse.of(ApiStatus._OK, isBookmarked);
     }
 
-    @GetMapping(value = "/project/bookmark")
+    @GetMapping(value = "/me/project/bookmark")
     @Operation(
             summary = "북마크한 프로젝트 모집글 조회",
             description = "사용자가 북마크한 프로젝트 모집글을 조회합니다.",
@@ -179,8 +206,8 @@ public class UserController {
                     )
             )
     })
-    public ResponseEntity<BaseResponse<Set<ProjectResponseDto>>> fetchBookmarkProjects() {
-        Set<ProjectResponseDto> projectResponseDtos = userService.getBookmarkProjects().stream()
+    public ResponseEntity<BaseResponse<Set<ProjectResponseDto>>> fetchMyBookmarkProjects() {
+        Set<ProjectResponseDto> projectResponseDtos = userService.getCurrentUserBookmarkProjects().stream()
                 .map(ProjectResponseDto::from)
                 .collect(Collectors.toSet());
         return SuccessResponse.of(ApiStatus._OK, projectResponseDtos);

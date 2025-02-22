@@ -2,7 +2,6 @@ package com.waggle.domain.project.controller;
 
 import com.waggle.domain.project.dto.ProjectInputDto;
 import com.waggle.domain.project.dto.ProjectResponseDto;
-import com.waggle.domain.project.dto.ProjectWithUserResponseDto;
 import com.waggle.domain.project.entity.Project;
 import com.waggle.domain.project.service.ProjectService;
 import com.waggle.global.response.*;
@@ -53,9 +52,9 @@ public class ProjectController {
                     )
             )
     })
-    public ResponseEntity<BaseResponse<ProjectWithUserResponseDto>> createProject(@RequestBody ProjectInputDto projectInputDto) {
+    public ResponseEntity<BaseResponse<ProjectResponseDto>> createProject(@RequestBody ProjectInputDto projectInputDto) {
         Project newProject = projectService.create(projectInputDto);
-        return SuccessResponse.of(ApiStatus._CREATED, ProjectWithUserResponseDto.from(newProject));
+        return SuccessResponse.of(ApiStatus._CREATED, ProjectResponseDto.from(newProject));
     }
     @PutMapping("/post/{id}")
     @Operation(
@@ -86,9 +85,9 @@ public class ProjectController {
                     )
             )
     })
-    public ResponseEntity<BaseResponse<ProjectWithUserResponseDto>> updateProject(@PathVariable String id, @RequestBody ProjectInputDto projectInputDto) {
+    public ResponseEntity<BaseResponse<ProjectResponseDto>> updateProject(@PathVariable String id, @RequestBody ProjectInputDto projectInputDto) {
         Project updateProject = projectService.update(UUID.fromString(id), projectInputDto);
-        return SuccessResponse.of(ApiStatus._OK, ProjectWithUserResponseDto.from(updateProject));
+        return SuccessResponse.of(ApiStatus._OK, ProjectResponseDto.from(updateProject));
     }
 
     @DeleteMapping("/post/{id}")
@@ -118,7 +117,7 @@ public class ProjectController {
                     )
             )
     })
-    public ResponseEntity<BaseResponse<ProjectResponseDto>> deleteProject(@PathVariable String id) {
+    public ResponseEntity<BaseResponse<Object>> deleteProject(@PathVariable String id) {
         projectService.delete(UUID.fromString(id));
         return SuccessResponse.of(ApiStatus._NO_CONTENT, null);
     }
@@ -145,8 +144,8 @@ public class ProjectController {
                     )
             )
     })
-    public ResponseEntity<BaseResponse<ProjectWithUserResponseDto>> fetchProject(@PathVariable String id) {
+    public ResponseEntity<BaseResponse<ProjectResponseDto>> fetchProject(@PathVariable String id) {
         Project fetchProject = projectService.findById(UUID.fromString(id));
-        return SuccessResponse.of(ApiStatus._OK, ProjectWithUserResponseDto.from(fetchProject));
+        return SuccessResponse.of(ApiStatus._OK, ProjectResponseDto.from(fetchProject));
     }
 }

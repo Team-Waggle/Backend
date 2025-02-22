@@ -9,8 +9,9 @@ import java.util.Set;
 
 public interface UserService {
     User getCurrentUser();
-    User updateUser(MultipartFile profileImage, UserInputDto userInputDto);
-    void deleteUser();
-    boolean toggleBookmark(String projectId);
-    Set<Project> getBookmarkProjects();
+    User updateCurrentUser(MultipartFile profileImage, UserInputDto userInputDto);
+    void deleteCurrentUser();
+    Set<Project> getCurrentUserProjects();
+    boolean toggleCurrentUserBookmark(String projectId);
+    Set<Project> getCurrentUserBookmarkProjects();
 }

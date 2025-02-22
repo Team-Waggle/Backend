@@ -2,6 +2,7 @@ package com.waggle.domain.user.service;
 
 import com.waggle.domain.project.entity.Project;
 import com.waggle.domain.project.entity.ProjectBookmark;
+import com.waggle.domain.project.entity.ProjectUser;
 import com.waggle.domain.project.repository.ProjectRepository;
 import com.waggle.domain.reference.entity.*;
 import com.waggle.domain.reference.service.ReferenceService;
@@ -52,7 +53,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(MultipartFile profileImage, UserInputDto userInputDto) {
+    public User updateCurrentUser(MultipartFile profileImage, UserInputDto userInputDto) {
         User user = getCurrentUser();
         user.clearInfo();
 
@@ -73,14 +74,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser() {
+    public void deleteCurrentUser() {
         User user = getCurrentUser();
         s3Service.deleteFile(user.getProfileImageUrl());
         userRepository.delete(user);
     }
 
     @Override
-    public boolean toggleBookmark(String projectId) {
+    public Set<Project> getCurrentUserProjects() {
+        User user = getCurrentUser();
+        return user.getProjectUsers().stream()
+                .map(ProjectUser::getProject)
+                .sorted(Comparator.comparing(Project::getCreatedAt).reversed())
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    @Override
+    public boolean toggleCurrentUserBookmark(String projectId) {
         User user = getCurrentUser();
         Project project = projectRepository.findById(UUID.fromString(projectId))
                 .orElseThrow(() -> new EmptyResultDataAccessException(1));
@@ -106,7 +116,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Set<Project> getBookmarkProjects() {
+    public Set<Project> getCurrentUserBookmarkProjects() {
         User user = getCurrentUser();
         return user.getProjectBookmarks().stream()
                 .map(ProjectBookmark::getProject)
