@@ -132,7 +132,7 @@ public class UserWithProjectResponseDto {
                         .collect(Collectors.toCollection(LinkedHashSet::new)))
                 .projects(user.getProjectUsers().stream()
                         .map(ProjectUser::getProject)
-                        .map(Project::toResponseDto)
+                        .map(ProjectResponseDto::from)
                         .sorted(Comparator.comparing(ProjectResponseDto::getUpdatedAt).reversed())
                         .collect(Collectors.toCollection(LinkedHashSet::new)))
                 .createdAt(user.getCreatedAt())

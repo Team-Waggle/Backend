@@ -1,5 +1,6 @@
 package com.waggle.domain.user.controller;
 
+import com.waggle.domain.project.dto.ProjectResponseDto;
 import com.waggle.domain.user.dto.UserInputDto;
 import com.waggle.domain.user.dto.UserWithProjectResponseDto;
 import com.waggle.domain.user.entity.User;
@@ -8,6 +9,7 @@ import com.waggle.global.response.ApiStatus;
 import com.waggle.global.response.BaseResponse;
 import com.waggle.global.response.ErrorResponse;
 import com.waggle.global.response.SuccessResponse;
+import com.waggle.global.response.swagger.ProjectsSuccessResponse;
 import com.waggle.global.response.swagger.UserSuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -22,6 +24,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Tag(name = "사용자", description = "사용자 관련 API")
@@ -143,5 +148,41 @@ public class UserController {
     ) {
         boolean isBookmarked = userService.toggleBookmark(projectId);
         return SuccessResponse.of(ApiStatus._OK, isBookmarked);
+    }
+
+    @GetMapping(value = "/project/bookmark")
+    @Operation(
+            summary = "북마크한 프로젝트 모집글 조회",
+            description = "사용자가 북마크한 프로젝트 모집글을 조회합니다.",
+            security = @SecurityRequirement(name = "JWT")
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "사용자 정보 수정 성공",
+                    content = @Content(
+                            schema = @Schema(implementation = ProjectsSuccessResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "인증되지 않은 사용자",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "프로젝트를 찾을 수 없음",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
+    })
+    public ResponseEntity<BaseResponse<Set<ProjectResponseDto>>> fetchBookmarkProjects() {
+        Set<ProjectResponseDto> projectResponseDtos = userService.getBookmarkProjects().stream()
+                .map(ProjectResponseDto::from)
+                .collect(Collectors.toSet());
+        return SuccessResponse.of(ApiStatus._OK, projectResponseDtos);
     }
 }

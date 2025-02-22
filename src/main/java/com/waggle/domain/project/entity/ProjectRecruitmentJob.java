@@ -34,6 +34,7 @@ public class ProjectRecruitmentJob {
     @JsonProperty("job")
     private Job job;
 
+    @Column(name = "recruitment_cnt", nullable = false, columnDefinition = "integer default 0")
     @JsonProperty("recruitment_cnt")
     private int recruitmentCnt;
 }

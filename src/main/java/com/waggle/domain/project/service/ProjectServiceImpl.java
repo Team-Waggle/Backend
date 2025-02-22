@@ -46,6 +46,7 @@ public class ProjectServiceImpl implements ProjectService{
         projectUsers.add(ProjectUser.builder()
                 .project(newProject)
                 .user(userService.getCurrentUser())
+                .isLeader(true)
                 .build());
         newProject.setProjectUsers(projectUsers);
         newProject.setRecruitmentJobs(getProjectRecruitmentJobs(projectInputDto, newProject));
@@ -62,7 +63,7 @@ public class ProjectServiceImpl implements ProjectService{
                 .orElseThrow(() -> new EmptyResultDataAccessException(1));
         User currentUser = userService.getCurrentUser();
 
-        if (!project.getProjectUsers().stream().anyMatch(projectUser -> projectUser.getUser().getId().equals(currentUser.getId()))) {
+        if (!getLeader(project).getId().equals(currentUser.getId())) {
             throw new AccessDeniedException(ApiStatus._UPDATE_ACCESS_DENIED);
         }
 
@@ -94,7 +95,7 @@ public class ProjectServiceImpl implements ProjectService{
                 .orElseThrow(() -> new EmptyResultDataAccessException(1));
         User currentUser = userService.getCurrentUser();
 
-        if (!project.getProjectUsers().stream().anyMatch(projectUser -> projectUser.getUser().getId().equals(currentUser.getId()))) {
+        if (!getLeader(project).getId().equals(currentUser.getId())) {
             throw new AccessDeniedException(ApiStatus._DELETE_ACCESS_DENIED);
         }
 
@@ -110,6 +111,7 @@ public class ProjectServiceImpl implements ProjectService{
     private Set<ProjectRecruitmentJob> getProjectRecruitmentJobs(ProjectInputDto projectInputDto, Project project) {
         Set<ProjectRecruitmentJob> projectRecruitmentJobs = new HashSet<>();
         projectInputDto.getRecruitmentJobs().forEach(jobDto -> {
+            log.info("jobDto: {}", jobDto);
             ProjectRecruitmentJob projectRecruitmentJob = ProjectRecruitmentJob.builder()
                     .project(project)
                     .job(referenceService.getJobById(jobDto.getJobId()))
@@ -143,5 +145,13 @@ public class ProjectServiceImpl implements ProjectService{
             projectSkills.add(projectSkill);
         });
         return projectSkills;
+    }
+
+    private User getLeader(Project project) {
+        return project.getProjectUsers().stream()
+                .filter(ProjectUser::isLeader)
+                .map(ProjectUser::getUser)
+                .findFirst()
+                .orElseThrow(() -> new EmptyResultDataAccessException(1));
     }
 }

@@ -20,9 +20,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -104,6 +103,15 @@ public class UserServiceImpl implements UserService {
         projectRepository.save(project);
 
         return isBookmarked;
+    }
+
+    @Override
+    public Set<Project> getBookmarkProjects() {
+        User user = getCurrentUser();
+        return user.getProjectBookmarks().stream()
+                .map(ProjectBookmark::getProject)
+                .sorted(Comparator.comparing(Project::getCreatedAt).reversed())
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     private Set<UserJob> getUserJobs(UserInputDto userInputDto, User user) {
