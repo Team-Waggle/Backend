@@ -1,7 +1,6 @@
 package com.waggle.domain.user.controller;
 
 import com.waggle.domain.project.dto.ProjectResponseDto;
-import com.waggle.domain.project.entity.Project;
 import com.waggle.domain.user.dto.UserInputDto;
 import com.waggle.domain.user.dto.UserWithProjectResponseDto;
 import com.waggle.domain.user.entity.User;
