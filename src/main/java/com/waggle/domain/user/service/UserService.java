@@ -14,4 +14,7 @@ public interface UserService {
     Set<Project> getCurrentUserProjects();
     boolean toggleCurrentUserBookmark(String projectId);
     Set<Project> getCurrentUserBookmarkProjects();
+    User getUserByUserId(String userId);
+    Set<Project> getUserProjects(String userId);
+    Set<Project> getUserBookmarkProjects(String userId);
 }

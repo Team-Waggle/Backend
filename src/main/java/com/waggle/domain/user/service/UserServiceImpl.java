@@ -124,6 +124,30 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
+    @Override
+    public User getUserByUserId(String userId) {
+        return userRepository.findByUserId(UUID.fromString(userId))
+                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+    }
+
+    @Override
+    public Set<Project> getUserProjects(String userId) {
+        User user = getUserByUserId(userId);
+        return user.getProjectUsers().stream()
+                .map(ProjectUser::getProject)
+                .sorted(Comparator.comparing(Project::getCreatedAt).reversed())
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    @Override
+    public Set<Project> getUserBookmarkProjects(String userId) {
+        User user = getUserByUserId(userId);
+        return user.getProjectBookmarks().stream()
+                .map(ProjectBookmark::getProject)
+                .sorted(Comparator.comparing(Project::getCreatedAt).reversed())
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
     private Set<UserJob> getUserJobs(UserInputDto userInputDto, User user) {
         Set<UserJob> userJobs = new HashSet<>();
         userInputDto.getJobs().forEach(userJobDto -> {

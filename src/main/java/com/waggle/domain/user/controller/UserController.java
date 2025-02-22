@@ -212,4 +212,110 @@ public class UserController {
                 .collect(Collectors.toSet());
         return SuccessResponse.of(ApiStatus._OK, projectResponseDtos);
     }
+
+    @GetMapping("/{userId}")
+    @Operation(
+            summary = "특정 사용자 조회",
+            description = "특정 사용자를 조회합니다.",
+            security = @SecurityRequirement(name = "JWT")
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "사용자 조회 성공",
+                    content = @Content(
+                            schema = @Schema(implementation = UserSuccessResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "인증되지 않은 사용자",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "사용자를 찾을 수 없음",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
+    })
+    public ResponseEntity<BaseResponse<UserResponseDto>> fetchUser(@PathVariable String userId) {
+        User user = userService.getUserByUserId(userId);
+        return SuccessResponse.of(ApiStatus._OK, UserResponseDto.from(user));
+    }
+
+    @GetMapping("/{userId}/project")
+    @Operation(
+            summary = "특정 사용자가 작성한 프로젝트 모집글 조회",
+            description = "특정 사용자가 작성한 프로젝트 모집글을 조회합니다.",
+            security = @SecurityRequirement(name = "JWT")
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "사용자 조회 성공",
+                    content = @Content(
+                            schema = @Schema(implementation = ProjectsSuccessResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "인증되지 않은 사용자",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "사용자를 찾을 수 없음",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
+    })
+    public ResponseEntity<BaseResponse<Set<ProjectResponseDto>>> fetchUserProjects(@PathVariable String userId) {
+        Set<ProjectResponseDto> projectResponseDtos = userService.getUserProjects(userId).stream()
+                .map(ProjectResponseDto::from)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+        return SuccessResponse.of(ApiStatus._OK, projectResponseDtos);
+    }
+
+    @GetMapping("/{userId}/project/bookmark")
+    @Operation(
+            summary = "특정 사용자가 북마크한 프로젝트 모집글 조회",
+            description = "특정 사용자가 북마크한 프로젝트 모집글을 조회합니다.",
+            security = @SecurityRequirement(name = "JWT")
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "사용자 조회 성공",
+                    content = @Content(
+                            schema = @Schema(implementation = ProjectsSuccessResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "인증되지 않은 사용자",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "사용자를 찾을 수 없음",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
+    })
+    public ResponseEntity<BaseResponse<Set<ProjectResponseDto>>> fetchUserBookmarkProjects(@PathVariable String userId) {
+        Set<ProjectResponseDto> projectResponseDtos = userService.getUserBookmarkProjects(userId).stream()
+                .map(ProjectResponseDto::from)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+        return SuccessResponse.of(ApiStatus._OK, projectResponseDtos);
+    }
 }
