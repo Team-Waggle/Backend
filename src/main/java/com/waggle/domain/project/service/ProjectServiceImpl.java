@@ -3,8 +3,10 @@ package com.waggle.domain.project.service;
 import com.waggle.domain.project.dto.ProjectInputDto;
 import com.waggle.domain.project.entity.*;
 import com.waggle.domain.project.repository.ProjectRepository;
+import com.waggle.domain.reference.entity.Job;
 import com.waggle.domain.reference.service.ReferenceService;
 import com.waggle.domain.user.entity.User;
+import com.waggle.domain.user.entity.UserJob;
 import com.waggle.domain.user.service.UserService;
 import com.waggle.global.exception.AccessDeniedException;
 import com.waggle.global.response.ApiStatus;
@@ -14,9 +16,9 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -28,7 +30,13 @@ public class ProjectServiceImpl implements ProjectService{
     private final ReferenceService referenceService;
 
     @Override
-    public Project create(ProjectInputDto projectInputDto) {
+    public Project getProjectByProjectId(UUID id) {
+        return projectRepository.findById(id)
+                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+    }
+
+    @Override
+    public Project createProject(ProjectInputDto projectInputDto) {
         Project newProject = Project.builder()
                 .title(projectInputDto.getTitle())
                 .industry(referenceService.getIndustryById(projectInputDto.getIndustryId()))
@@ -58,7 +66,7 @@ public class ProjectServiceImpl implements ProjectService{
     }
 
     @Override
-    public Project update(UUID id, ProjectInputDto projectInputDto) {
+    public Project updateProject(UUID id, ProjectInputDto projectInputDto) {
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new EmptyResultDataAccessException(1));
         User currentUser = userService.getCurrentUser();
@@ -84,7 +92,7 @@ public class ProjectServiceImpl implements ProjectService{
 
     @Override
     @Transactional
-    public void delete(UUID id) {
+    public void deleteProject(UUID id) {
         //id가 아닌 다른 기준으로 값을 삭제할 때
         /*Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new EmptyResultDataAccessException(1));
@@ -103,9 +111,28 @@ public class ProjectServiceImpl implements ProjectService{
     }
 
     @Override
-    public Project findById(UUID id) {
-        return projectRepository.findById(id)
+    public Set<User> getUsersByProjectId(UUID id) {
+        Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new EmptyResultDataAccessException(1));
+
+        Map<User, Map.Entry<Long, LocalDateTime>> userJobMap = project.getProjectUsers().stream()
+                .collect(Collectors.toMap(
+                        ProjectUser::getUser,
+                        projectUser -> Map.entry(
+                                projectUser.getUser().getUserJobs().stream()
+                                        .map(userJob -> userJob.getJob().getId())
+                                        .findFirst()
+                                        .orElse(null),
+                                projectUser.getJoinedAt()
+                        )
+                ));
+
+        // job id 기준으로 정렬하고, job id가 같은 경우 joined_at 기준으로 정렬
+        return userJobMap.entrySet().stream()
+                .sorted(Comparator.comparing((Map.Entry<User, Map.Entry<Long, LocalDateTime>> entry) -> entry.getValue().getKey())
+                        .thenComparing(entry -> entry.getValue().getValue()))
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     private Set<ProjectRecruitmentJob> getProjectRecruitmentJobs(ProjectInputDto projectInputDto, Project project) {

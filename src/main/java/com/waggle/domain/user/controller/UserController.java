@@ -216,8 +216,7 @@ public class UserController {
     @GetMapping("/{userId}")
     @Operation(
             summary = "특정 사용자 조회",
-            description = "특정 사용자를 조회합니다.",
-            security = @SecurityRequirement(name = "JWT")
+            description = "특정 사용자를 조회합니다."
     )
     @ApiResponses({
             @ApiResponse(
@@ -250,8 +249,7 @@ public class UserController {
     @GetMapping("/{userId}/project")
     @Operation(
             summary = "특정 사용자가 작성한 프로젝트 모집글 조회",
-            description = "특정 사용자가 작성한 프로젝트 모집글을 조회합니다.",
-            security = @SecurityRequirement(name = "JWT")
+            description = "특정 사용자가 작성한 프로젝트 모집글을 조회합니다."
     )
     @ApiResponses({
             @ApiResponse(
@@ -286,8 +284,7 @@ public class UserController {
     @GetMapping("/{userId}/project/bookmark")
     @Operation(
             summary = "특정 사용자가 북마크한 프로젝트 모집글 조회",
-            description = "특정 사용자가 북마크한 프로젝트 모집글을 조회합니다.",
-            security = @SecurityRequirement(name = "JWT")
+            description = "특정 사용자가 북마크한 프로젝트 모집글을 조회합니다."
     )
     @ApiResponses({
             @ApiResponse(
