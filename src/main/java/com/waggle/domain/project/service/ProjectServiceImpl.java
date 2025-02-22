@@ -63,7 +63,7 @@ public class ProjectServiceImpl implements ProjectService{
                 .orElseThrow(() -> new EmptyResultDataAccessException(1));
         User currentUser = userService.getCurrentUser();
 
-        if (!project.getProjectUsers().stream().anyMatch(projectUser -> projectUser.getUser().getId().equals(currentUser.getId()))) {
+        if (!getLeader(project).getId().equals(currentUser.getId())) {
             throw new AccessDeniedException(ApiStatus._UPDATE_ACCESS_DENIED);
         }
 
@@ -95,7 +95,7 @@ public class ProjectServiceImpl implements ProjectService{
                 .orElseThrow(() -> new EmptyResultDataAccessException(1));
         User currentUser = userService.getCurrentUser();
 
-        if (!project.getProjectUsers().stream().anyMatch(projectUser -> projectUser.getUser().getId().equals(currentUser.getId()))) {
+        if (!getLeader(project).getId().equals(currentUser.getId())) {
             throw new AccessDeniedException(ApiStatus._DELETE_ACCESS_DENIED);
         }
 
@@ -145,5 +145,13 @@ public class ProjectServiceImpl implements ProjectService{
             projectSkills.add(projectSkill);
         });
         return projectSkills;
+    }
+
+    private User getLeader(Project project) {
+        return project.getProjectUsers().stream()
+                .filter(ProjectUser::isLeader)
+                .map(ProjectUser::getUser)
+                .findFirst()
+                .orElseThrow(() -> new EmptyResultDataAccessException(1));
     }
 }
