@@ -1,6 +1,5 @@
 package com.waggle.domain.project.entity;
 
-import com.waggle.domain.project.dto.ProjectResponseDto;
 import com.waggle.domain.reference.entity.Industry;
 import com.waggle.domain.reference.entity.WaysOfWorking;
 import com.waggle.domain.reference.entity.DurationOfWorking;

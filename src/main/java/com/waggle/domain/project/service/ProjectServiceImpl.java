@@ -46,6 +46,7 @@ public class ProjectServiceImpl implements ProjectService{
         projectUsers.add(ProjectUser.builder()
                 .project(newProject)
                 .user(userService.getCurrentUser())
+                .isLeader(true)
                 .build());
         newProject.setProjectUsers(projectUsers);
         newProject.setRecruitmentJobs(getProjectRecruitmentJobs(projectInputDto, newProject));
