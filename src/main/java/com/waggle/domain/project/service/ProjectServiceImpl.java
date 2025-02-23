@@ -216,15 +216,16 @@ public class ProjectServiceImpl implements ProjectService{
         }
 
         User user = userService.getUserByUserId(userId);
-        project.getProjectMembers().stream()
-                .filter(member -> member.getUser().getId().equals(user.getId()))
-                .findFirst()
-                .ifPresent(member -> member.setLeader(true));
 
         project.getProjectMembers().stream()
                 .filter(member -> member.getUser().getId().equals(currentUser.getId()))
                 .findFirst()
                 .ifPresent(member -> member.setLeader(false));
+
+        project.getProjectMembers().stream()
+                .filter(member -> member.getUser().getId().equals(user.getId()))
+                .findFirst()
+                .ifPresent(member -> member.setLeader(true));
 
         projectRepository.save(project);
     }
