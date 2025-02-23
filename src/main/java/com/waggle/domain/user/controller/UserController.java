@@ -138,6 +138,40 @@ public class UserController {
                 .collect(Collectors.toCollection(LinkedHashSet::new)));
     }
 
+    @DeleteMapping("/me/project/{projectId}")
+    @Operation(
+            summary = "내가 참여한 프로젝트 탈퇴",
+            description = "현재 로그인 된 사용자가 참여한 프로젝트를 삭제합니다.",
+            security = @SecurityRequirement(name = "JWT")
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "프로젝트 탈퇴 성공",
+                    content = @Content(
+                            schema = @Schema(implementation = SuccessResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "인증되지 않은 사용자",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "삭제 권한이 없습니다.",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
+    })
+    public ResponseEntity<BaseResponse<Object>> quitMyProject(@PathVariable String projectId) {
+        userService.deleteUserProject(projectId);
+        return SuccessResponse.of(ApiStatus._NO_CONTENT, null);
+    }
+
     @PostMapping(value = "/me/project/bookmark")
     @Operation(
             summary = "프로젝트 북마크 추가/제거",

@@ -43,7 +43,8 @@ public enum ApiStatus {
     _UPDATE_ACCESS_DENIED(HttpStatus.FORBIDDEN, 403, "수정 권한이 없습니다."),
     _DELETE_ACCESS_DENIED(HttpStatus.FORBIDDEN, 403, "삭제 권한이 없습니다."),
     _ALREADY_APPLIED_PROJECT(HttpStatus.BAD_REQUEST, 400, "이미 지원한 프로젝트입니다."),
-    _ALREADY_JOINED_PROJECT(HttpStatus.BAD_REQUEST, 400, "이미 참여한 프로젝트입니다.");
+    _ALREADY_JOINED_PROJECT(HttpStatus.BAD_REQUEST, 400, "이미 참여한 프로젝트입니다."),
+    _NOT_JOINED_PROJECT(HttpStatus.BAD_REQUEST, 400, "참여하지 않은 프로젝트입니다.");
 
     private final HttpStatus httpStatus;
     private final int code;

@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class ProjectApplyException extends RuntimeException {
+public class ProjectException extends RuntimeException {
 
     private final ApiStatus status;
 

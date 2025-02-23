@@ -12,7 +12,7 @@ import com.waggle.domain.user.entity.*;
 import com.waggle.domain.user.repository.UserRepository;
 import com.waggle.global.aws.service.S3Service;
 import com.waggle.global.exception.JwtTokenException;
-import com.waggle.global.exception.ProjectApplyException;
+import com.waggle.global.exception.ProjectException;
 import com.waggle.global.response.ApiStatus;
 import com.waggle.global.secure.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -142,6 +142,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void deleteUserProject(String projectId) {
+        User user = getCurrentUser();
+        Project project = projectRepository.findById(UUID.fromString(projectId))
+                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+
+        if (!project.getProjectMembers().stream().anyMatch(projectMember -> projectMember.getUser().getId().equals(user.getId()))) {
+            throw new ProjectException(ApiStatus._NOT_JOINED_PROJECT);
+        }
+
+        project.getProjectMembers().removeIf(projectMember -> projectMember.getUser().getId().equals(user.getId()));
+        projectRepository.save(project);
+    }
+
+    @Override
     public Set<Project> getUserBookmarkProjects(String userId) {
         User user = getUserByUserId(userId);
         return user.getProjectBookmarks().stream()
@@ -157,11 +171,11 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new EmptyResultDataAccessException(1));
 
         if (project.getProjectMembers().stream().anyMatch(projectMember -> projectMember.getUser().getId().equals(user.getId()))) {
-            throw new ProjectApplyException(ApiStatus._ALREADY_JOINED_PROJECT);
+            throw new ProjectException(ApiStatus._ALREADY_JOINED_PROJECT);
         }
 
         if (project.getProjectApplicants().stream().anyMatch(projectMember -> projectMember.getUser().getId().equals(user.getId()))) {
-            throw new ProjectApplyException(ApiStatus._ALREADY_APPLIED_PROJECT);
+            throw new ProjectException(ApiStatus._ALREADY_APPLIED_PROJECT);
         }
 
         project.getProjectApplicants().add(ProjectApplicant.builder()
