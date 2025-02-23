@@ -112,7 +112,7 @@ public class UserController {
 
     @GetMapping("/me/project")
     @Operation(
-            summary = "내가 작성한 프로젝트 모집글 조회",
+            summary = "내가 참가한 프로젝트의 모집글 조회",
             description = "현재 로그인 된 사용자가 작성한 프로젝트 모집글을 조회합니다.",
             security = @SecurityRequirement(name = "JWT")
     )
