@@ -172,4 +172,109 @@ public class ProjectController {
                 .map(UserResponseDto::from)
                 .collect(Collectors.toCollection(LinkedHashSet::new)));
     }
+
+    @PutMapping("/{projectId}/member/{userId}/reject")
+    @Operation(
+            summary = "프로젝트 모집글 참여자 강제 퇴장",
+            description = "프로젝트 모집글에 참여한 사용자를 강제 퇴장시킨다.",
+            security = @SecurityRequirement(name = "JWT")
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "프로젝트 모집글 참여자 제명 성공",
+                    content = @Content(
+                            schema = @Schema(implementation = ProjectSuccessResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "인증되지 않은 사용자입니다.",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "수정 권한이 없습니다.",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
+    })
+    public ResponseEntity<BaseResponse<Set<UserResponseDto>>> rejectMember(@PathVariable String projectId, @PathVariable String userId) {
+        return SuccessResponse.of(ApiStatus._OK, projectService.rejectMemberUser(UUID.fromString(projectId), userId).stream()
+                .map(UserResponseDto::from)
+                .collect(Collectors.toCollection(LinkedHashSet::new)));
+    }
+
+    @PutMapping("/{projectId}/apply/{userId}/approve")
+    @Operation(
+            summary = "프로젝트 모집글 참여자 승인",
+            description = "프로젝트 모집글에 참여한 사용자를 승인한다.",
+            security = @SecurityRequirement(name = "JWT")
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "프로젝트 모집글 참여자 승인 성공",
+                    content = @Content(
+                            schema = @Schema(implementation = ProjectSuccessResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "인증되지 않은 사용자입니다.",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "수정 권한이 없습니다.",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
+    })
+    public ResponseEntity<BaseResponse<Set<UserResponseDto>>> approveUser(@PathVariable String projectId, @PathVariable String userId) {
+        return SuccessResponse.of(ApiStatus._OK, projectService.approveAppliedUser(UUID.fromString(projectId), userId).stream()
+                .map(UserResponseDto::from)
+                .collect(Collectors.toCollection(LinkedHashSet::new)));
+    }
+
+    @PutMapping("/{projectId}/apply/{userId}/reject")
+    @Operation(
+            summary = "프로젝트 모집글 참여자 거절",
+            description = "프로젝트 모집글에 참여한 사용자를 거절한다.",
+            security = @SecurityRequirement(name = "JWT")
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "프로젝트 모집글 참여자 거절 성공",
+                    content = @Content(
+                            schema = @Schema(implementation = ProjectSuccessResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "인증되지 않은 사용자입니다.",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "수정 권한이 없습니다.",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
+    })
+    public ResponseEntity<BaseResponse<Set<UserResponseDto>>> rejectUser(@PathVariable String projectId, @PathVariable String userId) {
+        return SuccessResponse.of(ApiStatus._OK, projectService.rejectAppliedUser(UUID.fromString(projectId), userId).stream()
+                .map(UserResponseDto::from)
+                .collect(Collectors.toCollection(LinkedHashSet::new)));
+    }
 }

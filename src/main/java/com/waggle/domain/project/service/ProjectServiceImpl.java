@@ -133,6 +133,65 @@ public class ProjectServiceImpl implements ProjectService{
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
+    @Override
+    public Set<User> approveAppliedUser(UUID projectId, String userId) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+        User currentUser = userService.getCurrentUser();
+
+        if (!getLeader(project).getId().equals(currentUser.getId())) {
+            throw new AccessDeniedException(ApiStatus._UPDATE_ACCESS_DENIED);
+        }
+
+        User user = userService.getUserByUserId(userId);
+        ProjectMember projectMember = ProjectMember.builder()
+                .project(project)
+                .user(user)
+                .isLeader(false)
+                .joinedAt(LocalDateTime.now())
+                .build();
+        project.getProjectMembers().add(projectMember);;
+
+        project.getProjectApplicants().removeIf(member -> member.getUser().getId().equals(user.getId()));
+        projectRepository.save(project);
+
+        return getUsersByProjectId(projectId);
+    }
+
+    @Override
+    public Set<User> rejectAppliedUser(UUID projectId, String userId) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+        User currentUser = userService.getCurrentUser();
+
+        if (!getLeader(project).getId().equals(currentUser.getId())) {
+            throw new AccessDeniedException(ApiStatus._UPDATE_ACCESS_DENIED);
+        }
+
+        User user = userService.getUserByUserId(userId);
+        project.getProjectApplicants().removeIf(member -> member.getUser().getId().equals(user.getId()));
+        projectRepository.save(project);
+
+        return getUsersByProjectId(projectId);
+    }
+
+    @Override
+    public Set<User> rejectMemberUser(UUID projectId, String userId) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+        User currentUser = userService.getCurrentUser();
+
+        if (!getLeader(project).getId().equals(currentUser.getId())) {
+            throw new AccessDeniedException(ApiStatus._UPDATE_ACCESS_DENIED);
+        }
+
+        User user = userService.getUserByUserId(userId);
+        project.getProjectMembers().removeIf(member -> member.getUser().getId().equals(user.getId()));
+        projectRepository.save(project);
+
+        return getUsersByProjectId(projectId);
+    }
+
     private Set<ProjectRecruitmentJob> getProjectRecruitmentJobs(ProjectInputDto projectInputDto, Project project) {
         Set<ProjectRecruitmentJob> projectRecruitmentJobs = new HashSet<>();
         projectInputDto.getRecruitmentJobs().forEach(jobDto -> {
