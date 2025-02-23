@@ -192,6 +192,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void cancelApplyProject(String projectId) {
         User user = getCurrentUser();
         Project project = projectRepository.findById(UUID.fromString(projectId))
@@ -199,9 +200,6 @@ public class UserServiceImpl implements UserService {
 
         project.getProjectApplicants().removeIf(projectApplicant -> projectApplicant.getUser().getId().equals(user.getId()));
         projectRepository.save(project);
-
-        user.getProjectApplicants().removeIf(projectApplicant -> projectApplicant.getProject().getId().equals(project.getId()));
-        userRepository.save(user);
     }
 
     @Override
