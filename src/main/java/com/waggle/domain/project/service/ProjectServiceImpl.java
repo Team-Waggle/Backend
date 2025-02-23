@@ -3,10 +3,8 @@ package com.waggle.domain.project.service;
 import com.waggle.domain.project.dto.ProjectInputDto;
 import com.waggle.domain.project.entity.*;
 import com.waggle.domain.project.repository.ProjectRepository;
-import com.waggle.domain.reference.entity.Job;
 import com.waggle.domain.reference.service.ReferenceService;
 import com.waggle.domain.user.entity.User;
-import com.waggle.domain.user.entity.UserJob;
 import com.waggle.domain.user.service.UserService;
 import com.waggle.global.exception.AccessDeniedException;
 import com.waggle.global.response.ApiStatus;
@@ -50,13 +48,13 @@ public class ProjectServiceImpl implements ProjectService{
                 .build();
         newProject = projectRepository.save(newProject);
 
-        Set<ProjectUser> projectUsers = new HashSet<>();
-        projectUsers.add(ProjectUser.builder()
+        Set<ProjectMember> projectMembers = new HashSet<>();
+        projectMembers.add(ProjectMember.builder()
                 .project(newProject)
                 .user(userService.getCurrentUser())
                 .isLeader(true)
                 .build());
-        newProject.setProjectUsers(projectUsers);
+        newProject.setProjectMembers(projectMembers);
         newProject.setRecruitmentJobs(getProjectRecruitmentJobs(projectInputDto, newProject));
         newProject.setMemberJobs(getProjectMemberJobs(projectInputDto, newProject));
         newProject.setProjectSkills(getProjectSkills(projectInputDto, newProject));
@@ -115,15 +113,15 @@ public class ProjectServiceImpl implements ProjectService{
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new EmptyResultDataAccessException(1));
 
-        Map<User, Map.Entry<Long, LocalDateTime>> userJobMap = project.getProjectUsers().stream()
+        Map<User, Map.Entry<Long, LocalDateTime>> userJobMap = project.getProjectMembers().stream()
                 .collect(Collectors.toMap(
-                        ProjectUser::getUser,
-                        projectUser -> Map.entry(
-                                projectUser.getUser().getUserJobs().stream()
+                        ProjectMember::getUser,
+                        projectMember -> Map.entry(
+                                projectMember.getUser().getUserJobs().stream()
                                         .map(userJob -> userJob.getJob().getId())
                                         .findFirst()
                                         .orElse(null),
-                                projectUser.getJoinedAt()
+                                projectMember.getJoinedAt()
                         )
                 ));
 
@@ -175,9 +173,9 @@ public class ProjectServiceImpl implements ProjectService{
     }
 
     private User getLeader(Project project) {
-        return project.getProjectUsers().stream()
-                .filter(ProjectUser::isLeader)
-                .map(ProjectUser::getUser)
+        return project.getProjectMembers().stream()
+                .filter(ProjectMember::isLeader)
+                .map(ProjectMember::getUser)
                 .findFirst()
                 .orElseThrow(() -> new EmptyResultDataAccessException(1));
     }

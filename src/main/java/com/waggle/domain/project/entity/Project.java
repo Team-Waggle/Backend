@@ -72,8 +72,10 @@ public class Project {
     private int bookmarkCnt; //북마크 수(스크랩)
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    //@JsonIgnoreProperties("project")
-    private Set<ProjectUser> projectUsers; //참여자
+    private Set<ProjectMember> projectMembers; //참여자
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    private Set<ProjectApplicant> projectApplicants; //지원자
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)

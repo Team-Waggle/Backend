@@ -19,7 +19,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class ProjectUser {
+public class ProjectApplicant {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -40,13 +40,8 @@ public class ProjectUser {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
-    @Column(name = "is_leader", nullable = false, columnDefinition = "boolean default false")
-    @Schema(description = "프로젝트 리더 여부", example = "true")
-    @JsonProperty("is_leader")
-    private boolean isLeader;
-
     @CreationTimestamp
-    @Schema(description = "참가 일자", example = "2021-08-01T00:00:00")
-    @JsonProperty("joined_at")
-    private LocalDateTime joinedAt;
+    @Schema(description = "지원 일자", example = "2021-08-01T00:00:00")
+    @JsonProperty("applied_at")
+    private LocalDateTime appliedAt;
 }

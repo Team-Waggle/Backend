@@ -2,7 +2,7 @@ package com.waggle.domain.user.service;
 
 import com.waggle.domain.project.entity.Project;
 import com.waggle.domain.project.entity.ProjectBookmark;
-import com.waggle.domain.project.entity.ProjectUser;
+import com.waggle.domain.project.entity.ProjectMember;
 import com.waggle.domain.project.repository.ProjectRepository;
 import com.waggle.domain.reference.entity.*;
 import com.waggle.domain.reference.service.ReferenceService;
@@ -83,8 +83,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public Set<Project> getCurrentUserProjects() {
         User user = getCurrentUser();
-        return user.getProjectUsers().stream()
-                .map(ProjectUser::getProject)
+        return user.getProjectMembers().stream()
+                .map(ProjectMember::getProject)
                 .sorted(Comparator.comparing(Project::getCreatedAt).reversed())
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
@@ -133,8 +133,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public Set<Project> getUserProjects(String userId) {
         User user = getUserByUserId(userId);
-        return user.getProjectUsers().stream()
-                .map(ProjectUser::getProject)
+        return user.getProjectMembers().stream()
+                .map(ProjectMember::getProject)
                 .sorted(Comparator.comparing(Project::getCreatedAt).reversed())
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
