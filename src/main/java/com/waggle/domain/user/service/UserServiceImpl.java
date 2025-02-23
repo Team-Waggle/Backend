@@ -1,7 +1,9 @@
 package com.waggle.domain.user.service;
 
 import com.waggle.domain.project.entity.Project;
+import com.waggle.domain.project.entity.ProjectApplicant;
 import com.waggle.domain.project.entity.ProjectBookmark;
+import com.waggle.domain.project.entity.ProjectMember;
 import com.waggle.domain.project.repository.ProjectRepository;
 import com.waggle.domain.reference.entity.*;
 import com.waggle.domain.reference.service.ReferenceService;
@@ -10,12 +12,14 @@ import com.waggle.domain.user.entity.*;
 import com.waggle.domain.user.repository.UserRepository;
 import com.waggle.global.aws.service.S3Service;
 import com.waggle.global.exception.JwtTokenException;
+import com.waggle.global.exception.ProjectException;
 import com.waggle.global.response.ApiStatus;
 import com.waggle.global.secure.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
@@ -52,7 +56,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(MultipartFile profileImage, UserInputDto userInputDto) {
+    @Transactional
+    public User updateCurrentUser(MultipartFile profileImage, UserInputDto userInputDto) {
         User user = getCurrentUser();
         user.clearInfo();
 
@@ -73,14 +78,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser() {
+    @Transactional
+    public void deleteCurrentUser() {
         User user = getCurrentUser();
         s3Service.deleteFile(user.getProfileImageUrl());
         userRepository.delete(user);
     }
 
     @Override
-    public boolean toggleBookmark(String projectId) {
+    public Set<Project> getCurrentUserProjects() {
+        User user = getCurrentUser();
+        return user.getProjectMembers().stream()
+                .map(ProjectMember::getProject)
+                .sorted(Comparator.comparing(Project::getCreatedAt).reversed())
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    @Override
+    public boolean toggleCurrentUserBookmark(String projectId) {
         User user = getCurrentUser();
         Project project = projectRepository.findById(UUID.fromString(projectId))
                 .orElseThrow(() -> new EmptyResultDataAccessException(1));
@@ -106,11 +121,93 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Set<Project> getBookmarkProjects() {
+    public Set<Project> getCurrentUserBookmarkProjects() {
         User user = getCurrentUser();
         return user.getProjectBookmarks().stream()
                 .map(ProjectBookmark::getProject)
                 .sorted(Comparator.comparing(Project::getCreatedAt).reversed())
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    @Override
+    public User getUserByUserId(String userId) {
+        return userRepository.findByUserId(UUID.fromString(userId))
+                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+    }
+
+    @Override
+    public Set<Project> getUserProjects(String userId) {
+        User user = getUserByUserId(userId);
+        return user.getProjectMembers().stream()
+                .map(ProjectMember::getProject)
+                .sorted(Comparator.comparing(Project::getCreatedAt).reversed())
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    @Override
+    @Transactional
+    public void deleteUserProject(String projectId) {
+        User user = getCurrentUser();
+        Project project = projectRepository.findById(UUID.fromString(projectId))
+                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+
+        if (!project.getProjectMembers().stream().anyMatch(projectMember -> projectMember.getUser().getId().equals(user.getId()))) {
+            throw new ProjectException(ApiStatus._NOT_JOINED_PROJECT);
+        }
+
+        project.getProjectMembers().removeIf(projectMember -> projectMember.getUser().getId().equals(user.getId()));
+        projectRepository.save(project);
+    }
+
+    @Override
+    public Set<Project> getUserBookmarkProjects(String userId) {
+        User user = getUserByUserId(userId);
+        return user.getProjectBookmarks().stream()
+                .map(ProjectBookmark::getProject)
+                .sorted(Comparator.comparing(Project::getCreatedAt).reversed())
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    @Override
+    public Project applyProject(String projectId) {
+        User user = getCurrentUser();
+        Project project = projectRepository.findById(UUID.fromString(projectId))
+                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+
+        if (project.getProjectMembers().stream().anyMatch(projectMember -> projectMember.getUser().getId().equals(user.getId()))) {
+            throw new ProjectException(ApiStatus._ALREADY_JOINED_PROJECT);
+        }
+
+        if (project.getProjectApplicants().stream().anyMatch(projectMember -> projectMember.getUser().getId().equals(user.getId()))) {
+            throw new ProjectException(ApiStatus._ALREADY_APPLIED_PROJECT);
+        }
+
+        project.getProjectApplicants().add(ProjectApplicant.builder()
+                .project(project)
+                .user(user)
+                .build());
+
+        projectRepository.save(project);
+        return project;
+    }
+
+    @Override
+    @Transactional
+    public void cancelApplyProject(String projectId) {
+        User user = getCurrentUser();
+        Project project = projectRepository.findById(UUID.fromString(projectId))
+                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+
+        project.getProjectApplicants().removeIf(projectApplicant -> projectApplicant.getUser().getId().equals(user.getId()));
+        projectRepository.save(project);
+    }
+
+    @Override
+    public Set<Project> getAppliedProjects() {
+        User user = getCurrentUser();
+        return user.getProjectApplicants().stream()
+                .sorted(Comparator.comparing(ProjectApplicant::getAppliedAt).reversed())
+                .map(ProjectApplicant::getProject)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 

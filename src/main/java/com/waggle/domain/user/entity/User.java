@@ -1,7 +1,8 @@
 package com.waggle.domain.user.entity;
 
+import com.waggle.domain.project.entity.ProjectApplicant;
 import com.waggle.domain.project.entity.ProjectBookmark;
-import com.waggle.domain.project.entity.ProjectUser;
+import com.waggle.domain.project.entity.ProjectMember;
 import com.waggle.domain.reference.entity.Sido;
 import com.waggle.domain.reference.entity.TimeOfWorking;
 import com.waggle.domain.reference.entity.WaysOfWorking;
@@ -76,7 +77,10 @@ public class User {
     private Set<UserPortfolioUrl> userPortfolioUrls = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    private Set<ProjectUser> projectUsers = new HashSet<>();
+    private Set<ProjectMember> projectMembers = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    private Set<ProjectApplicant> projectApplicants = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<ProjectBookmark> projectBookmarks = new HashSet<>();

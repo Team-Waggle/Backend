@@ -2,6 +2,7 @@ package com.waggle.global.exception.handler;
 
 import com.waggle.global.exception.AccessDeniedException;
 import com.waggle.global.exception.JwtTokenException;
+import com.waggle.global.exception.ProjectException;
 import com.waggle.global.exception.S3Exception;
 import com.waggle.global.response.ApiStatus;
 import com.waggle.global.response.BaseResponse;
@@ -32,5 +33,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<BaseResponse<Object>> handleAccessDeniedException(AccessDeniedException ex) {
         return ErrorResponse.of(ex.getStatus());
+    }
+
+    @ExceptionHandler(ProjectException.class)
+    public ResponseEntity<BaseResponse<Object>> handleProjectException(ProjectException ex) {
+        return ErrorResponse.of(ex.getStatus(), ex.getMessage());
     }
 }
