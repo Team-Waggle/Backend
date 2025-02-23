@@ -1,6 +1,7 @@
 package com.waggle.domain.user.controller;
 
 import com.waggle.domain.project.dto.ProjectResponseDto;
+import com.waggle.domain.project.entity.Project;
 import com.waggle.domain.user.dto.UserInputDto;
 import com.waggle.domain.user.dto.UserResponseDto;
 import com.waggle.domain.user.entity.User;
@@ -9,6 +10,7 @@ import com.waggle.global.response.ApiStatus;
 import com.waggle.global.response.BaseResponse;
 import com.waggle.global.response.ErrorResponse;
 import com.waggle.global.response.SuccessResponse;
+import com.waggle.global.response.swagger.ProjectSuccessResponse;
 import com.waggle.global.response.swagger.ProjectsSuccessResponse;
 import com.waggle.global.response.swagger.UserSuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -314,5 +316,100 @@ public class UserController {
                 .map(ProjectResponseDto::from)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
         return SuccessResponse.of(ApiStatus._OK, projectResponseDtos);
+    }
+
+    @GetMapping("/me/project/apply")
+    @Operation(
+            summary = "내가 지원한 프로젝트 조회",
+            description = "현재 로그인 된 사용자가 지원한 프로젝트를 조회합니다.",
+            security = @SecurityRequirement(name = "JWT")
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "사용자 정보 수정 성공",
+                    content = @Content(
+                            schema = @Schema(implementation = ProjectsSuccessResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "인증되지 않은 사용자",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
+    })
+    public ResponseEntity<BaseResponse<Set<ProjectResponseDto>>> getAppliedProjects() {
+        Set<ProjectResponseDto> appliedProjects = userService.getAppliedProjects().stream()
+                .map(ProjectResponseDto::from)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+        return SuccessResponse.of(ApiStatus._OK, appliedProjects);
+    }
+
+    @PostMapping("/me/project/apply")
+    @Operation(
+            summary = "프로젝트 지원",
+            description = "프로젝트에 지원합니다. 성공 시 지원한 프로젝트 정보를 반환합니다.",
+            security = @SecurityRequirement(name = "JWT")
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "프로젝트 지원 성공",
+                    content = @Content(
+                            schema = @Schema(implementation = ProjectSuccessResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "인증되지 않은 사용자",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "프로젝트를 찾을 수 없음",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
+    })
+    public ResponseEntity<BaseResponse<ProjectResponseDto>> applyProject(@RequestParam String projectId) {
+        ProjectResponseDto applyProject = ProjectResponseDto.from(userService.applyProject(projectId));
+        return SuccessResponse.of(ApiStatus._CREATED, applyProject);
+    }
+
+    @DeleteMapping("/me/project/apply")
+    @Operation(
+            summary = "프로젝트 지원 취소",
+            description = "프로젝트 지원을 취소합니다.",
+            security = @SecurityRequirement(name = "JWT")
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "프로젝트 지원 취소 성공",
+                    content = @Content()
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "인증되지 않은 사용자",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "프로젝트를 찾을 수 없음",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
+    })
+    public ResponseEntity<BaseResponse<Object>> cancelApplyProject(@RequestParam String projectId) {
+        userService.cancelApplyProject(projectId);
+        return SuccessResponse.of(ApiStatus._NO_CONTENT, null);
     }
 }

@@ -39,8 +39,11 @@ public enum ApiStatus {
     _S3_INVALID_FILE_TYPE(HttpStatus.BAD_REQUEST, 400, "지원하지 않는 파일 형식입니다."),
     _S3_FILE_SIZE_EXCEEDED(HttpStatus.BAD_REQUEST, 400, "파일 크기가 제한을 초과했습니다."),
 
+    // 프로젝트 관련 에러 (4xx)
     _UPDATE_ACCESS_DENIED(HttpStatus.FORBIDDEN, 403, "수정 권한이 없습니다."),
-    _DELETE_ACCESS_DENIED(HttpStatus.FORBIDDEN, 403, "삭제 권한이 없습니다.");
+    _DELETE_ACCESS_DENIED(HttpStatus.FORBIDDEN, 403, "삭제 권한이 없습니다."),
+    _ALREADY_APPLIED_PROJECT(HttpStatus.BAD_REQUEST, 400, "이미 지원한 프로젝트입니다."),
+    _ALREADY_JOINED_PROJECT(HttpStatus.BAD_REQUEST, 400, "이미 참여한 프로젝트입니다.");
 
     private final HttpStatus httpStatus;
     private final int code;

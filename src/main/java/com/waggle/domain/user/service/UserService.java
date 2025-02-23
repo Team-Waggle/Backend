@@ -17,4 +17,7 @@ public interface UserService {
     User getUserByUserId(String userId);
     Set<Project> getUserProjects(String userId);
     Set<Project> getUserBookmarkProjects(String userId);
+    Project applyProject(String projectId);
+    void cancelApplyProject(String projectId);
+    Set<Project> getAppliedProjects();
 }
