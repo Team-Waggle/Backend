@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
@@ -55,6 +56,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public User updateCurrentUser(MultipartFile profileImage, UserInputDto userInputDto) {
         User user = getCurrentUser();
         user.clearInfo();
@@ -76,6 +78,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void deleteCurrentUser() {
         User user = getCurrentUser();
         s3Service.deleteFile(user.getProfileImageUrl());
@@ -142,6 +145,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void deleteUserProject(String projectId) {
         User user = getCurrentUser();
         Project project = projectRepository.findById(UUID.fromString(projectId))
@@ -195,6 +199,9 @@ public class UserServiceImpl implements UserService {
 
         project.getProjectApplicants().removeIf(projectApplicant -> projectApplicant.getUser().getId().equals(user.getId()));
         projectRepository.save(project);
+
+        user.getProjectApplicants().removeIf(projectApplicant -> projectApplicant.getProject().getId().equals(project.getId()));
+        userRepository.save(user);
     }
 
     @Override

@@ -277,6 +277,33 @@ public class ProjectController {
         return SuccessResponse.of(ApiStatus._OK, null);
     }
 
+    @GetMapping("/{projectId}/apply")
+    @Operation(
+            summary = "프로젝트 모집글 지원자 조회",
+            description = "프로젝트 모집글에 지원한 사용자들을 조회한다."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "프로젝트 모집글 지원자 조회 성공",
+                    content = @Content(
+                            schema = @Schema(implementation = ProjectSuccessResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "프로젝트 모집글이 존재하지 않습니다.",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
+    })
+    public ResponseEntity<BaseResponse<Set<UserResponseDto>>> fetchAppliedUsers(@PathVariable String projectId) {
+        return SuccessResponse.of(ApiStatus._OK, projectService.getAppliedUsersByProjectId(UUID.fromString(projectId)).stream()
+                .map(UserResponseDto::from)
+                .collect(Collectors.toCollection(LinkedHashSet::new)));
+    }
+
     @PutMapping("/{projectId}/apply/{userId}/approve")
     @Operation(
             summary = "프로젝트 모집글 참여자 승인",

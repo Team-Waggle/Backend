@@ -13,6 +13,7 @@ public interface ProjectService {
     Project updateProject(UUID id, ProjectInputDto projectInputDto);
     void deleteProject(UUID id);
     Set<User> getUsersByProjectId(UUID id);
+    Set<User> getAppliedUsersByProjectId(UUID id);
     Set<User> approveAppliedUser(UUID projectId, String userId);
     Set<User> rejectAppliedUser(UUID projectId, String userId);
     Set<User> rejectMemberUser(UUID projectId, String userId);
