@@ -114,6 +114,13 @@ public class ProjectController {
                     content = @Content(
                             schema = @Schema(implementation = ErrorResponse.class)
                     )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "프로젝트 모집글이 존재하지 않습니다.",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
             )
     })
     public ResponseEntity<BaseResponse<ProjectResponseDto>> updateProject(@PathVariable String projectId, @RequestBody ProjectInputDto projectInputDto) {
@@ -146,6 +153,13 @@ public class ProjectController {
                     content = @Content(
                             schema = @Schema(implementation = ErrorResponse.class)
                     )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "프로젝트 모집글이 존재하지 않습니다.",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
             )
     })
     public ResponseEntity<BaseResponse<Object>> deleteProject(@PathVariable String projectId) {
@@ -164,6 +178,13 @@ public class ProjectController {
                     description = "프로젝트 모집글 참여자 조회 성공",
                     content = @Content(
                             schema = @Schema(implementation = ProjectSuccessResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "프로젝트 모집글이 존재하지 않습니다.",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
                     )
             )
     })
@@ -200,12 +221,60 @@ public class ProjectController {
                     content = @Content(
                             schema = @Schema(implementation = ErrorResponse.class)
                     )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "프로젝트 모집글 혹은 사용자가 존재하지 않습니다.",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
             )
     })
     public ResponseEntity<BaseResponse<Set<UserResponseDto>>> rejectMember(@PathVariable String projectId, @PathVariable String userId) {
         return SuccessResponse.of(ApiStatus._OK, projectService.rejectMemberUser(UUID.fromString(projectId), userId).stream()
                 .map(UserResponseDto::from)
                 .collect(Collectors.toCollection(LinkedHashSet::new)));
+    }
+
+    @PutMapping("/{projectId}/member/{userId}/delegate")
+    @Operation(
+            summary = "프로젝트 리더 위임",
+            description = "프로젝트 리더를 위임한다.",
+            security = @SecurityRequirement(name = "JWT")
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "프로젝트 리더 위임 성공",
+                    content = @Content(
+                            schema = @Schema(implementation = ProjectSuccessResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "인증되지 않은 사용자입니다.",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "수정 권한이 없습니다.",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "프로젝트 모집글 혹은 사용자가 존재하지 않습니다.",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
+    })
+    public ResponseEntity<BaseResponse<Set<UserResponseDto>>> delegateLeader(@PathVariable String projectId, @PathVariable String userId) {
+        projectService.delegateLeader(UUID.fromString(projectId), userId);
+        return SuccessResponse.of(ApiStatus._OK, null);
     }
 
     @PutMapping("/{projectId}/apply/{userId}/approve")
@@ -232,6 +301,13 @@ public class ProjectController {
             @ApiResponse(
                     responseCode = "403",
                     description = "수정 권한이 없습니다.",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "프로젝트 모집글 혹은 사용자가 존재하지 않습니다.",
                     content = @Content(
                             schema = @Schema(implementation = ErrorResponse.class)
                     )
@@ -267,6 +343,13 @@ public class ProjectController {
             @ApiResponse(
                     responseCode = "403",
                     description = "수정 권한이 없습니다.",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "프로젝트 모집글 혹은 사용자가 존재하지 않습니다.",
                     content = @Content(
                             schema = @Schema(implementation = ErrorResponse.class)
                     )

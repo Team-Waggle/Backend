@@ -140,7 +140,7 @@ public class ProjectServiceImpl implements ProjectService{
         User currentUser = userService.getCurrentUser();
 
         if (!getLeader(project).getId().equals(currentUser.getId())) {
-            throw new AccessDeniedException(ApiStatus._UPDATE_ACCESS_DENIED);
+            throw new AccessDeniedException(ApiStatus._NOT_LEADER);
         }
 
         User user = userService.getUserByUserId(userId);
@@ -165,7 +165,7 @@ public class ProjectServiceImpl implements ProjectService{
         User currentUser = userService.getCurrentUser();
 
         if (!getLeader(project).getId().equals(currentUser.getId())) {
-            throw new AccessDeniedException(ApiStatus._UPDATE_ACCESS_DENIED);
+            throw new AccessDeniedException(ApiStatus._NOT_LEADER);
         }
 
         User user = userService.getUserByUserId(userId);
@@ -182,7 +182,7 @@ public class ProjectServiceImpl implements ProjectService{
         User currentUser = userService.getCurrentUser();
 
         if (!getLeader(project).getId().equals(currentUser.getId())) {
-            throw new AccessDeniedException(ApiStatus._UPDATE_ACCESS_DENIED);
+            throw new AccessDeniedException(ApiStatus._NOT_LEADER);
         }
 
         User user = userService.getUserByUserId(userId);
@@ -190,6 +190,30 @@ public class ProjectServiceImpl implements ProjectService{
         projectRepository.save(project);
 
         return getUsersByProjectId(projectId);
+    }
+
+    @Override
+    public void delegateLeader(UUID projectId, String userId) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+        User currentUser = userService.getCurrentUser();
+
+        if (!getLeader(project).getId().equals(currentUser.getId())) {
+            throw new AccessDeniedException(ApiStatus._NOT_LEADER);
+        }
+
+        User user = userService.getUserByUserId(userId);
+        project.getProjectMembers().stream()
+                .filter(member -> member.getUser().getId().equals(user.getId()))
+                .findFirst()
+                .ifPresent(member -> member.setLeader(true));
+
+        project.getProjectMembers().stream()
+                .filter(member -> member.getUser().getId().equals(currentUser.getId()))
+                .findFirst()
+                .ifPresent(member -> member.setLeader(false));
+
+        projectRepository.save(project);
     }
 
     private Set<ProjectRecruitmentJob> getProjectRecruitmentJobs(ProjectInputDto projectInputDto, Project project) {

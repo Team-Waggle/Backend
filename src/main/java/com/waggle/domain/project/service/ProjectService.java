@@ -16,4 +16,5 @@ public interface ProjectService {
     Set<User> approveAppliedUser(UUID projectId, String userId);
     Set<User> rejectAppliedUser(UUID projectId, String userId);
     Set<User> rejectMemberUser(UUID projectId, String userId);
+    void delegateLeader(UUID projectId, String userId);
 }
