@@ -33,7 +33,7 @@ public class ProjectController {
 
     private final ProjectService projectService;
 
-    @GetMapping("/post/{projectId}")
+    @GetMapping("/{projectId}/post")
     @Operation(
             summary = "프로젝트 모집글 조회",
             description = "프로젝트 모집글을 조회한다."
@@ -87,7 +87,7 @@ public class ProjectController {
         Project newProject = projectService.createProject(projectInputDto);
         return SuccessResponse.of(ApiStatus._CREATED, ProjectResponseDto.from(newProject));
     }
-    @PutMapping("/post/{projectId}")
+    @PutMapping("/{projectId}/post")
     @Operation(
             summary = "프로젝트 모집글 수정",
             description = "프로젝트 모집글을 수정한다.",
@@ -121,7 +121,7 @@ public class ProjectController {
         return SuccessResponse.of(ApiStatus._OK, ProjectResponseDto.from(updateProject));
     }
 
-    @DeleteMapping("/post/{projectId}")
+    @DeleteMapping("/{projectId}/post")
     @Operation(
             summary = "프로젝트 모집글 삭제",
             description = "프로젝트 모집글을 삭제한다.",
@@ -153,7 +153,7 @@ public class ProjectController {
         return SuccessResponse.of(ApiStatus._NO_CONTENT, null);
     }
 
-    @GetMapping("/post/{projectId}/user")
+    @GetMapping("/{projectId}/member")
     @Operation(
             summary = "프로젝트 모집글 참여자 조회",
             description = "프로젝트 모집글에 참여한 사용자들을 조회한다."
