@@ -73,7 +73,7 @@ public class ProjectServiceImpl implements ProjectService{
         User currentUser = userService.getCurrentUser();
 
         if (!getLeader(project).getId().equals(currentUser.getId())) {
-            throw new AccessDeniedException(ApiStatus._UPDATE_ACCESS_DENIED);
+            throw new AccessDeniedException(ApiStatus._NOT_LEADER);
         }
 
         project.setTitle(projectInputDto.getTitle());
@@ -105,7 +105,7 @@ public class ProjectServiceImpl implements ProjectService{
         User currentUser = userService.getCurrentUser();
 
         if (!getLeader(project).getId().equals(currentUser.getId())) {
-            throw new AccessDeniedException(ApiStatus._DELETE_ACCESS_DENIED);
+            throw new AccessDeniedException(ApiStatus._NOT_LEADER);
         }
 
         projectRepository.delete(project);
