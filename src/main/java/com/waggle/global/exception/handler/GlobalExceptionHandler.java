@@ -39,4 +39,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<BaseResponse<Object>> handleProjectException(ProjectException ex) {
         return ErrorResponse.of(ex.getStatus(), ex.getMessage());
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<BaseResponse<Object>> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return ErrorResponse.of(ApiStatus._BAD_REQUEST, ex.getMessage());
+    }
 }

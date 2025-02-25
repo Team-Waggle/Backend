@@ -1,5 +1,6 @@
 package com.waggle.config;
 
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -94,6 +95,21 @@ public class SwaggerConfig {
         return openApi -> {
             Map<String, Schema> schemas = openApi.getComponents().getSchemas();
             openApi.getComponents().setSchemas(new TreeMap<>(schemas));
+        };
+    }
+
+    @Bean
+    public OpenApiCustomizer sortPathsAlphabetically() {
+        return openApi -> {
+            openApi.setTags(List.of(
+                    new io.swagger.v3.oas.models.tags.Tag().name("인증"),
+                    new io.swagger.v3.oas.models.tags.Tag().name("사용자"),
+                    new io.swagger.v3.oas.models.tags.Tag().name("프로젝트 모집 게시글"),
+                    new io.swagger.v3.oas.models.tags.Tag().name("프로젝트 지원"),
+                    new io.swagger.v3.oas.models.tags.Tag().name("프로젝트 멤버"),
+                    new io.swagger.v3.oas.models.tags.Tag().name("프로젝트 북마크"),
+                    new io.swagger.v3.oas.models.tags.Tag().name("참조 데이터")
+            ));
         };
     }
 }

@@ -18,4 +18,13 @@ public interface ProjectService {
     Set<User> rejectAppliedUser(UUID projectId, String userId);
     Set<User> rejectMemberUser(UUID projectId, String userId);
     void delegateLeader(UUID projectId, String userId);
+    Set<Project> getUserProjects(String userId);
+    void deleteUserProject(String projectId);
+    Set<Project> getUserBookmarkProjects(String userId);
+    Project applyProject(String projectId);
+    void cancelApplyProject(String projectId);
+    Set<Project> getAppliedProjects();
+    boolean toggleCurrentUserBookmark(String projectId);
+    Set<Project> getCurrentUserBookmarkProjects();
+    Set<Project> getCurrentUserProjects();
 }
