@@ -8,6 +8,7 @@ import com.waggle.domain.user.entity.User;
 import com.waggle.domain.user.repository.UserRepository;
 import com.waggle.domain.user.service.UserService;
 import com.waggle.global.exception.AccessDeniedException;
+import com.waggle.global.exception.ProjectException;
 import com.waggle.global.response.ApiStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -230,6 +231,91 @@ public class ProjectServiceImpl implements ProjectService{
         projectRepository.save(project);
     }
 
+    @Override
+    public Set<Project> getUserProjects(String userId) {
+        User user = userService.getUserByUserId(userId);
+        return user.getProjectMembers().stream()
+                .map(ProjectMember::getProject)
+                .sorted(Comparator.comparing(Project::getCreatedAt).reversed())
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    @Override
+    @Transactional
+    public void deleteUserProject(String projectId) {
+        User user = userService.getCurrentUser();
+        Project project = projectRepository.findById(UUID.fromString(projectId))
+                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+
+        if (!project.getProjectMembers().stream().anyMatch(projectMember -> projectMember.getUser().getId().equals(user.getId()))) {
+            throw new ProjectException(ApiStatus._NOT_JOINED_PROJECT);
+        }
+
+        project.getProjectMembers().removeIf(projectMember -> projectMember.getUser().getId().equals(user.getId()));
+        projectRepository.save(project);
+    }
+
+    @Override
+    public Set<Project> getUserBookmarkProjects(String userId) {
+        User user = userService.getUserByUserId(userId);
+        return user.getProjectBookmarks().stream()
+                .map(ProjectBookmark::getProject)
+                .sorted(Comparator.comparing(Project::getCreatedAt).reversed())
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    @Override
+    public Project applyProject(String projectId) {
+        User user = userService.getCurrentUser();
+        Project project = projectRepository.findById(UUID.fromString(projectId))
+                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+
+        if (project.getProjectMembers().stream().anyMatch(projectMember -> projectMember.getUser().getId().equals(user.getId()))) {
+            throw new ProjectException(ApiStatus._ALREADY_JOINED_PROJECT);
+        }
+
+        if (project.getProjectApplicants().stream().anyMatch(projectMember -> projectMember.getUser().getId().equals(user.getId()))) {
+            throw new ProjectException(ApiStatus._ALREADY_APPLIED_PROJECT);
+        }
+
+        project.getProjectApplicants().add(ProjectApplicant.builder()
+                .project(project)
+                .user(user)
+                .build());
+
+        projectRepository.save(project);
+        return project;
+    }
+
+    @Override
+    @Transactional
+    public void cancelApplyProject(String projectId) {
+        User user = userService.getCurrentUser();
+        Project project = projectRepository.findById(UUID.fromString(projectId))
+                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+
+        project.getProjectApplicants().removeIf(projectApplicant -> projectApplicant.getUser().getId().equals(user.getId()));
+        projectRepository.save(project);
+    }
+
+    @Override
+    public Set<Project> getAppliedProjects() {
+        User user = userService.getCurrentUser();
+        return user.getProjectApplicants().stream()
+                .sorted(Comparator.comparing(ProjectApplicant::getAppliedAt).reversed())
+                .map(ProjectApplicant::getProject)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    @Override
+    public Set<Project> getCurrentUserProjects() {
+        User user = userService.getCurrentUser();
+        return user.getProjectMembers().stream()
+                .map(ProjectMember::getProject)
+                .sorted(Comparator.comparing(Project::getCreatedAt).reversed())
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
     private Set<ProjectRecruitmentJob> getProjectRecruitmentJobs(ProjectInputDto projectInputDto, Project project) {
         Set<ProjectRecruitmentJob> projectRecruitmentJobs = new HashSet<>();
         projectInputDto.getRecruitmentJobs().forEach(jobDto -> {
@@ -275,5 +361,40 @@ public class ProjectServiceImpl implements ProjectService{
                 .map(ProjectMember::getUser)
                 .findFirst()
                 .orElseThrow(() -> new EmptyResultDataAccessException(1));
+    }
+
+    @Override
+    public boolean toggleCurrentUserBookmark(String projectId) {
+        User user = userService.getCurrentUser();
+        Project project = projectRepository.findById(UUID.fromString(projectId))
+                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+        boolean isBookmarked;
+
+        if (user.getProjectBookmarks().stream().anyMatch(projectBookmark -> projectBookmark.getProject().getId().equals(project.getId()))) {
+            user.getProjectBookmarks().removeIf(projectBookmark -> projectBookmark.getProject().getId().equals(project.getId()));
+            project.setBookmarkCnt(project.getBookmarkCnt() - 1);
+            isBookmarked = false;
+        } else {
+            user.getProjectBookmarks().add(ProjectBookmark.builder()
+                    .project(project)
+                    .user(user)
+                    .build());
+            project.setBookmarkCnt(project.getBookmarkCnt() + 1);
+            isBookmarked = true;
+        }
+
+        userRepository.save(user);
+        projectRepository.save(project);
+
+        return isBookmarked;
+    }
+
+    @Override
+    public Set<Project> getCurrentUserBookmarkProjects() {
+        User user = userService.getCurrentUser();
+        return user.getProjectBookmarks().stream()
+                .map(ProjectBookmark::getProject)
+                .sorted(Comparator.comparing(Project::getCreatedAt).reversed())
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }

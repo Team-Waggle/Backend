@@ -11,14 +11,5 @@ public interface UserService {
     User getCurrentUser();
     User updateCurrentUser(MultipartFile profileImage, UserInputDto userInputDto);
     void deleteCurrentUser();
-    Set<Project> getCurrentUserProjects();
-    boolean toggleCurrentUserBookmark(String projectId);
-    Set<Project> getCurrentUserBookmarkProjects();
     User getUserByUserId(String userId);
-    Set<Project> getUserProjects(String userId);
-    void deleteUserProject(String projectId);
-    Set<Project> getUserBookmarkProjects(String userId);
-    Project applyProject(String projectId);
-    void cancelApplyProject(String projectId);
-    Set<Project> getAppliedProjects();
 }
