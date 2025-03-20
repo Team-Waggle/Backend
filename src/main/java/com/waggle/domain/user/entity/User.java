@@ -104,13 +104,4 @@ public class User {
         private Set<ProjectApplicant> projectApplicants = new HashSet<>();
         private Set<ProjectBookmark> projectBookmarks = new HashSet<>();
     }
-
-    public void clearInfo() {
-        this.userJobs.clear();
-        this.userIndustries.clear();
-        this.userSkills.clear();
-        this.userWeekDays.clear();
-        this.userIndustries.clear();
-        this.userPortfolioUrls.clear();
-    }
 }

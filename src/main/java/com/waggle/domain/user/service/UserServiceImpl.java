@@ -1,9 +1,5 @@
 package com.waggle.domain.user.service;
 
-import com.waggle.domain.project.entity.Project;
-import com.waggle.domain.project.entity.ProjectApplicant;
-import com.waggle.domain.project.entity.ProjectBookmark;
-import com.waggle.domain.project.entity.ProjectMember;
 import com.waggle.domain.project.repository.ProjectRepository;
 import com.waggle.domain.reference.entity.*;
 import com.waggle.domain.reference.service.ReferenceService;
@@ -12,7 +8,6 @@ import com.waggle.domain.user.entity.*;
 import com.waggle.domain.user.repository.UserRepository;
 import com.waggle.global.aws.service.S3Service;
 import com.waggle.global.exception.JwtTokenException;
-import com.waggle.global.exception.ProjectException;
 import com.waggle.global.response.ApiStatus;
 import com.waggle.global.secure.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +20,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -59,20 +53,20 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public User updateCurrentUser(MultipartFile profileImage, UserInputDto userInputDto) {
         User user = getCurrentUser();
-        user.clearInfo();
+        //user.clearInfo();
 
         user.setProfileImageUrl(getProfileImageUrl(profileImage, user));
         user.setName(userInputDto.getName());
-        user.setUserJobs(getUserJobs(userInputDto, user));
-        user.setUserIndustries(getUserIndustries(userInputDto, user));
-        user.setUserSkills(getUserSkills(userInputDto, user));
-        user.setUserWeekDays(getUserWeekDays(userInputDto, user));
+        setUserJobs(userInputDto, user);
+        setUserIndustries(userInputDto, user);
+        setUserSkills(userInputDto, user);
+        setUserWeekDays(userInputDto, user);
         user.setPreferTow(referenceService.getTimeOfWorkingById(userInputDto.getPreferTowId()));
         user.setPreferWow(referenceService.getWaysOfWorkingById(userInputDto.getPreferWowId()));
         user.setPreferSido(referenceService.getSidoesById(userInputDto.getPreferSidoId()));
-        user.setUserIntroduces(getIntroduces(userInputDto, user));
+        setIntroduces(userInputDto, user);
         user.setDetail(userInputDto.getDetail());
-        user.setUserPortfolioUrls(getUserPortfolioUrls(userInputDto, user));
+        setUserPortfolioUrls(userInputDto, user);
 
         return userRepository.save(user);
     }
@@ -91,8 +85,8 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new EmptyResultDataAccessException(1));
     }
 
-    private Set<UserJob> getUserJobs(UserInputDto userInputDto, User user) {
-        Set<UserJob> userJobs = new HashSet<>();
+    private void setUserJobs(UserInputDto userInputDto, User user) {
+        user.getUserJobs().clear();
         userInputDto.getJobs().forEach(userJobDto -> {
             Job job = referenceService.getJobById(userJobDto.getJobId());
             UserJob userJob = UserJob.builder()
@@ -100,52 +94,48 @@ public class UserServiceImpl implements UserService {
                     .user(user)
                     .yearCnt(userJobDto.getYearCnt())
                     .build();
-            userJobs.add(userJob);
+            user.getUserJobs().add(userJob);
         });
-        return userJobs;
     }
 
-    private Set<UserIndustry> getUserIndustries(UserInputDto userInputDto, User user) {
-        Set<UserIndustry> userIndustries = new HashSet<>();
+    private void setUserIndustries(UserInputDto userInputDto, User user) {
+        user.getUserIndustries().clear();
         userInputDto.getIndustries().forEach(industryId -> {
             Industry industry = referenceService.getIndustryById(industryId);
             UserIndustry userIndustry = UserIndustry.builder()
                     .industry(industry)
                     .user(user)
                     .build();
-            userIndustries.add(userIndustry);
+            user.getUserIndustries().add(userIndustry);
         });
-        return userIndustries;
     }
 
-    private Set<UserSkill> getUserSkills(UserInputDto userInputDto, User user) {
-        Set<UserSkill> userSkills = new HashSet<>();
+    private void setUserSkills(UserInputDto userInputDto, User user) {
+        user.getUserSkills().clear();
         userInputDto.getSkills().forEach(skillId -> {
             Skill skill = referenceService.getSkillById(skillId);
             UserSkill userSkill = UserSkill.builder()
                     .skill(skill)
                     .user(user)
                     .build();
-            userSkills.add(userSkill);
+            user.getUserSkills().add(userSkill);
         });
-        return userSkills;
     }
 
-    private Set<UserWeekDays> getUserWeekDays(UserInputDto userInputDto, User user) {
-        Set<UserWeekDays> userWeekDays = new HashSet<>();
+    private void setUserWeekDays(UserInputDto userInputDto, User user) {
+        user.getUserWeekDays().clear();
         userInputDto.getPreferWeekDays().forEach(userWeekDayId -> {
             WeekDays weekDays = referenceService.getWeekDaysById(userWeekDayId);
             UserWeekDays userWeekDay = UserWeekDays.builder()
                     .user(user)
                     .weekDays(weekDays)
                     .build();
-            userWeekDays.add(userWeekDay);
+            user.getUserWeekDays().add(userWeekDay);
         });
-        return userWeekDays;
     }
 
-    private Set<UserPortfolioUrl> getUserPortfolioUrls(UserInputDto userInputDto, User user) {
-        Set<UserPortfolioUrl> userPortfolioUrls = new HashSet<>();
+    private void setUserPortfolioUrls(UserInputDto userInputDto, User user) {
+        user.getUserPortfolioUrls().clear();
         userInputDto.getPortfolioUrls().forEach(portfolioUrlDto -> {
             PortfolioUrl portfolioUrl = referenceService.getPortfolioUrlById(portfolioUrlDto.getPortfolioUrlId());
             UserPortfolioUrl userPortfolioUrl = UserPortfolioUrl.builder()
@@ -153,22 +143,19 @@ public class UserServiceImpl implements UserService {
                     .user(user)
                     .url(portfolioUrlDto.getUrl())
                     .build();
-            userPortfolioUrls.add(userPortfolioUrl);
+            user.getUserPortfolioUrls().add(userPortfolioUrl);
         });
-        return userPortfolioUrls;
     }
 
-    private Set<UserIntroduce> getIntroduces(UserInputDto userInputDto, User user) {
-        Set<UserIntroduce> introduces = new HashSet<>();
+    private void setIntroduces(UserInputDto userInputDto, User user) {
         userInputDto.getIntroduces().forEach(introduceId -> {
             SubIntroduce introduce = referenceService.getSubIntroduceById(introduceId);
             UserIntroduce userIntroduce = UserIntroduce.builder()
                     .user(user)
                     .subIntroduce(introduce)
                     .build();
-            introduces.add(userIntroduce);
+            user.getUserIntroduces().add(userIntroduce);
         });
-        return introduces;
     }
 
     private String getProfileImageUrl(MultipartFile profileImage, User user) {
