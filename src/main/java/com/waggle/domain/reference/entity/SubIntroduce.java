@@ -40,7 +40,7 @@ public class SubIntroduce {
     private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "main_id")
+    @JoinColumn(name = "main_introduce")
     @Schema(description = "키워드 대분류")
     @JsonProperty("main_introduce")
     @JsonIgnoreProperties("sub_introduces")
