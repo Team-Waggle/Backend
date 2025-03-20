@@ -1,7 +1,6 @@
 package com.waggle.domain.user.service;
 
 import com.waggle.domain.reference.entity.*;
-import com.waggle.domain.reference.service.ReferenceService;
 import com.waggle.domain.user.dto.UserInputDto;
 import com.waggle.domain.user.dto.UserJobDto;
 import com.waggle.domain.user.dto.UserPortfolioUrlDto;
@@ -15,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -30,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @Transactional
 @TestPropertySource(locations = "file:./.env")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD) // 각 테스트 메소드 실행 후 DB 초기화
 public class UserServiceTest {
 
     @Autowired
