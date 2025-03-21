@@ -93,12 +93,15 @@ public class User {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    public void clearInfo() {
-        this.userJobs.clear();
-        this.userIndustries.clear();
-        this.userSkills.clear();
-        this.userWeekDays.clear();
-        this.userIndustries.clear();
-        this.userPortfolioUrls.clear();
+    public static class UserBuilder {
+        private Set<UserJob> userJobs = new HashSet<>();
+        private Set<UserIndustry> userIndustries = new HashSet<>();
+        private Set<UserSkill> userSkills = new HashSet<>();
+        private Set<UserWeekDays> userWeekDays = new HashSet<>();
+        private Set<UserIntroduce> userIntroduces = new HashSet<>();
+        private Set<UserPortfolioUrl> userPortfolioUrls = new HashSet<>();
+        private Set<ProjectMember> projectMembers = new HashSet<>();
+        private Set<ProjectApplicant> projectApplicants = new HashSet<>();
+        private Set<ProjectBookmark> projectBookmarks = new HashSet<>();
     }
 }

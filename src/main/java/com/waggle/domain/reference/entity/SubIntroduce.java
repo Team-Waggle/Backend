@@ -15,8 +15,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
+@AllArgsConstructor(access = AccessLevel.PUBLIC)
 @Table(name = "introduce_sub_type")
 @Schema(description = "자기소개 키워드(소분류)")
 public class SubIntroduce {
@@ -40,7 +40,7 @@ public class SubIntroduce {
     private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "main_id")
+    @JoinColumn(name = "main_introduce")
     @Schema(description = "키워드 대분류")
     @JsonProperty("main_introduce")
     @JsonIgnoreProperties("sub_introduces")

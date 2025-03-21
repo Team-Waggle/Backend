@@ -2,11 +2,13 @@ package com.waggle.domain.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.util.Set;
 
 @Getter
+@Builder
 @Schema(description = "사용자 정보 수정 DTO")
 public class UserInputDto {
 
