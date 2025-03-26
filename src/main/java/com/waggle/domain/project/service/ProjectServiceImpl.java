@@ -347,8 +347,8 @@ public class ProjectServiceImpl implements ProjectService {
             log.info("jobDto: {}", jobDto);
             ProjectRecruitmentJob projectRecruitmentJob = ProjectRecruitmentJob.builder()
                 .project(project)
-                .job(referenceService.getJobById(jobDto.getJobId()))
-                .recruitmentCnt(jobDto.getCnt())
+                .job(referenceService.getJobById(jobDto.jobId()))
+                .recruitmentCnt(jobDto.cnt())
                 .build();
             projectRecruitmentJobs.add(projectRecruitmentJob);
         });
@@ -363,8 +363,8 @@ public class ProjectServiceImpl implements ProjectService {
         projectInputDto.memberJobs().forEach(jobDto -> {
             ProjectMemberJob projectMemberJob = ProjectMemberJob.builder()
                 .project(project)
-                .job(referenceService.getJobById(jobDto.getJobId()))
-                .memberCnt(jobDto.getCnt())
+                .job(referenceService.getJobById(jobDto.jobId()))
+                .memberCnt(jobDto.cnt())
                 .build();
             projectMemberJobs.add(projectMemberJob);
         });
