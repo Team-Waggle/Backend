@@ -2,6 +2,9 @@ package com.waggle.domain.project.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.waggle.domain.reference.enums.Industry;
+import com.waggle.domain.reference.enums.Skill;
+import com.waggle.domain.reference.enums.WorkWay;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -14,12 +17,12 @@ public record ProjectInputDto(
     String title,
 
     @Schema(description = "관심 산업 분야 고유키", example = "2")
-    @JsonProperty("industry_id")
-    Long industryId,
+    @JsonProperty("industry")
+    Industry industry,
 
     @Schema(description = "진행 방식 고유키", example = "1")
-    @JsonProperty("way_of_working_id")
-    Long wayOfWorkingId,
+    @JsonProperty("way_of_working")
+    WorkWay workWay,
 
     @Schema(description = "마감 일자", example = "2021-07-01T00:00:00")
     @JsonProperty("recruitment_date")
@@ -39,8 +42,8 @@ public record ProjectInputDto(
     Set<ProjectJobInputDto> memberJobs,
 
     @Schema(description = "사용 스킬 고유키 목록", example = "[2, 4, 7]")
-    @JsonProperty("skill_ids")
-    Set<Long> skillIds,
+    @JsonProperty("skills")
+    Set<Skill> skills,
 
     @Schema(description = "소개", example = "기본적으로 Spring을 쓰실 줄 알며, RestAPI를 잘 쓰시는 분을 모집합니다.")
     @JsonProperty("detail")

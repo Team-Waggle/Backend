@@ -6,8 +6,8 @@ import com.waggle.domain.project.entity.ProjectMemberJob;
 import com.waggle.domain.project.entity.ProjectRecruitmentJob;
 import com.waggle.domain.project.entity.ProjectSkill;
 import com.waggle.domain.reference.entity.DurationOfWorking;
-import com.waggle.domain.reference.entity.Industry;
-import com.waggle.domain.reference.entity.WaysOfWorking;
+import com.waggle.domain.reference.enums.Industry;
+import com.waggle.domain.reference.enums.WorkWay;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -32,7 +32,7 @@ public record ProjectResponseDto(
 
     @Schema(description = "진행 방식")
     @JsonProperty("ways_of_working")
-    WaysOfWorking waysOfWorking,
+    WorkWay waysOfWorking,
 
     @Schema(description = "마감 일자", example = "2021-07-01T00:00:00")
     @JsonProperty("recruitment_date")
@@ -88,13 +88,13 @@ public record ProjectResponseDto(
             project.getRecruitmentDate(),
             project.getDurationOfWorking(),
             project.getRecruitmentJobs().stream()
-                .sorted(Comparator.comparing(prj -> prj.getJob().getId()))
+                .sorted(Comparator.comparing(prj -> prj.getJob().name()))
                 .collect(Collectors.toCollection(LinkedHashSet::new)),
             project.getMemberJobs().stream()
-                .sorted(Comparator.comparing(prj -> prj.getJob().getId()))
+                .sorted(Comparator.comparing(prj -> prj.getJob().name()))
                 .collect(Collectors.toCollection(LinkedHashSet::new)),
             project.getProjectSkills().stream()
-                .sorted(Comparator.comparing(prj -> prj.getSkill().getId()))
+                .sorted(Comparator.comparing(prj -> prj.getSkill().name()))
                 .collect(Collectors.toCollection(LinkedHashSet::new)),
             project.getDetail(),
             project.getConnectUrl(),
