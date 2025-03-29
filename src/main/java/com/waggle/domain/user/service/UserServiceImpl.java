@@ -1,15 +1,21 @@
 package com.waggle.domain.user.service;
 
 import com.waggle.domain.project.repository.ProjectRepository;
-import com.waggle.domain.reference.entity.*;
 import com.waggle.domain.reference.service.ReferenceService;
 import com.waggle.domain.user.dto.UserInputDto;
-import com.waggle.domain.user.entity.*;
+import com.waggle.domain.user.entity.User;
+import com.waggle.domain.user.entity.UserIndustry;
+import com.waggle.domain.user.entity.UserIntroduce;
+import com.waggle.domain.user.entity.UserJob;
+import com.waggle.domain.user.entity.UserPortfolioUrl;
+import com.waggle.domain.user.entity.UserSkill;
+import com.waggle.domain.user.entity.UserWeekDays;
 import com.waggle.domain.user.repository.UserRepository;
 import com.waggle.global.aws.service.S3Service;
 import com.waggle.global.exception.JwtTokenException;
 import com.waggle.global.response.ApiStatus;
 import com.waggle.global.secure.jwt.JwtUtil;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -18,8 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.*;
 
 @Slf4j
 @Service
@@ -35,8 +39,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getCurrentUser() {
         String authorizationHeader = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
-                .getRequest()
-                .getHeader("Authorization");
+            .getRequest()
+            .getHeader("Authorization");
 
         String token = jwtUtil.getTokenFromHeader(authorizationHeader);
 
@@ -46,7 +50,7 @@ public class UserServiceImpl implements UserService {
         }
 
         return userRepository.findByUserId(UUID.fromString(userId))
-                .orElseThrow(() -> new JwtTokenException(ApiStatus._INVALID_ACCESS_TOKEN));
+            .orElseThrow(() -> new JwtTokenException(ApiStatus._INVALID_ACCESS_TOKEN));
     }
 
     @Override
@@ -61,9 +65,9 @@ public class UserServiceImpl implements UserService {
         setUserIndustries(userInputDto, user);
         setUserSkills(userInputDto, user);
         setUserWeekDays(userInputDto, user);
-        user.setPreferTow(referenceService.getTimeOfWorkingById(userInputDto.getPreferTowId()));
-        user.setPreferWow(referenceService.getWaysOfWorkingById(userInputDto.getPreferWowId()));
-        user.setPreferSido(referenceService.getSidoesById(userInputDto.getPreferSidoId()));
+//        user.setPreferTow(referenceService.getTimeOfWorkingById(userInputDto.getPreferTowId()));
+//        user.setPreferWow(referenceService.getWaysOfWorkingById(userInputDto.getPreferWowId()));
+//        user.setPreferSido(referenceService.getSidoesById(userInputDto.getPreferSidoId()));
         setIntroduces(userInputDto, user);
         user.setDetail(userInputDto.getDetail());
         setUserPortfolioUrls(userInputDto, user);
@@ -82,18 +86,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserByUserId(String userId) {
         return userRepository.findByUserId(UUID.fromString(userId))
-                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+            .orElseThrow(() -> new EmptyResultDataAccessException(1));
     }
 
     private void setUserJobs(UserInputDto userInputDto, User user) {
         user.getUserJobs().clear();
         userInputDto.getJobs().forEach(userJobDto -> {
-            Job job = referenceService.getJobById(userJobDto.getJobId());
+//            Job job = referenceService.getJobById(userJobDto.getJobId());
             UserJob userJob = UserJob.builder()
-                    .job(job)
-                    .user(user)
-                    .yearCnt(userJobDto.getYearCnt())
-                    .build();
+//                .jobRole(job)
+                .user(user)
+                .yearCnt(userJobDto.getYearCnt())
+                .build();
             user.getUserJobs().add(userJob);
         });
     }
@@ -101,11 +105,11 @@ public class UserServiceImpl implements UserService {
     private void setUserIndustries(UserInputDto userInputDto, User user) {
         user.getUserIndustries().clear();
         userInputDto.getIndustries().forEach(industryId -> {
-            Industry industry = referenceService.getIndustryById(industryId);
+//            Industry industry = referenceService.getIndustryById(industryId);
             UserIndustry userIndustry = UserIndustry.builder()
-                    .industry(industry)
-                    .user(user)
-                    .build();
+//                .industry(industry)
+                .user(user)
+                .build();
             user.getUserIndustries().add(userIndustry);
         });
     }
@@ -113,11 +117,11 @@ public class UserServiceImpl implements UserService {
     private void setUserSkills(UserInputDto userInputDto, User user) {
         user.getUserSkills().clear();
         userInputDto.getSkills().forEach(skillId -> {
-            Skill skill = referenceService.getSkillById(skillId);
+//            Skill skill = referenceService.getSkillById(skillId);
             UserSkill userSkill = UserSkill.builder()
-                    .skill(skill)
-                    .user(user)
-                    .build();
+//                .skill(skill)
+                .user(user)
+                .build();
             user.getUserSkills().add(userSkill);
         });
     }
@@ -125,11 +129,11 @@ public class UserServiceImpl implements UserService {
     private void setUserWeekDays(UserInputDto userInputDto, User user) {
         user.getUserWeekDays().clear();
         userInputDto.getPreferWeekDays().forEach(userWeekDayId -> {
-            WeekDays weekDays = referenceService.getWeekDaysById(userWeekDayId);
+//            WeekDays weekDays = referenceService.getWeekDaysById(userWeekDayId);
             UserWeekDays userWeekDay = UserWeekDays.builder()
-                    .user(user)
-                    .weekDays(weekDays)
-                    .build();
+                .user(user)
+//                .dayOfWeek(weekDays)
+                .build();
             user.getUserWeekDays().add(userWeekDay);
         });
     }
@@ -137,23 +141,24 @@ public class UserServiceImpl implements UserService {
     private void setUserPortfolioUrls(UserInputDto userInputDto, User user) {
         user.getUserPortfolioUrls().clear();
         userInputDto.getPortfolioUrls().forEach(portfolioUrlDto -> {
-            PortfolioUrl portfolioUrl = referenceService.getPortfolioUrlById(portfolioUrlDto.getPortfolioUrlId());
+//            PortfolioUrl portfolioUrl = referenceService.getPortfolioUrlById(
+//                portfolioUrlDto.getPortfolioUrlId());
             UserPortfolioUrl userPortfolioUrl = UserPortfolioUrl.builder()
-                    .portfolioUrl(portfolioUrl)
-                    .user(user)
-                    .url(portfolioUrlDto.getUrl())
-                    .build();
+//                .portfolioUrl(portfolioUrl)
+                .user(user)
+                .url(portfolioUrlDto.getUrl())
+                .build();
             user.getUserPortfolioUrls().add(userPortfolioUrl);
         });
     }
 
     private void setIntroduces(UserInputDto userInputDto, User user) {
         userInputDto.getIntroduces().forEach(introduceId -> {
-            SubIntroduce introduce = referenceService.getSubIntroduceById(introduceId);
+//            SubIntroduce introduce = referenceService.getSubIntroduceById(introduceId);
             UserIntroduce userIntroduce = UserIntroduce.builder()
-                    .user(user)
-                    .subIntroduce(introduce)
-                    .build();
+                .user(user)
+//                .subIntroduce(introduce)
+                .build();
             user.getUserIntroduces().add(userIntroduce);
         });
     }
