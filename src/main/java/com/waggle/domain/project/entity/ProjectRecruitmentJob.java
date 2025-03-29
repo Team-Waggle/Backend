@@ -3,11 +3,20 @@ package com.waggle.domain.project.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.waggle.domain.reference.entity.Job;
-import jakarta.persistence.*;
-import lombok.*;
-
+import com.waggle.domain.reference.enums.JobRole;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import java.util.UUID;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
@@ -29,10 +38,9 @@ public class ProjectRecruitmentJob {
     @JsonIgnore
     private Project project;
 
-    @ManyToOne
     @JoinColumn(name = "job_id")
     @JsonProperty("job")
-    private Job job;
+    private JobRole job;
 
     @Column(name = "recruitment_cnt", nullable = false, columnDefinition = "integer default 0")
     @JsonProperty("recruitment_cnt")

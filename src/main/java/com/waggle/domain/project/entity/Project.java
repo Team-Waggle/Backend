@@ -1,17 +1,31 @@
 package com.waggle.domain.project.entity;
 
-import com.waggle.domain.reference.entity.Industry;
-import com.waggle.domain.reference.entity.WaysOfWorking;
 import com.waggle.domain.reference.entity.DurationOfWorking;
+import com.waggle.domain.reference.enums.Industry;
+import com.waggle.domain.reference.enums.WorkWay;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.*;
-import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Getter //getter: 값을 가져올 수 있게 해주는 것, setter: 값을 수정할 수 있게 해주는 것
@@ -30,11 +44,9 @@ public class Project {
     @Column(nullable = false)
     private String title; //제목
 
-    @ManyToOne
     private Industry industry; //산업 분야
 
-    @ManyToOne
-    private WaysOfWorking waysOfWorking; //진행 방식
+    private WorkWay waysOfWorking; //진행 방식
 
     @Column(name = "recruitment_date", nullable = false)
     private LocalDateTime recruitmentDate; //프로젝트 모집 마감 일자

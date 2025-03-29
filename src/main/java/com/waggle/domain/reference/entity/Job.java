@@ -3,18 +3,23 @@ package com.waggle.domain.reference.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.waggle.domain.project.entity.ProjectRecruitmentJob;
-import com.waggle.domain.user.entity.UserJob;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-
-import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -42,13 +47,14 @@ public class Job {
     @JsonIgnore
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL)
-    @Schema(description = "해당 직무를 선택한 사용자 목록")
-    @JsonIgnore
-    private Set<UserJob> userJobs = new HashSet<>();
+    //    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL)
+//    @Schema(description = "해당 직무를 선택한 사용자 목록")
+//    @JsonIgnore
+//    private Set<UserJob> userJobs = new HashSet<>();
 
     //new HashSet<>() = 빈 배열
-    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL) //job이 여러개 올 수 있고, 중간테이블은 project를 1개씩밖에 못가져서
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL)
+    //job이 여러개 올 수 있고, 중간테이블은 project를 1개씩밖에 못가져서
     @JsonIgnore //manyTomany로 연결되었을 때 무한 반복되는 것을 끊어내기 위해 사용
     private Set<ProjectRecruitmentJob> projectRecruitmentJobs = new HashSet<>();
 }

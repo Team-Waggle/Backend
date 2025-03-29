@@ -3,16 +3,30 @@ package com.waggle.domain.user.entity;
 import com.waggle.domain.project.entity.ProjectApplicant;
 import com.waggle.domain.project.entity.ProjectBookmark;
 import com.waggle.domain.project.entity.ProjectMember;
-import com.waggle.domain.reference.entity.Sido;
-import com.waggle.domain.reference.entity.TimeOfWorking;
-import com.waggle.domain.reference.entity.WaysOfWorking;
-import jakarta.persistence.*;
-import lombok.*;
+import com.waggle.domain.reference.enums.Sido;
+import com.waggle.domain.reference.enums.WorkTime;
+import com.waggle.domain.reference.enums.WorkWay;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
-import java.time.LocalDateTime;
-import java.util.*;
 
 @Entity
 @Getter
@@ -55,16 +69,13 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<UserWeekDays> userWeekDays = new HashSet<>();
 
-    @ManyToOne
-    @JoinColumn(name = "prefer_tow_id")
-    private TimeOfWorking preferTow;
+    @Column(name = "prefer_tow_id")
+    private WorkTime preferTow;
 
-    @ManyToOne
-    @JoinColumn(name = "prefer_wow_id")
-    private WaysOfWorking preferWow;
+    @Column(name = "prefer_wow_id")
+    private WorkWay preferWow;
 
-    @ManyToOne
-    @JoinColumn(name = "prefer_sido_id")
+    @Column(name = "prefer_sido_id")
     private Sido preferSido;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
@@ -94,6 +105,7 @@ public class User {
     private LocalDateTime updatedAt;
 
     public static class UserBuilder {
+
         private Set<UserJob> userJobs = new HashSet<>();
         private Set<UserIndustry> userIndustries = new HashSet<>();
         private Set<UserSkill> userSkills = new HashSet<>();

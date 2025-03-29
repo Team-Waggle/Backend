@@ -2,13 +2,18 @@ package com.waggle.domain.user.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.waggle.domain.reference.entity.Industry;
-import com.waggle.domain.reference.entity.SubIntroduce;
-import jakarta.persistence.*;
-import lombok.*;
-
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import java.util.UUID;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
@@ -28,8 +33,8 @@ public class UserIntroduce {
     @JsonIgnore
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "sub_introduce_id")
-    @JsonProperty("sub_introduce")
-    private SubIntroduce subIntroduce;
+//    @ManyToOne
+//    @JoinColumn(name = "sub_introduce_id")
+//    @JsonProperty("sub_introduce")
+//    private SubIntroduce subIntroduce;
 }

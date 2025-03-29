@@ -3,12 +3,22 @@ package com.waggle.domain.user.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.waggle.domain.reference.entity.Skill;
-import com.waggle.domain.reference.entity.WeekDays;
-import jakarta.persistence.*;
-import lombok.*;
-
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import java.time.DayOfWeek;
 import java.util.UUID;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
@@ -28,8 +38,8 @@ public class UserWeekDays {
     @JsonIgnore
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "week_days_id")
-    @JsonProperty("week_days")
-    private WeekDays weekDays;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "day_of_week")
+    @JsonProperty("day_of_week")
+    private DayOfWeek dayOfWeek;
 }

@@ -2,19 +2,19 @@ package com.waggle.domain.reference.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.waggle.domain.user.entity.UserSkill;
-import com.waggle.domain.user.entity.UserWeekDays;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-
-import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -47,8 +47,8 @@ public class WeekDays {
     @JsonIgnore
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "weekDays", cascade = CascadeType.ALL)
-    @Schema(description = "해당 요일을 선호하는 사용자 목록")
-    @JsonIgnore
-    private Set<UserWeekDays> userWeekDays = new HashSet<>();
+//    @OneToMany(mappedBy = "weekDays", cascade = CascadeType.ALL)
+//    @Schema(description = "해당 요일을 선호하는 사용자 목록")
+//    @JsonIgnore
+//    private Set<UserWeekDays> userWeekDays = new HashSet<>();
 }

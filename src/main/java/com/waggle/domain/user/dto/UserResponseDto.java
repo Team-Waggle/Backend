@@ -1,17 +1,25 @@
 package com.waggle.domain.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.waggle.domain.reference.entity.Sido;
-import com.waggle.domain.reference.entity.TimeOfWorking;
-import com.waggle.domain.reference.entity.WaysOfWorking;
-import com.waggle.domain.user.entity.*;
+import com.waggle.domain.reference.enums.Sido;
+import com.waggle.domain.reference.enums.WorkTime;
+import com.waggle.domain.reference.enums.WorkWay;
+import com.waggle.domain.user.entity.User;
+import com.waggle.domain.user.entity.UserIndustry;
+import com.waggle.domain.user.entity.UserIntroduce;
+import com.waggle.domain.user.entity.UserJob;
+import com.waggle.domain.user.entity.UserPortfolioUrl;
+import com.waggle.domain.user.entity.UserSkill;
+import com.waggle.domain.user.entity.UserWeekDays;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Getter
 @Builder
@@ -60,11 +68,11 @@ public class UserResponseDto {
 
     @Schema(description = "사용자 선호 작업 시간 정보")
     @JsonProperty("prefer_tow")
-    private TimeOfWorking preferTow;
+    private WorkTime preferTow;
 
     @Schema(description = "사용자 선호 작업 방식 정보")
     @JsonProperty("prefer_wow")
-    private WaysOfWorking preferWow;
+    private WorkWay preferWow;
 
     @Schema(description = "사용자 지역 정보")
     @JsonProperty("prefer_sido")
@@ -92,36 +100,36 @@ public class UserResponseDto {
 
     public static UserResponseDto from(User user) {
         return UserResponseDto.builder()
-                .id(user.getId())
-                .provider(user.getProvider())
-                .providerId(user.getProviderId())
-                .profileImageUrl(user.getProfileImageUrl())
-                .name(user.getName())
-                .email(user.getEmail())
-                .userJobs(user.getUserJobs().stream()
-                        .sorted(Comparator.comparing(uj -> uj.getJob().getId()))
-                        .collect(Collectors.toCollection(LinkedHashSet::new)))
-                .userIndustries(user.getUserIndustries().stream()
-                        .sorted(Comparator.comparing(ui -> ui.getIndustry().getId()))
-                        .collect(Collectors.toCollection(LinkedHashSet::new)))
-                .userSkills(user.getUserSkills().stream()
-                        .sorted(Comparator.comparing(us -> us.getSkill().getId()))
-                        .collect(Collectors.toCollection(LinkedHashSet::new)))
-                .userWeekDays(user.getUserWeekDays().stream()
-                        .sorted(Comparator.comparing(uwd -> uwd.getWeekDays().getId()))
-                        .collect(Collectors.toCollection(LinkedHashSet::new)))
-                .preferTow(user.getPreferTow())
-                .preferWow(user.getPreferWow())
-                .preferSido(user.getPreferSido())
-                .userIntroduces(user.getUserIntroduces().stream()
-                        .sorted(Comparator.comparing(ui -> ui.getSubIntroduce().getId()))
-                        .collect(Collectors.toCollection(LinkedHashSet::new)))
-                .detail(user.getDetail())
-                .userPortfolioUrls(user.getUserPortfolioUrls().stream()
-                        .sorted(Comparator.comparing(upu -> upu.getPortfolioUrl().getId()))
-                        .collect(Collectors.toCollection(LinkedHashSet::new)))
-                .createdAt(user.getCreatedAt())
-                .updatedAt(user.getUpdatedAt())
-                .build();
+            .id(user.getId())
+            .provider(user.getProvider())
+            .providerId(user.getProviderId())
+            .profileImageUrl(user.getProfileImageUrl())
+            .name(user.getName())
+            .email(user.getEmail())
+            .userJobs(user.getUserJobs().stream()
+                .sorted(Comparator.comparing(uj -> uj.getJobRole().name()))
+                .collect(Collectors.toCollection(LinkedHashSet::new)))
+            .userIndustries(user.getUserIndustries().stream()
+                .sorted(Comparator.comparing(ui -> ui.getIndustry().name()))
+                .collect(Collectors.toCollection(LinkedHashSet::new)))
+            .userSkills(user.getUserSkills().stream()
+                .sorted(Comparator.comparing(us -> us.getSkill().name()))
+                .collect(Collectors.toCollection(LinkedHashSet::new)))
+            .userWeekDays(user.getUserWeekDays().stream()
+                .sorted(Comparator.comparing(uwd -> uwd.getDayOfWeek().name()))
+                .collect(Collectors.toCollection(LinkedHashSet::new)))
+            .preferTow(user.getPreferTow())
+            .preferWow(user.getPreferWow())
+            .preferSido(user.getPreferSido())
+//            .userIntroduces(user.getUserIntroduces().stream()
+//                .sorted(Comparator.comparing(ui -> ui.getSubIntroduce().getId()))
+//                .collect(Collectors.toCollection(LinkedHashSet::new)))
+            .detail(user.getDetail())
+            .userPortfolioUrls(user.getUserPortfolioUrls().stream()
+                .sorted(Comparator.comparing(upu -> upu.getPortfolioUrl().name()))
+                .collect(Collectors.toCollection(LinkedHashSet::new)))
+            .createdAt(user.getCreatedAt())
+            .updatedAt(user.getUpdatedAt())
+            .build();
     }
 }
