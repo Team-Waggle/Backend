@@ -60,7 +60,7 @@ public class UserServiceImpl implements UserService {
         //user.clearInfo();
 
         user.setProfileImageUrl(getProfileImageUrl(profileImage, user));
-        user.setName(userInputDto.getName());
+        user.setName(userInputDto.name());
         setUserJobs(userInputDto, user);
         setUserIndustries(userInputDto, user);
         setUserSkills(userInputDto, user);
@@ -69,7 +69,7 @@ public class UserServiceImpl implements UserService {
 //        user.setPreferWow(referenceService.getWaysOfWorkingById(userInputDto.getPreferWowId()));
 //        user.setPreferSido(referenceService.getSidoesById(userInputDto.getPreferSidoId()));
         setIntroduces(userInputDto, user);
-        user.setDetail(userInputDto.getDetail());
+        user.setDetail(userInputDto.detail());
         setUserPortfolioUrls(userInputDto, user);
 
         return userRepository.save(user);
@@ -91,12 +91,12 @@ public class UserServiceImpl implements UserService {
 
     private void setUserJobs(UserInputDto userInputDto, User user) {
         user.getUserJobs().clear();
-        userInputDto.getJobs().forEach(userJobDto -> {
+        userInputDto.jobs().forEach(userJobDto -> {
 //            Job job = referenceService.getJobById(userJobDto.getJobId());
             UserJob userJob = UserJob.builder()
 //                .jobRole(job)
                 .user(user)
-                .yearCnt(userJobDto.getYearCnt())
+                .yearCnt(userJobDto.yearCnt())
                 .build();
             user.getUserJobs().add(userJob);
         });
@@ -104,7 +104,7 @@ public class UserServiceImpl implements UserService {
 
     private void setUserIndustries(UserInputDto userInputDto, User user) {
         user.getUserIndustries().clear();
-        userInputDto.getIndustries().forEach(industryId -> {
+        userInputDto.industries().forEach(industryId -> {
 //            Industry industry = referenceService.getIndustryById(industryId);
             UserIndustry userIndustry = UserIndustry.builder()
 //                .industry(industry)
@@ -116,7 +116,7 @@ public class UserServiceImpl implements UserService {
 
     private void setUserSkills(UserInputDto userInputDto, User user) {
         user.getUserSkills().clear();
-        userInputDto.getSkills().forEach(skillId -> {
+        userInputDto.skills().forEach(skillId -> {
 //            Skill skill = referenceService.getSkillById(skillId);
             UserSkill userSkill = UserSkill.builder()
 //                .skill(skill)
@@ -128,7 +128,7 @@ public class UserServiceImpl implements UserService {
 
     private void setUserWeekDays(UserInputDto userInputDto, User user) {
         user.getUserWeekDays().clear();
-        userInputDto.getPreferWeekDays().forEach(userWeekDayId -> {
+        userInputDto.preferWeekDays().forEach(userWeekDayId -> {
 //            WeekDays weekDays = referenceService.getWeekDaysById(userWeekDayId);
             UserWeekDays userWeekDay = UserWeekDays.builder()
                 .user(user)
@@ -140,20 +140,20 @@ public class UserServiceImpl implements UserService {
 
     private void setUserPortfolioUrls(UserInputDto userInputDto, User user) {
         user.getUserPortfolioUrls().clear();
-        userInputDto.getPortfolioUrls().forEach(portfolioUrlDto -> {
+        userInputDto.portfolioUrls().forEach(portfolioUrlDto -> {
 //            PortfolioUrl portfolioUrl = referenceService.getPortfolioUrlById(
 //                portfolioUrlDto.getPortfolioUrlId());
             UserPortfolioUrl userPortfolioUrl = UserPortfolioUrl.builder()
 //                .portfolioUrl(portfolioUrl)
                 .user(user)
-                .url(portfolioUrlDto.getUrl())
+                .url(portfolioUrlDto.url())
                 .build();
             user.getUserPortfolioUrls().add(userPortfolioUrl);
         });
     }
 
     private void setIntroduces(UserInputDto userInputDto, User user) {
-        userInputDto.getIntroduces().forEach(introduceId -> {
+        userInputDto.introduces().forEach(introduceId -> {
 //            SubIntroduce introduce = referenceService.getSubIntroduceById(introduceId);
             UserIntroduce userIntroduce = UserIntroduce.builder()
                 .user(user)
