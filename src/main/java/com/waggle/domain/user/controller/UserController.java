@@ -1,5 +1,6 @@
 package com.waggle.domain.user.controller;
 
+import com.waggle.domain.auth.service.AuthService;
 import com.waggle.domain.user.dto.UserInputDto;
 import com.waggle.domain.user.dto.UserResponseDto;
 import com.waggle.domain.user.entity.User;
@@ -34,6 +35,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class UserController {
 
+    private final AuthService authService;
     private final UserService userService;
 
     @GetMapping("/me")
@@ -59,7 +61,7 @@ public class UserController {
         )
     })
     public ResponseEntity<BaseResponse<UserResponseDto>> fetchMe() {
-        User currentUserUser = userService.getCurrentUser();
+        User currentUserUser = authService.getCurrentUser();
         return SuccessResponse.of(ApiStatus._OK, UserResponseDto.from(currentUserUser));
     }
 
