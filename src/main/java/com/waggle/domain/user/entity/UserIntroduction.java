@@ -2,7 +2,12 @@ package com.waggle.domain.user.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.waggle.domain.reference.enums.IntroductionType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -20,7 +25,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserIntroduce {
+public class UserIntroduction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -33,8 +38,11 @@ public class UserIntroduce {
     @JsonIgnore
     private User user;
 
-//    @ManyToOne
-//    @JoinColumn(name = "sub_introduce_id")
-//    @JsonProperty("sub_introduce")
-//    private SubIntroduce subIntroduce;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "introduction_type", nullable = false)
+    @JsonProperty("introduction_type")
+    private IntroductionType introductionType;
+
+    @JsonProperty("sub_introduction")
+    private String subIntroduction;
 }
