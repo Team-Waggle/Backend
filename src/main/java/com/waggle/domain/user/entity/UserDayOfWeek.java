@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserWeekDays {
+public class UserDayOfWeek {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
