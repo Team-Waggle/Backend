@@ -58,7 +58,7 @@ public class User {
     private String email;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    private Set<UserJob> userJobs = new HashSet<>();
+    private Set<UserJobRole> userJobRoles = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<UserIndustry> userIndustries = new HashSet<>();
@@ -67,25 +67,25 @@ public class User {
     private Set<UserSkill> userSkills = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    private Set<UserWeekDays> userWeekDays = new HashSet<>();
+    private Set<UserDayOfWeek> userDayOfWeeks = new HashSet<>();
 
-    @Column(name = "prefer_tow_id")
-    private WorkTime preferTow;
+    @Column(name = "preferred_work_time")
+    private WorkTime preferredWorkTime;
 
-    @Column(name = "prefer_wow_id")
-    private WorkWay preferWow;
+    @Column(name = "preferred_work_way")
+    private WorkWay preferredWorkWay;
 
-    @Column(name = "prefer_sido_id")
-    private Sido preferSido;
+    @Column(name = "preferred_sido")
+    private Sido preferredSido;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    private Set<UserIntroduce> userIntroduces = new HashSet<>();
+    private Set<UserIntroduction> userIntroductions = new HashSet<>();
 
     @Column(name = "detail")
     private String detail;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    private Set<UserPortfolioUrl> userPortfolioUrls = new HashSet<>();
+    private Set<UserPortfolio> userPortfolios = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<ProjectMember> projectMembers = new HashSet<>();
@@ -97,21 +97,21 @@ public class User {
     private Set<ProjectBookmark> projectBookmarks = new HashSet<>();
 
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    @Column(name = "updated_at")
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
     public static class UserBuilder {
 
-        private Set<UserJob> userJobs = new HashSet<>();
+        private Set<UserJobRole> userJobRoles = new HashSet<>();
         private Set<UserIndustry> userIndustries = new HashSet<>();
         private Set<UserSkill> userSkills = new HashSet<>();
-        private Set<UserWeekDays> userWeekDays = new HashSet<>();
-        private Set<UserIntroduce> userIntroduces = new HashSet<>();
-        private Set<UserPortfolioUrl> userPortfolioUrls = new HashSet<>();
+        private Set<UserDayOfWeek> userDayOfWeeks = new HashSet<>();
+        private Set<UserIntroduction> userIntroductions = new HashSet<>();
+        private Set<UserPortfolio> userPortfolios = new HashSet<>();
         private Set<ProjectMember> projectMembers = new HashSet<>();
         private Set<ProjectApplicant> projectApplicants = new HashSet<>();
         private Set<ProjectBookmark> projectBookmarks = new HashSet<>();
