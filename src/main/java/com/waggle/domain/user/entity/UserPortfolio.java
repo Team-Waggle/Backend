@@ -3,7 +3,7 @@ package com.waggle.domain.user.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.waggle.domain.reference.enums.PortfolioUrl;
+import com.waggle.domain.reference.enums.PortfolioType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserPortfolioUrl {
+public class UserPortfolio {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -41,7 +41,7 @@ public class UserPortfolioUrl {
     @Enumerated(EnumType.STRING)
     @Column(name = "portfolio_url")
     @JsonProperty("portfolio_url")
-    private PortfolioUrl portfolioUrl;
+    private PortfolioType portfolioType;
 
     @Column(name = "url", nullable = false, length = 1000)
     @JsonProperty("url")
