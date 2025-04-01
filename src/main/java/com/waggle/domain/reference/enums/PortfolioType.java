@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum PortfolioUrl {
+public enum PortfolioType {
     GITHUB("GitHub", "https://logo.clearbit.com/GitHub.com"),
     NOTION("Notion", "https://logo.clearbit.com/Notion.com"),
     LINKEDIN("LinkedIn", "https://logo.clearbit.com/LinkedIn.com"),

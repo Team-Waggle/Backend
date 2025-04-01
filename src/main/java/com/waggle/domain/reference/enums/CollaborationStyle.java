@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum CollaborationTendency {
+public enum CollaborationStyle {
     LEADERSHIP("리더십 스타일"),
     SUPPORTER("서포터형"),
     FREE_SPIRIT("자유로운 영혼"),
