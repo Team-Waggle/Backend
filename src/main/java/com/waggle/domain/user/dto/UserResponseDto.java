@@ -5,12 +5,12 @@ import com.waggle.domain.reference.enums.Sido;
 import com.waggle.domain.reference.enums.WorkTime;
 import com.waggle.domain.reference.enums.WorkWay;
 import com.waggle.domain.user.entity.User;
+import com.waggle.domain.user.entity.UserDayOfWeek;
 import com.waggle.domain.user.entity.UserIndustry;
-import com.waggle.domain.user.entity.UserIntroduce;
-import com.waggle.domain.user.entity.UserJob;
-import com.waggle.domain.user.entity.UserPortfolioUrl;
+import com.waggle.domain.user.entity.UserIntroduction;
+import com.waggle.domain.user.entity.UserJobRole;
+import com.waggle.domain.user.entity.UserPortfolio;
 import com.waggle.domain.user.entity.UserSkill;
-import com.waggle.domain.user.entity.UserWeekDays;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -50,7 +50,7 @@ public record UserResponseDto(
 
     @Schema(description = "사용자 직무 정보")
     @JsonProperty("jobs")
-    Set<UserJob> userJobs,
+    Set<UserJobRole> userJobRoles,
 
     @Schema(description = "사용자 관심 산업 정보")
     @JsonProperty("industries")
@@ -61,24 +61,24 @@ public record UserResponseDto(
     Set<UserSkill> userSkills,
 
     @Schema(description = "사용자 선호 요일 정보")
-    @JsonProperty("week_days")
-    Set<UserWeekDays> userWeekDays,
+    @JsonProperty("days_of_week")
+    Set<UserDayOfWeek> userDaysOfWeek,
 
     @Schema(description = "사용자 선호 작업 시간 정보")
-    @JsonProperty("prefer_tow")
-    WorkTime preferTow,
+    @JsonProperty("preferred_work_time")
+    WorkTime preferredWorkTime,
 
     @Schema(description = "사용자 선호 작업 방식 정보")
-    @JsonProperty("prefer_wow")
-    WorkWay preferWow,
+    @JsonProperty("preferred_work_way")
+    WorkWay preferredWorkWay,
 
     @Schema(description = "사용자 지역 정보")
-    @JsonProperty("prefer_sido")
-    Sido preferSido,
+    @JsonProperty("preferred_sido")
+    Sido preferredSido,
 
     @Schema(description = "사용자 소개 키워드 정보")
     @JsonProperty("introduces")
-    Set<UserIntroduce> userIntroduces,
+    Set<UserIntroduction> userIntroductions,
 
     @Schema(description = "사용자 자기소개", example = "안녕하세요.")
     @JsonProperty("detail")
@@ -86,7 +86,7 @@ public record UserResponseDto(
 
     @Schema(description = "사용자 포트폴리오 링크 정보")
     @JsonProperty("portfolio_urls")
-    Set<UserPortfolioUrl> userPortfolioUrls,
+    Set<UserPortfolio> userPortfolios,
 
     @Schema(description = "생성일자", example = "2021-07-01T00:00:00")
     @JsonProperty("created_at")
@@ -105,7 +105,7 @@ public record UserResponseDto(
             .profileImageUrl(user.getProfileImageUrl())
             .name(user.getName())
             .email(user.getEmail())
-            .userJobs(user.getUserJobs().stream()
+            .userJobRoles(user.getUserJobRoles().stream()
                 .sorted(Comparator.comparing(uj -> uj.getJobRole().name()))
                 .collect(Collectors.toCollection(LinkedHashSet::new)))
             .userIndustries(user.getUserIndustries().stream()
@@ -114,18 +114,18 @@ public record UserResponseDto(
             .userSkills(user.getUserSkills().stream()
                 .sorted(Comparator.comparing(us -> us.getSkill().name()))
                 .collect(Collectors.toCollection(LinkedHashSet::new)))
-            .userWeekDays(user.getUserWeekDays().stream()
+            .userDaysOfWeek(user.getUserDayOfWeeks().stream()
                 .sorted(Comparator.comparing(uwd -> uwd.getDayOfWeek().name()))
                 .collect(Collectors.toCollection(LinkedHashSet::new)))
-            .preferTow(user.getPreferTow())
-            .preferWow(user.getPreferWow())
-            .preferSido(user.getPreferSido())
+            .preferredWorkTime(user.getPreferredWorkTime())
+            .preferredWorkWay(user.getPreferredWorkWay())
+            .preferredSido(user.getPreferredSido())
 //            .userIntroduces(user.getUserIntroduces().stream()
 //                .sorted(Comparator.comparing(ui -> ui.getSubIntroduce().getId()))
 //                .collect(Collectors.toCollection(LinkedHashSet::new)))
             .detail(user.getDetail())
-            .userPortfolioUrls(user.getUserPortfolioUrls().stream()
-                .sorted(Comparator.comparing(upu -> upu.getPortfolioUrl().name()))
+            .userPortfolios(user.getUserPortfolios().stream()
+                .sorted(Comparator.comparing(upu -> upu.getPortfolioType().name()))
                 .collect(Collectors.toCollection(LinkedHashSet::new)))
             .createdAt(user.getCreatedAt())
             .updatedAt(user.getUpdatedAt())
