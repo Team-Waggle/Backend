@@ -103,17 +103,4 @@ public class User {
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
-
-    public static class UserBuilder {
-
-        private Set<UserJobRole> userJobRoles = new HashSet<>();
-        private Set<UserIndustry> userIndustries = new HashSet<>();
-        private Set<UserSkill> userSkills = new HashSet<>();
-        private Set<UserDayOfWeek> userDayOfWeeks = new HashSet<>();
-        private Set<UserIntroduction> userIntroductions = new HashSet<>();
-        private Set<UserPortfolio> userPortfolios = new HashSet<>();
-        private Set<ProjectMember> projectMembers = new HashSet<>();
-        private Set<ProjectApplicant> projectApplicants = new HashSet<>();
-        private Set<ProjectBookmark> projectBookmarks = new HashSet<>();
-    }
 }
