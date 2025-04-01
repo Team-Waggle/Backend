@@ -6,8 +6,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface UserService {
 
-    User getCurrentUser();
-
     User updateCurrentUser(MultipartFile profileImage, UserInputDto userInputDto);
 
     void deleteCurrentUser();
