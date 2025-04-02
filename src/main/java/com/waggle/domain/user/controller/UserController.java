@@ -1,6 +1,7 @@
 package com.waggle.domain.user.controller;
 
 import com.waggle.domain.auth.service.AuthService;
+import com.waggle.domain.user.UserInfo;
 import com.waggle.domain.user.dto.UserInputDto;
 import com.waggle.domain.user.dto.UserResponseDto;
 import com.waggle.domain.user.entity.User;
@@ -17,6 +18,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -62,7 +64,8 @@ public class UserController {
     })
     public ResponseEntity<BaseResponse<UserResponseDto>> fetchMe() {
         User currentUserUser = authService.getCurrentUser();
-        return SuccessResponse.of(ApiStatus._OK, UserResponseDto.from(currentUserUser));
+        UserInfo userInfo = userService.getUserInfoByUserId(currentUserUser.getId());
+        return SuccessResponse.of(ApiStatus._OK, UserResponseDto.from(userInfo));
     }
 
     @PutMapping(value = "/me", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -92,7 +95,8 @@ public class UserController {
         @RequestPart(value = "updateUserDto") UserInputDto userInputDto
     ) {
         User updatedUser = userService.updateCurrentUser(profileImage, userInputDto);
-        return SuccessResponse.of(ApiStatus._OK, UserResponseDto.from(updatedUser));
+        UserInfo userInfo = userService.getUserInfoByUserId(updatedUser.getId());
+        return SuccessResponse.of(ApiStatus._OK, UserResponseDto.from(userInfo));
     }
 
     @DeleteMapping("/me")
@@ -138,8 +142,8 @@ public class UserController {
             )
         )
     })
-    public ResponseEntity<BaseResponse<UserResponseDto>> fetchUser(@PathVariable String userId) {
-        User user = userService.getUserByUserId(userId);
-        return SuccessResponse.of(ApiStatus._OK, UserResponseDto.from(user));
+    public ResponseEntity<BaseResponse<UserResponseDto>> fetchUser(@PathVariable UUID userId) {
+        UserInfo userInfo = userService.getUserInfoByUserId(userId);
+        return SuccessResponse.of(ApiStatus._OK, UserResponseDto.from(userInfo));
     }
 }
