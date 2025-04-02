@@ -4,6 +4,7 @@ import com.waggle.domain.auth.service.AuthService;
 import com.waggle.domain.reference.enums.Industry;
 import com.waggle.domain.reference.enums.IntroductionType;
 import com.waggle.domain.reference.enums.Skill;
+import com.waggle.domain.user.UserInfo;
 import com.waggle.domain.user.dto.UserInputDto;
 import com.waggle.domain.user.dto.UserIntroductionDto;
 import com.waggle.domain.user.dto.UserJobRoleDto;
@@ -84,9 +85,25 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public User getUserByUserId(String userId) {
-        return userRepository.findByUserId(UUID.fromString(userId))
+    public UserInfo getUserInfoByUserId(UUID userId) {
+        User user = userRepository.findByUserId(userId)
             .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+        List<UserJobRole> userJobRoles = userJobRoleRepository.findByUserId(userId);
+        List<UserIndustry> userIndustries = userIndustryRepository.findByUserId(userId);
+        List<UserSkill> userSkills = userSkillRepository.findByUserId(userId);
+        List<UserDayOfWeek> userDaysOfWeek = userDayOfWeekRepository.findByUserId(userId);
+        List<UserIntroduction> userIntroductions = userIntroductionRepository.findByUserId(userId);
+        List<UserPortfolio> userPortfolios = userPortfolioRepository.findByUserId(userId);
+
+        return UserInfo.builder()
+            .user(user)
+            .userJobRoles(userJobRoles)
+            .userIndustries(userIndustries)
+            .userSkills(userSkills)
+            .userDaysOfWeek(userDaysOfWeek)
+            .userIntroductions(userIntroductions)
+            .userPortfolios(userPortfolios)
+            .build();
     }
 
     private void updateUserJobRoles(UUID userId, Set<UserJobRoleDto> userJobRoles) {
