@@ -3,11 +3,15 @@ package com.waggle.domain.user.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.waggle.domain.reference.enums.CollaborationStyle;
 import com.waggle.domain.reference.enums.CommunicationStyle;
+import com.waggle.domain.reference.enums.IntroductionType;
 import com.waggle.domain.reference.enums.Mbti;
 import com.waggle.domain.reference.enums.ProblemSolvingApproach;
 import com.waggle.domain.reference.enums.WorkStyle;
+import com.waggle.domain.user.entity.UserIntroduction;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public record UserIntroductionDto(
     @JsonProperty("communication_styles")
@@ -31,4 +35,40 @@ public record UserIntroductionDto(
     Mbti mbti
 ) {
 
+    public static UserIntroductionDto from(List<UserIntroduction> introductions) {
+        Set<CommunicationStyle> communicationStyles = introductions.stream()
+            .filter(intro -> intro.getIntroductionType() == IntroductionType.COMMUNICATION_STYLE)
+            .map(intro -> CommunicationStyle.valueOf(intro.getSubIntroduction()))
+            .collect(Collectors.toSet());
+
+        Set<CollaborationStyle> collaborationStyles = introductions.stream()
+            .filter(intro -> intro.getIntroductionType() == IntroductionType.COLLABORATION_STYLE)
+            .map(intro -> CollaborationStyle.valueOf(intro.getSubIntroduction()))
+            .collect(Collectors.toSet());
+
+        Set<WorkStyle> workStyles = introductions.stream()
+            .filter(intro -> intro.getIntroductionType() == IntroductionType.WORK_STYLE)
+            .map(intro -> WorkStyle.valueOf(intro.getSubIntroduction()))
+            .collect(Collectors.toSet());
+
+        Set<ProblemSolvingApproach> problemSolvingApproaches = introductions.stream()
+            .filter(
+                intro -> intro.getIntroductionType() == IntroductionType.PROBLEM_SOLVING_APPROACH)
+            .map(intro -> ProblemSolvingApproach.valueOf(intro.getSubIntroduction()))
+            .collect(Collectors.toSet());
+
+        Mbti mbti = introductions.stream()
+            .filter(intro -> intro.getIntroductionType() == IntroductionType.MBTI)
+            .findFirst()
+            .map(intro -> Mbti.valueOf(intro.getSubIntroduction()))
+            .orElse(null);
+
+        return new UserIntroductionDto(
+            communicationStyles,
+            collaborationStyles,
+            workStyles,
+            problemSolvingApproaches,
+            mbti
+        );
+    }
 }

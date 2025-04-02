@@ -2,6 +2,7 @@ package com.waggle.domain.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.waggle.domain.reference.enums.PortfolioType;
+import com.waggle.domain.user.entity.UserPortfolio;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public record UserPortfolioDto(
@@ -15,4 +16,7 @@ public record UserPortfolioDto(
     String url
 ) {
 
+    public static UserPortfolioDto from(UserPortfolio userPortfolio) {
+        return new UserPortfolioDto(userPortfolio.getPortfolioType(), userPortfolio.getUrl());
+    }
 }

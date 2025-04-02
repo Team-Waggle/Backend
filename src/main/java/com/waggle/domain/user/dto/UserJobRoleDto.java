@@ -2,6 +2,7 @@ package com.waggle.domain.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.waggle.domain.reference.enums.JobRole;
+import com.waggle.domain.user.entity.UserJobRole;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public record UserJobRoleDto(
@@ -15,4 +16,7 @@ public record UserJobRoleDto(
     int yearCnt
 ) {
 
+    public static UserJobRoleDto from(UserJobRole userJobRole) {
+        return new UserJobRoleDto(userJobRole.getJobRole(), userJobRole.getYearCnt());
+    }
 }
