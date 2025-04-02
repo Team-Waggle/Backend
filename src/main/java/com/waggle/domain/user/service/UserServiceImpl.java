@@ -83,6 +83,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public User getUserByUserId(String userId) {
         return userRepository.findByUserId(UUID.fromString(userId))
             .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
