@@ -81,6 +81,12 @@ public class UserServiceImpl implements UserService {
         User user = authService.getCurrentUser();
         s3Service.deleteFile(user.getProfileImageUrl());
         userRepository.delete(user);
+        userJobRoleRepository.deleteByUserId(user.getId());
+        userIndustryRepository.deleteByUserId(user.getId());
+        userSkillRepository.deleteByUserId(user.getId());
+        userDayOfWeekRepository.deleteByUserId(user.getId());
+        userIntroductionRepository.deleteByUserId(user.getId());
+        userPortfolioRepository.deleteByUserId(user.getId());
     }
 
     @Override
