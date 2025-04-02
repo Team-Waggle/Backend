@@ -1,7 +1,9 @@
 package com.waggle.domain.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.waggle.domain.reference.enums.Industry;
 import com.waggle.domain.reference.enums.Sido;
+import com.waggle.domain.reference.enums.Skill;
 import com.waggle.domain.reference.enums.WorkTime;
 import com.waggle.domain.reference.enums.WorkWay;
 import com.waggle.domain.user.entity.User;
@@ -12,9 +14,11 @@ import com.waggle.domain.user.entity.UserJobRole;
 import com.waggle.domain.user.entity.UserPortfolio;
 import com.waggle.domain.user.entity.UserSkill;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -49,44 +53,44 @@ public record UserResponseDto(
     String email,
 
     @Schema(description = "사용자 직무 정보")
-    @JsonProperty("jobs")
-    Set<UserJobRole> userJobRoles,
+    @JsonProperty("job_roles")
+    Set<UserJobRoleDto> userJobRoles,
 
     @Schema(description = "사용자 관심 산업 정보")
     @JsonProperty("industries")
-    Set<UserIndustry> userIndustries,
+    Set<Industry> industries,
 
     @Schema(description = "사용자 보유 기술 정보")
     @JsonProperty("skills")
-    Set<UserSkill> userSkills,
+    Set<Skill> skills,
 
     @Schema(description = "사용자 선호 요일 정보")
     @JsonProperty("days_of_week")
-    Set<UserDayOfWeek> userDaysOfWeek,
+    Set<DayOfWeek> daysOfWeek,
 
     @Schema(description = "사용자 선호 작업 시간 정보")
     @JsonProperty("preferred_work_time")
-    WorkTime preferredWorkTime,
+    WorkTime workTime,
 
     @Schema(description = "사용자 선호 작업 방식 정보")
     @JsonProperty("preferred_work_way")
-    WorkWay preferredWorkWay,
+    WorkWay workWay,
 
     @Schema(description = "사용자 지역 정보")
     @JsonProperty("preferred_sido")
-    Sido preferredSido,
+    Sido sido,
 
     @Schema(description = "사용자 소개 키워드 정보")
-    @JsonProperty("introduces")
-    Set<UserIntroduction> userIntroductions,
+    @JsonProperty("introductions")
+    UserIntroductionDto userIntroductions,
 
     @Schema(description = "사용자 자기소개", example = "안녕하세요.")
     @JsonProperty("detail")
     String detail,
 
-    @Schema(description = "사용자 포트폴리오 링크 정보")
-    @JsonProperty("portfolio_urls")
-    Set<UserPortfolio> userPortfolios,
+    @Schema(description = "사용자 포트폴리오 정보")
+    @JsonProperty("portfolios")
+    Set<UserPortfolioDto> userPortfolios,
 
     @Schema(description = "생성일자", example = "2021-07-01T00:00:00")
     @JsonProperty("created_at")
@@ -97,7 +101,15 @@ public record UserResponseDto(
     LocalDateTime updatedAt
 ) {
 
-    public static UserResponseDto from(User user) {
+    public static UserResponseDto of(
+        User user,
+        List<UserJobRole> jobRoles,
+        List<UserIndustry> industries,
+        List<UserSkill> skills,
+        List<UserDayOfWeek> daysOfWeek,
+        List<UserIntroduction> introductions,
+        List<UserPortfolio> portfolios
+    ) {
         return UserResponseDto.builder()
             .id(user.getId())
             .provider(user.getProvider())
@@ -105,27 +117,30 @@ public record UserResponseDto(
             .profileImageUrl(user.getProfileImageUrl())
             .name(user.getName())
             .email(user.getEmail())
-            .userJobRoles(user.getUserJobRoles().stream()
-                .sorted(Comparator.comparing(uj -> uj.getJobRole().name()))
+            .userJobRoles(jobRoles.stream()
+                .map(UserJobRoleDto::from)
+                .sorted(Comparator.comparing(UserJobRoleDto::jobRole))
                 .collect(Collectors.toCollection(LinkedHashSet::new)))
-            .userIndustries(user.getUserIndustries().stream()
-                .sorted(Comparator.comparing(ui -> ui.getIndustry().name()))
+            .industries(industries.stream()
+                .map(UserIndustry::getIndustry)
+                .sorted(Comparator.comparing(Enum::name))
                 .collect(Collectors.toCollection(LinkedHashSet::new)))
-            .userSkills(user.getUserSkills().stream()
-                .sorted(Comparator.comparing(us -> us.getSkill().name()))
+            .skills(skills.stream()
+                .map(UserSkill::getSkill)
+                .sorted(Comparator.comparing(Enum::name))
                 .collect(Collectors.toCollection(LinkedHashSet::new)))
-            .userDaysOfWeek(user.getUserDayOfWeeks().stream()
-                .sorted(Comparator.comparing(uwd -> uwd.getDayOfWeek().name()))
+            .daysOfWeek(daysOfWeek.stream()
+                .map(UserDayOfWeek::getDayOfWeek)
+                .sorted()
                 .collect(Collectors.toCollection(LinkedHashSet::new)))
-            .preferredWorkTime(user.getPreferredWorkTime())
-            .preferredWorkWay(user.getPreferredWorkWay())
-            .preferredSido(user.getPreferredSido())
-//            .userIntroduces(user.getUserIntroduces().stream()
-//                .sorted(Comparator.comparing(ui -> ui.getSubIntroduce().getId()))
-//                .collect(Collectors.toCollection(LinkedHashSet::new)))
+            .workTime(user.getWorkTime())
+            .workWay(user.getWorkWay())
+            .sido(user.getSido())
+            .userIntroductions(UserIntroductionDto.from(introductions))
             .detail(user.getDetail())
-            .userPortfolios(user.getUserPortfolios().stream()
-                .sorted(Comparator.comparing(upu -> upu.getPortfolioType().name()))
+            .userPortfolios(portfolios.stream()
+                .map(UserPortfolioDto::from)
+                .sorted(Comparator.comparing(UserPortfolioDto::portfolioType))
                 .collect(Collectors.toCollection(LinkedHashSet::new)))
             .createdAt(user.getCreatedAt())
             .updatedAt(user.getUpdatedAt())
