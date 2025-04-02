@@ -60,8 +60,7 @@ public class ProjectApplyController {
         )
     })
     public ResponseEntity<BaseResponse<Set<UserResponseDto>>> fetchAppliedUsers(
-        @PathVariable String projectId,
-        @PathVariable String test
+        @PathVariable String projectId
     ) {
         return SuccessResponse.of(ApiStatus._OK,
             projectService.getAppliedUsersByProjectId(UUID.fromString(projectId)).stream()
