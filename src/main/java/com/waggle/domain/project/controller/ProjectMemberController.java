@@ -62,7 +62,7 @@ public class ProjectMemberController {
         @PathVariable String projectId) {
         return SuccessResponse.of(ApiStatus._OK,
             projectService.getUsersByProjectId(UUID.fromString(projectId)).stream()
-                .map(UserResponseDto::from)
+                .map(UserResponseDto::of)
                 .collect(Collectors.toCollection(LinkedHashSet::new)));
     }
 
@@ -106,7 +106,7 @@ public class ProjectMemberController {
         @PathVariable String projectId, @PathVariable String userId) {
         return SuccessResponse.of(ApiStatus._OK,
             projectService.rejectMemberUser(UUID.fromString(projectId), userId).stream()
-                .map(UserResponseDto::from)
+                .map(UserResponseDto::of)
                 .collect(Collectors.toCollection(LinkedHashSet::new)));
     }
 

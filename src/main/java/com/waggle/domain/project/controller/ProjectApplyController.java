@@ -60,10 +60,12 @@ public class ProjectApplyController {
         )
     })
     public ResponseEntity<BaseResponse<Set<UserResponseDto>>> fetchAppliedUsers(
-        @PathVariable String projectId, @PathVariable String test) {
+        @PathVariable String projectId,
+        @PathVariable String test
+    ) {
         return SuccessResponse.of(ApiStatus._OK,
             projectService.getAppliedUsersByProjectId(UUID.fromString(projectId)).stream()
-                .map(UserResponseDto::from)
+                .map(UserResponseDto::of)
                 .collect(Collectors.toCollection(LinkedHashSet::new)));
     }
 
@@ -104,10 +106,12 @@ public class ProjectApplyController {
         )
     })
     public ResponseEntity<BaseResponse<Set<UserResponseDto>>> approveUser(
-        @PathVariable String projectId, @PathVariable String userId) {
+        @PathVariable String projectId,
+        @PathVariable String userId
+    ) {
         return SuccessResponse.of(ApiStatus._OK,
             projectService.approveAppliedUser(UUID.fromString(projectId), userId).stream()
-                .map(UserResponseDto::from)
+                .map(UserResponseDto::of)
                 .collect(Collectors.toCollection(LinkedHashSet::new)));
     }
 
@@ -148,10 +152,12 @@ public class ProjectApplyController {
         )
     })
     public ResponseEntity<BaseResponse<Set<UserResponseDto>>> rejectUser(
-        @PathVariable String projectId, @PathVariable String userId) {
+        @PathVariable String projectId,
+        @PathVariable String userId
+    ) {
         return SuccessResponse.of(ApiStatus._OK,
             projectService.rejectAppliedUser(UUID.fromString(projectId), userId).stream()
-                .map(UserResponseDto::from)
+                .map(UserResponseDto::of)
                 .collect(Collectors.toCollection(LinkedHashSet::new)));
     }
 
@@ -214,7 +220,8 @@ public class ProjectApplyController {
         )
     })
     public ResponseEntity<BaseResponse<ProjectResponseDto>> applyProject(
-        @PathVariable String projectId) {
+        @PathVariable String projectId
+    ) {
         ProjectResponseDto applyProject = ProjectResponseDto.from(
             projectService.applyProject(projectId));
         return SuccessResponse.of(ApiStatus._CREATED, applyProject);

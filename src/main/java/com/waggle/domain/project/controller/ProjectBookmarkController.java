@@ -140,7 +140,8 @@ public class ProjectBookmarkController {
         )
     })
     public ResponseEntity<BaseResponse<Set<ProjectResponseDto>>> fetchUserBookmarkProjects(
-        @PathVariable String userId) {
+        @PathVariable String userId
+    ) {
         Set<ProjectResponseDto> projectResponseDtos = projectService.getUserBookmarkProjects(userId)
             .stream()
             .map(ProjectResponseDto::from)
