@@ -124,7 +124,7 @@ public class UserServiceImpl implements UserService {
             .map(dto -> UserJobRole.builder()
                 .user(user)
                 .jobRole(dto.jobRole())
-                .yearCnt(dto.yearCnt())
+                .yearCount(dto.yearCount())
                 .build())
             .toList();
 

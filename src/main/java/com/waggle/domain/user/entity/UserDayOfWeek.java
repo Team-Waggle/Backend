@@ -1,8 +1,5 @@
 package com.waggle.domain.user.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -29,17 +26,13 @@ public class UserDayOfWeek {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @JsonIgnore
     private UUID id;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @JsonBackReference
-    @JsonIgnore
     private User user;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "day_of_week")
-    @JsonProperty("day_of_week")
     private DayOfWeek dayOfWeek;
 }

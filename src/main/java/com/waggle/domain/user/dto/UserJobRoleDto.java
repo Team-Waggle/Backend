@@ -11,12 +11,12 @@ public record UserJobRoleDto(
     @Schema(description = "직무", example = "BACKEND")
     JobRole jobRole,
 
-    @JsonProperty("year_cnt")
+    @JsonProperty("year_count")
     @Schema(description = "경력", example = "3")
-    int yearCnt
+    int yearCount
 ) {
 
     public static UserJobRoleDto from(UserJobRole userJobRole) {
-        return new UserJobRoleDto(userJobRole.getJobRole(), userJobRole.getYearCnt());
+        return new UserJobRoleDto(userJobRole.getJobRole(), userJobRole.getYearCount());
     }
 }

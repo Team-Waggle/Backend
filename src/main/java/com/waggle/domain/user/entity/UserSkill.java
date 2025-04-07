@@ -1,8 +1,5 @@
 package com.waggle.domain.user.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.waggle.domain.reference.enums.Skill;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,17 +26,13 @@ public class UserSkill {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @JsonIgnore
     private UUID id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    @JsonBackReference
-    @JsonIgnore
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "skill")
-    @JsonProperty("skill")
+    @Column(name = "skill", nullable = false)
     private Skill skill;
 }

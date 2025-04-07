@@ -1,8 +1,5 @@
 package com.waggle.domain.user.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.waggle.domain.reference.enums.Industry;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,17 +26,13 @@ public class UserIndustry {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @JsonIgnore
     private UUID id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    @JsonBackReference
-    @JsonIgnore
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "industry")
-    @JsonProperty("industry")
+    @Column(name = "industry", nullable = false)
     private Industry industry;
 }

@@ -1,8 +1,5 @@
 package com.waggle.domain.user.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.waggle.domain.reference.enums.JobRole;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,21 +27,16 @@ public class UserJobRole {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @JsonIgnore
     private UUID id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id")
-    @JsonBackReference
-    @JsonIgnore
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "job_role")
-    @JsonProperty("job_role")
+    @Column(name = "job_role", nullable = false)
     private JobRole jobRole;
 
-    @Column(name = "year_cnt", nullable = false)
-    @JsonProperty("year_cnt")
-    private int yearCnt;
+    @Column(name = "year_count", nullable = false)
+    private int yearCount;
 }

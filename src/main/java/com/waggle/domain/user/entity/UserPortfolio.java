@@ -1,8 +1,5 @@
 package com.waggle.domain.user.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.waggle.domain.reference.enums.PortfolioType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,21 +26,16 @@ public class UserPortfolio {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @JsonIgnore
     private UUID id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    @JsonBackReference
-    @JsonIgnore
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "portfolio_url")
-    @JsonProperty("portfolio_url")
+    @Column(name = "portfolio_type")
     private PortfolioType portfolioType;
 
     @Column(name = "url", nullable = false, length = 1000)
-    @JsonProperty("url")
     private String url;
 }
