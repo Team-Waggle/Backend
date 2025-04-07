@@ -1,8 +1,5 @@
 package com.waggle.domain.project.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.waggle.domain.reference.enums.JobRole;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,25 +20,22 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class ProjectMemberJob {
+public class ProjectRecruitment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @JsonIgnore
     private UUID id;
 
     @ManyToOne
-    @JoinColumn(name = "project_id")
-    //BackReference가 무한 반복 끊어내는거고, Ignore는 실제로는 안에 데이터가 있지만 Json에서만 안 보여줌.
-    //중간 테이블에는 JsonBackReference를 해줘야 함.
-    @JsonBackReference
-    @JsonIgnore
+    @JoinColumn(name = "project_id", nullable = false)
     private Project project;
 
-    @Column(name = "job_id")
-    @JsonProperty("job")
-    private JobRole job;
+    @Column(name = "job_role", nullable = false)
+    private JobRole jobRole;
 
-    @JsonProperty("member_cnt")
-    private int memberCnt;
+    @Column(name = "current_count", nullable = false)
+    private int currentCount;
+
+    @Column(name = "required_count", nullable = false)
+    private int requiredCount;
 }
