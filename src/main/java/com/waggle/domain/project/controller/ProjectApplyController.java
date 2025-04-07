@@ -60,10 +60,10 @@ public class ProjectApplyController {
         )
     })
     public ResponseEntity<BaseResponse<Set<UserResponseDto>>> fetchAppliedUsers(
-        @PathVariable String projectId
+        @PathVariable UUID projectId
     ) {
         return SuccessResponse.of(ApiStatus._OK,
-            projectService.getAppliedUsersByProjectId(UUID.fromString(projectId)).stream()
+            projectService.getAppliedUsersByProjectId(projectId).stream()
                 .map(UserResponseDto::of)
                 .collect(Collectors.toCollection(LinkedHashSet::new)));
     }
@@ -105,11 +105,11 @@ public class ProjectApplyController {
         )
     })
     public ResponseEntity<BaseResponse<Set<UserResponseDto>>> approveUser(
-        @PathVariable String projectId,
-        @PathVariable String userId
+        @PathVariable UUID projectId,
+        @PathVariable UUID userId
     ) {
         return SuccessResponse.of(ApiStatus._OK,
-            projectService.approveAppliedUser(UUID.fromString(projectId), userId).stream()
+            projectService.approveAppliedUser(projectId, userId).stream()
                 .map(UserResponseDto::of)
                 .collect(Collectors.toCollection(LinkedHashSet::new)));
     }
@@ -151,11 +151,11 @@ public class ProjectApplyController {
         )
     })
     public ResponseEntity<BaseResponse<Set<UserResponseDto>>> rejectUser(
-        @PathVariable String projectId,
-        @PathVariable String userId
+        @PathVariable UUID projectId,
+        @PathVariable UUID userId
     ) {
         return SuccessResponse.of(ApiStatus._OK,
-            projectService.rejectAppliedUser(UUID.fromString(projectId), userId).stream()
+            projectService.rejectAppliedUser(projectId, userId).stream()
                 .map(UserResponseDto::of)
                 .collect(Collectors.toCollection(LinkedHashSet::new)));
     }
@@ -219,7 +219,7 @@ public class ProjectApplyController {
         )
     })
     public ResponseEntity<BaseResponse<ProjectResponseDto>> applyProject(
-        @PathVariable String projectId
+        @PathVariable UUID projectId
     ) {
         ProjectResponseDto applyProject = ProjectResponseDto.from(
             projectService.applyProject(projectId));
@@ -253,7 +253,7 @@ public class ProjectApplyController {
             )
         )
     })
-    public ResponseEntity<BaseResponse<Object>> cancelApplyProject(@PathVariable String projectId) {
+    public ResponseEntity<BaseResponse<Object>> cancelApplyProject(@PathVariable UUID projectId) {
         projectService.cancelApplyProject(projectId);
         return SuccessResponse.of(ApiStatus._NO_CONTENT, null);
     }

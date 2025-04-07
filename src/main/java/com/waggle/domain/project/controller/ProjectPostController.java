@@ -61,9 +61,9 @@ public class ProjectPostController {
         )
     })
     public ResponseEntity<BaseResponse<ProjectResponseDto>> fetchProject(
-        @PathVariable String projectId
+        @PathVariable UUID projectId
     ) {
-        Project fetchProject = projectService.getProjectByProjectId(UUID.fromString(projectId));
+        Project fetchProject = projectService.getProjectByProjectId(projectId);
         return SuccessResponse.of(ApiStatus._OK, ProjectResponseDto.from(fetchProject));
     }
 
@@ -134,11 +134,10 @@ public class ProjectPostController {
         )
     })
     public ResponseEntity<BaseResponse<ProjectResponseDto>> updateProject(
-        @PathVariable String projectId,
+        @PathVariable UUID projectId,
         @RequestBody ProjectInputDto projectInputDto
     ) {
-        Project updateProject = projectService.updateProject(UUID.fromString(projectId),
-            projectInputDto);
+        Project updateProject = projectService.updateProject(projectId, projectInputDto);
         return SuccessResponse.of(ApiStatus._OK, ProjectResponseDto.from(updateProject));
     }
 
@@ -176,8 +175,8 @@ public class ProjectPostController {
             )
         )
     })
-    public ResponseEntity<BaseResponse<Object>> deleteProject(@PathVariable String projectId) {
-        projectService.deleteProject(UUID.fromString(projectId));
+    public ResponseEntity<BaseResponse<Object>> deleteProject(@PathVariable UUID projectId) {
+        projectService.deleteProject(projectId);
         return SuccessResponse.of(ApiStatus._NO_CONTENT, null);
     }
 }

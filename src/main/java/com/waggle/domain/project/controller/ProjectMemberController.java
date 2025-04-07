@@ -59,9 +59,10 @@ public class ProjectMemberController {
         )
     })
     public ResponseEntity<BaseResponse<Set<UserResponseDto>>> fetchUsers(
-        @PathVariable String projectId) {
+        @PathVariable UUID projectId
+    ) {
         return SuccessResponse.of(ApiStatus._OK,
-            projectService.getUsersByProjectId(UUID.fromString(projectId)).stream()
+            projectService.getUsersByProjectId(projectId).stream()
                 .map(UserResponseDto::of)
                 .collect(Collectors.toCollection(LinkedHashSet::new)));
     }
@@ -103,9 +104,11 @@ public class ProjectMemberController {
         )
     })
     public ResponseEntity<BaseResponse<Set<UserResponseDto>>> rejectMember(
-        @PathVariable String projectId, @PathVariable String userId) {
+        @PathVariable UUID projectId,
+        @PathVariable UUID userId
+    ) {
         return SuccessResponse.of(ApiStatus._OK,
-            projectService.rejectMemberUser(UUID.fromString(projectId), userId).stream()
+            projectService.rejectMemberUser(projectId, userId).stream()
                 .map(UserResponseDto::of)
                 .collect(Collectors.toCollection(LinkedHashSet::new)));
     }
@@ -147,8 +150,10 @@ public class ProjectMemberController {
         )
     })
     public ResponseEntity<BaseResponse<Set<UserResponseDto>>> delegateLeader(
-        @PathVariable String projectId, @PathVariable String userId) {
-        projectService.delegateLeader(UUID.fromString(projectId), userId);
+        @PathVariable UUID projectId,
+        @PathVariable UUID userId
+    ) {
+        projectService.delegateLeader(projectId, userId);
         return SuccessResponse.of(ApiStatus._OK, null);
     }
 
@@ -181,7 +186,7 @@ public class ProjectMemberController {
             )
         )
     })
-    public ResponseEntity<BaseResponse<Object>> quitMyProject(@PathVariable String projectId) {
+    public ResponseEntity<BaseResponse<Object>> quitMyProject(@PathVariable UUID projectId) {
         projectService.deleteUserProject(projectId);
         return SuccessResponse.of(ApiStatus._NO_CONTENT, null);
     }
@@ -243,7 +248,8 @@ public class ProjectMemberController {
         )
     })
     public ResponseEntity<BaseResponse<Set<ProjectResponseDto>>> fetchUserProjects(
-        @PathVariable String userId) {
+        @PathVariable UUID userId
+    ) {
         Set<ProjectResponseDto> projectResponseDtos = projectService.getUserProjects(userId)
             .stream()
             .map(ProjectResponseDto::from)

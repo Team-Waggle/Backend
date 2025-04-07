@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -68,7 +69,7 @@ public class ProjectBookmarkController {
         )
     })
     public ResponseEntity<BaseResponse<Boolean>> toggleMyBookmark(
-        @PathVariable String projectId
+        @PathVariable UUID projectId
     ) {
         boolean isBookmarked = projectService.toggleCurrentUserBookmark(projectId);
         return SuccessResponse.of(ApiStatus._OK, isBookmarked);
@@ -140,7 +141,7 @@ public class ProjectBookmarkController {
         )
     })
     public ResponseEntity<BaseResponse<Set<ProjectResponseDto>>> fetchUserBookmarkProjects(
-        @PathVariable String userId
+        @PathVariable UUID userId
     ) {
         Set<ProjectResponseDto> projectResponseDtos = projectService.getUserBookmarkProjects(userId)
             .stream()
