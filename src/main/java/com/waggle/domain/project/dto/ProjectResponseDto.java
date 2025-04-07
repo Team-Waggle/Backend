@@ -1,14 +1,13 @@
 package com.waggle.domain.project.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.waggle.domain.project.entity.Project;
-import com.waggle.domain.project.entity.ProjectMemberJob;
-import com.waggle.domain.project.entity.ProjectRecruitmentJob;
+import com.waggle.domain.project.ProjectInfo;
 import com.waggle.domain.project.entity.ProjectSkill;
-import com.waggle.domain.reference.entity.DurationOfWorking;
 import com.waggle.domain.reference.enums.Industry;
+import com.waggle.domain.reference.enums.WorkPeriod;
 import com.waggle.domain.reference.enums.WorkWay;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
@@ -32,23 +31,19 @@ public record ProjectResponseDto(
 
     @Schema(description = "진행 방식")
     @JsonProperty("ways_of_working")
-    WorkWay waysOfWorking,
+    WorkWay workWay,
 
-    @Schema(description = "마감 일자", example = "2021-07-01T00:00:00")
-    @JsonProperty("recruitment_date")
-    LocalDateTime recruitmentDate,
+    @Schema(description = "마감 일자", example = "2021-07-01")
+    @JsonProperty("recruitment_end_date")
+    LocalDate recruitmentEndDate,
 
     @Schema(description = "진행 기간")
-    @JsonProperty("duration_of_working")
-    DurationOfWorking durationOfWorking,
+    @JsonProperty("work_period")
+    WorkPeriod workPeriod,
 
-    @Schema(description = "모집 직무 및 인원")
-    @JsonProperty("recruitment_jobs")
-    Set<ProjectRecruitmentJob> recruitmentJobs,
-
-    @Schema(description = "참여한 멤버 직무 및 인원")
-    @JsonProperty("member_jobs")
-    Set<ProjectMemberJob> memberJobs,
+    @Schema(description = "직무 및 인원")
+    @JsonProperty("recruitments")
+    Set<ProjectRecruitmentDto> projectRecruitmentDtos,
 
     @Schema(description = "사용 스킬 목록")
     @JsonProperty("skills")
@@ -79,29 +74,27 @@ public record ProjectResponseDto(
     LocalDateTime updatedAt
 ) {
 
-    public static ProjectResponseDto from(Project project) {
+    public static ProjectResponseDto from(ProjectInfo projectInfo) {
         return new ProjectResponseDto(
-            project.getId(),
-            project.getTitle(),
-            project.getIndustry(),
-            project.getWaysOfWorking(),
-            project.getRecruitmentDate(),
-            project.getDurationOfWorking(),
-            project.getRecruitmentJobs().stream()
-                .sorted(Comparator.comparing(prj -> prj.getJob().name()))
+            projectInfo.project().getId(),
+            projectInfo.project().getTitle(),
+            projectInfo.project().getIndustry(),
+            projectInfo.project().getWorkWay(),
+            projectInfo.project().getRecruitmentEndDate(),
+            projectInfo.project().getWorkPeriod(),
+            projectInfo.projectRecruitments().stream()
+                .map(ProjectRecruitmentDto::from)
+                .sorted(Comparator.comparing(prj -> prj.jobRole().name()))
                 .collect(Collectors.toCollection(LinkedHashSet::new)),
-            project.getMemberJobs().stream()
-                .sorted(Comparator.comparing(prj -> prj.getJob().name()))
-                .collect(Collectors.toCollection(LinkedHashSet::new)),
-            project.getProjectSkills().stream()
+            projectInfo.projectSkills().stream()
                 .sorted(Comparator.comparing(prj -> prj.getSkill().name()))
                 .collect(Collectors.toCollection(LinkedHashSet::new)),
-            project.getDetail(),
-            project.getConnectUrl(),
-            project.getReferenceUrl(),
-            project.getBookmarkCnt(),
-            project.getCreatedAt(),
-            project.getUpdatedAt()
+            projectInfo.project().getDetail(),
+            projectInfo.project().getContactUrl(),
+            projectInfo.project().getReferenceUrl(),
+            projectInfo.project().getBookmarkCount(),
+            projectInfo.project().getCreatedAt(),
+            projectInfo.project().getUpdatedAt()
         );
     }
 }

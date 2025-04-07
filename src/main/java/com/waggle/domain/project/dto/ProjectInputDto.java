@@ -4,9 +4,10 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.waggle.domain.reference.enums.Industry;
 import com.waggle.domain.reference.enums.Skill;
+import com.waggle.domain.reference.enums.WorkPeriod;
 import com.waggle.domain.reference.enums.WorkWay;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Set;
 
 @Schema(description = "프로젝트 생성 dto")
@@ -16,22 +17,22 @@ public record ProjectInputDto(
     @JsonProperty("title")
     String title,
 
-    @Schema(description = "관심 산업 분야 고유키", example = "2")
+    @Schema(description = "관심 산업 분야", example = "FINANCE")
     @JsonProperty("industry")
     Industry industry,
 
-    @Schema(description = "진행 방식 고유키", example = "1")
-    @JsonProperty("way_of_working")
+    @Schema(description = "진행 방식", example = "ONLINE")
+    @JsonProperty("work_way")
     WorkWay workWay,
 
-    @Schema(description = "마감 일자", example = "2021-07-01T00:00:00")
-    @JsonProperty("recruitment_date")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-    LocalDateTime recruitmentDate,
+    @Schema(description = "마감 일자", example = "2021-07-01")
+    @JsonProperty("recruitment_end_date")
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    LocalDate recruitmentEndDate,
 
-    @Schema(description = "진행 기간 고유키", example = "1")
-    @JsonProperty("duration_of_working_id")
-    Long durationOfWorkingId,
+    @Schema(description = "진행 기간", example = "ONE_MONTH")
+    @JsonProperty("work_period")
+    WorkPeriod workPeriod,
 
     @Schema(description = "모집 직무 및 인원")
     @JsonProperty("recruitment_jobs")
@@ -41,7 +42,7 @@ public record ProjectInputDto(
     @JsonProperty("member_jobs")
     Set<ProjectJobInputDto> memberJobs,
 
-    @Schema(description = "사용 스킬 고유키 목록", example = "[2, 4, 7]")
+    @Schema(description = "사용 스킬 목록", example = "[\"JAVA\", \"AWS\"]")
     @JsonProperty("skills")
     Set<Skill> skills,
 
@@ -50,11 +51,12 @@ public record ProjectInputDto(
     String detail,
 
     @Schema(description = "연락 링크", example = "https://open.kakao.com/o/si3gRPMa")
-    @JsonProperty("connect_url")
-    String connectUrl,
+    @JsonProperty("contact_url")
+    String contactUrl,
 
     @Schema(description = "참조 링크", example = "www.naver.com")
     @JsonProperty("reference_url")
-    String referenceUrl) {
+    String referenceUrl
+) {
 
 }
