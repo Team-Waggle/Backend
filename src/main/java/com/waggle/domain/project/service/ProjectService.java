@@ -8,39 +8,39 @@ import java.util.UUID;
 
 public interface ProjectService {
 
-    Project getProjectByProjectId(UUID id);
+    Project getProjectByProjectId(UUID projectId);
 
     Project createProject(ProjectInputDto projectInputDto);
 
-    Project updateProject(UUID id, ProjectInputDto projectInputDto);
+    Project updateProject(UUID projectId, ProjectInputDto projectInputDto);
 
-    void deleteProject(UUID id);
+    void deleteProject(UUID projectId);
 
-    Set<User> getUsersByProjectId(UUID id);
+    Set<User> getUsersByProjectId(UUID projectId);
 
-    Set<User> getAppliedUsersByProjectId(UUID id);
+    Set<User> getAppliedUsersByProjectId(UUID projectId);
 
-    Set<User> approveAppliedUser(UUID projectId, String userId);
+    Set<User> approveAppliedUser(UUID projectId, UUID userId);
 
-    Set<User> rejectAppliedUser(UUID projectId, String userId);
+    Set<User> rejectAppliedUser(UUID projectId, UUID userId);
 
-    Set<User> rejectMemberUser(UUID projectId, String userId);
+    Set<User> rejectMemberUser(UUID projectId, UUID userId);
 
-    void delegateLeader(UUID projectId, String userId);
+    void delegateLeader(UUID projectId, UUID userId);
 
-    Set<Project> getUserProjects(String userId);
+    Set<Project> getUserProjects(UUID userId);
 
-    void deleteUserProject(String projectId);
+    void deleteUserProject(UUID projectId);
 
-    Set<Project> getUserBookmarkProjects(String userId);
+    Set<Project> getUserBookmarkProjects(UUID userId);
 
-    Project applyProject(String projectId);
+    Project applyProject(UUID projectId);
 
-    void cancelApplyProject(String projectId);
+    void cancelApplyProject(UUID projectId);
 
     Set<Project> getAppliedProjects();
 
-    boolean toggleCurrentUserBookmark(String projectId);
+    boolean toggleCurrentUserBookmark(UUID projectId);
 
     Set<Project> getCurrentUserBookmarkProjects();
 
