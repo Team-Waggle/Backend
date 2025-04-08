@@ -1,6 +1,7 @@
 package com.waggle.domain.project.service;
 
 import com.waggle.domain.auth.service.AuthService;
+import com.waggle.domain.project.ProjectInfo;
 import com.waggle.domain.project.dto.ProjectInputDto;
 import com.waggle.domain.project.dto.ProjectRecruitmentDto;
 import com.waggle.domain.project.entity.Project;
@@ -55,12 +56,6 @@ public class ProjectServiceImpl implements ProjectService {
     private final ProjectSkillRepository projectSkillRepository;
 
     @Override
-    public Project getProjectByProjectId(UUID projectId) {
-        return projectRepository.findById(projectId).orElseThrow(() ->
-            new EntityNotFoundException("Project not found with id: " + projectId));
-    }
-
-    @Override
     @Transactional
     public Project createProject(ProjectInputDto projectInputDto) {
         Project project = Project.builder()
@@ -90,6 +85,27 @@ public class ProjectServiceImpl implements ProjectService {
         projectRecruitmentRepository.saveAll(projectRecruitments);
 
         return project;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ProjectInfo getProjectInfoByProjectId(UUID projectId) {
+        Project project = projectRepository.findById(projectId).orElseThrow(() ->
+            new EntityNotFoundException("Project not found with id: " + projectId));
+        List<ProjectSkill> projectSkills = projectSkillRepository.findByProjectId(projectId);
+        List<ProjectMember> projectMembers = projectMemberRepository.findByProjectId(projectId);
+        List<ProjectApplicant> projectApplicants = projectApplicantRepository.findByProjectId(
+            projectId);
+        List<ProjectRecruitment> projectRecruitments = projectRecruitmentRepository.findByProjectId(
+            projectId);
+
+        return ProjectInfo.of(
+            project,
+            projectSkills,
+            projectMembers,
+            projectApplicants,
+            projectRecruitments
+        );
     }
 
     @Override
@@ -149,8 +165,9 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public Set<User> getUsersByProjectId(UUID projectId) {
-        Project project = projectRepository.findById(projectId)
-            .orElseThrow(() -> new EmptyResultDataAccessException(1));
+        Project project = projectRepository.findById(projectId).orElseThrow(() ->
+            new EntityNotFoundException("Project not found with id: " + projectId));
+        List<ProjectMember> projectMembers = projectMemberRepository.findByProjectId(projectId);
 
         return project.getProjectMembers().stream()
             .map(ProjectMember::getUser)
