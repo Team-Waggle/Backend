@@ -33,9 +33,9 @@ public class ProjectRecruitment {
     @Column(name = "job_role", nullable = false)
     private JobRole jobRole;
 
+    @Column(name = "remaining_count", nullable = false)
+    private int remainingCount;
+
     @Column(name = "current_count", nullable = false)
     private int currentCount;
-
-    @Column(name = "required_count", nullable = false)
-    private int requiredCount;
 }
