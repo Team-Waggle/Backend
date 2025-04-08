@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService {
     public User updateCurrentUser(MultipartFile profileImage, UserInputDto userInputDto) {
         User user = authService.getCurrentUser();
 
-        user.updateProfile(
+        user.update(
             userInputDto.name(),
             getProfileImageUrl(profileImage, user),
             userInputDto.workTime(),
