@@ -8,9 +8,7 @@ import com.waggle.domain.user.entity.UserJobRole;
 import com.waggle.domain.user.entity.UserPortfolio;
 import com.waggle.domain.user.entity.UserSkill;
 import java.util.List;
-import lombok.Builder;
 
-@Builder
 public record UserInfo(
     User user,
     List<UserJobRole> userJobRoles,
@@ -21,4 +19,23 @@ public record UserInfo(
     List<UserPortfolio> userPortfolios
 ) {
 
+    public static UserInfo of(
+        User user,
+        List<UserJobRole> userJobRoles,
+        List<UserIndustry> userIndustries,
+        List<UserSkill> userSkills,
+        List<UserDayOfWeek> userDaysOfWeek,
+        List<UserIntroduction> userIntroductions,
+        List<UserPortfolio> userPortfolios
+    ) {
+        return new UserInfo(
+            user,
+            userJobRoles,
+            userIndustries,
+            userSkills,
+            userDaysOfWeek,
+            userIntroductions,
+            userPortfolios
+        );
+    }
 }

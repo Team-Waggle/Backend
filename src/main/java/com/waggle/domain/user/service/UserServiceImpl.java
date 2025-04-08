@@ -101,15 +101,15 @@ public class UserServiceImpl implements UserService {
         List<UserIntroduction> userIntroductions = userIntroductionRepository.findByUserId(userId);
         List<UserPortfolio> userPortfolios = userPortfolioRepository.findByUserId(userId);
 
-        return UserInfo.builder()
-            .user(user)
-            .userJobRoles(userJobRoles)
-            .userIndustries(userIndustries)
-            .userSkills(userSkills)
-            .userDaysOfWeek(userDaysOfWeek)
-            .userIntroductions(userIntroductions)
-            .userPortfolios(userPortfolios)
-            .build();
+        return UserInfo.of(
+            user,
+            userJobRoles,
+            userIndustries,
+            userSkills,
+            userDaysOfWeek,
+            userIntroductions,
+            userPortfolios
+        );
     }
 
     private void updateUserJobRoles(UUID userId, Set<UserJobRoleDto> userJobRoles) {
