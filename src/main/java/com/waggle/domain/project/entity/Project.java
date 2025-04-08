@@ -91,4 +91,24 @@ public class Project {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt; //수정일자
+
+    public void update(
+        String title,
+        Industry industry,
+        WorkWay workWay,
+        LocalDate recruitmentEndDate,
+        WorkPeriod workPeriod,
+        String detail,
+        String contactUrl,
+        String referenceUrl
+    ) {
+        this.title = title;
+        this.industry = industry;
+        this.workWay = workWay;
+        this.recruitmentEndDate = recruitmentEndDate;
+        this.workPeriod = workPeriod;
+        this.detail = detail;
+        this.contactUrl = contactUrl;
+        this.referenceUrl = referenceUrl;
+    }
 }
