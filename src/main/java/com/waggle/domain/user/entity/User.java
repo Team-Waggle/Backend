@@ -76,7 +76,7 @@ public class User {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    public void updateProfile(
+    public void update(
         String name,
         String profileImageUrl,
         WorkTime workTime,
