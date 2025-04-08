@@ -34,13 +34,9 @@ public record ProjectInputDto(
     @JsonProperty("work_period")
     WorkPeriod workPeriod,
 
-    @Schema(description = "모집 직무 및 인원")
-    @JsonProperty("recruitment_jobs")
-    Set<ProjectJobInputDto> recruitmentJobs,
-
-    @Schema(description = "참여한 멤버 직무 및 인원")
-    @JsonProperty("member_jobs")
-    Set<ProjectJobInputDto> memberJobs,
+    @Schema(description = "직무 및 인원 목록")
+    @JsonProperty("recruitments")
+    Set<ProjectRecruitmentDto> projectRecruitmentDtos,
 
     @Schema(description = "사용 스킬 목록", example = "[\"JAVA\", \"AWS\"]")
     @JsonProperty("skills")

@@ -16,19 +16,14 @@ public record ProjectRecruitmentDto(
 
     @Schema(description = "현재 인원 수", example = "3")
     @JsonProperty("current_count")
-    int currentCount,
-
-    @Schema(description = "필요 인원 수", example = "5")
-    @JsonProperty("required_count")
-    int requiredCount
+    int currentCount
 ) {
 
     public static ProjectRecruitmentDto from(ProjectRecruitment recruitment) {
         return new ProjectRecruitmentDto(
             recruitment.getJobRole(),
-            recruitment.getRequiredCount() - recruitment.getCurrentCount(),
-            recruitment.getCurrentCount(),
-            recruitment.getRequiredCount()
+            recruitment.getRemainingCount(),
+            recruitment.getCurrentCount()
         );
     }
 }
