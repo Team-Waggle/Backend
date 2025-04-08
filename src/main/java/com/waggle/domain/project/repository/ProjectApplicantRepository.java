@@ -6,4 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProjectApplicantRepository extends JpaRepository<ProjectApplicant, UUID> {
 
+    void deleteByProjectId(UUID projectId);
 }

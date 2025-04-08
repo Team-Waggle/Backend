@@ -6,4 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProjectBookmarkRepository extends JpaRepository<ProjectBookmark, UUID> {
 
+    void deleteByProjectId(UUID projectId);
 }
