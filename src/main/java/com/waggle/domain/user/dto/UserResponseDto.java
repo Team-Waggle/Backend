@@ -18,9 +18,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import lombok.Builder;
 
-@Builder
 @Schema(description = "사용자 정보 응답 DTO")
 public record UserResponseDto(
 
@@ -98,40 +96,40 @@ public record UserResponseDto(
 ) {
 
     public static UserResponseDto from(UserInfo userInfo) {
-        return UserResponseDto.builder()
-            .id(userInfo.user().getId())
-            .provider(userInfo.user().getProvider())
-            .providerId(userInfo.user().getProviderId())
-            .profileImageUrl(userInfo.user().getProfileImageUrl())
-            .name(userInfo.user().getName())
-            .email(userInfo.user().getEmail())
-            .userJobRoleDtos(userInfo.userJobRoles().stream()
+        return new UserResponseDto(
+            userInfo.user().getId(),
+            userInfo.user().getProvider(),
+            userInfo.user().getProviderId(),
+            userInfo.user().getProfileImageUrl(),
+            userInfo.user().getName(),
+            userInfo.user().getEmail(),
+            userInfo.userJobRoles().stream()
                 .map(UserJobRoleDto::from)
                 .sorted(Comparator.comparing(UserJobRoleDto::jobRole))
-                .collect(Collectors.toCollection(LinkedHashSet::new)))
-            .industries(userInfo.userIndustries().stream()
+                .collect(Collectors.toCollection(LinkedHashSet::new)),
+            userInfo.userIndustries().stream()
                 .map(UserIndustry::getIndustry)
                 .sorted(Comparator.comparing(Enum::name))
-                .collect(Collectors.toCollection(LinkedHashSet::new)))
-            .skills(userInfo.userSkills().stream()
+                .collect(Collectors.toCollection(LinkedHashSet::new)),
+            userInfo.userSkills().stream()
                 .map(UserSkill::getSkill)
                 .sorted(Comparator.comparing(Enum::name))
-                .collect(Collectors.toCollection(LinkedHashSet::new)))
-            .daysOfWeek(userInfo.userDaysOfWeek().stream()
+                .collect(Collectors.toCollection(LinkedHashSet::new)),
+            userInfo.userDaysOfWeek().stream()
                 .map(UserDayOfWeek::getDayOfWeek)
                 .sorted()
-                .collect(Collectors.toCollection(LinkedHashSet::new)))
-            .workTime(userInfo.user().getWorkTime())
-            .workWay(userInfo.user().getWorkWay())
-            .sido(userInfo.user().getSido())
-            .userIntroductionDto(UserIntroductionDto.from(userInfo.userIntroductions()))
-            .detail(userInfo.user().getDetail())
-            .userPortfolioDtos(userInfo.userPortfolios().stream()
+                .collect(Collectors.toCollection(LinkedHashSet::new)),
+            userInfo.user().getWorkTime(),
+            userInfo.user().getWorkWay(),
+            userInfo.user().getSido(),
+            UserIntroductionDto.from(userInfo.userIntroductions()),
+            userInfo.user().getDetail(),
+            userInfo.userPortfolios().stream()
                 .map(UserPortfolioDto::from)
                 .sorted(Comparator.comparing(UserPortfolioDto::portfolioType))
-                .collect(Collectors.toCollection(LinkedHashSet::new)))
-            .createdAt(userInfo.user().getCreatedAt())
-            .updatedAt(userInfo.user().getUpdatedAt())
-            .build();
+                .collect(Collectors.toCollection(LinkedHashSet::new)),
+            userInfo.user().getCreatedAt(),
+            userInfo.user().getUpdatedAt()
+        );
     }
 }
