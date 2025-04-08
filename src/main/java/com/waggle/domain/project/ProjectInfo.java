@@ -13,7 +13,7 @@ public record ProjectInfo(
     Project project,
     List<ProjectSkill> projectSkills,
     List<ProjectMember> projectMembers,
-    List<ProjectApplicant> projectApplicant,
+    List<ProjectApplicant> projectApplicants,
     List<ProjectRecruitment> projectRecruitments
 ) {
 
@@ -21,14 +21,14 @@ public record ProjectInfo(
         Project project,
         List<ProjectSkill> projectSkills,
         List<ProjectMember> projectMembers,
-        List<ProjectApplicant> projectApplicant,
+        List<ProjectApplicant> projectApplicants,
         List<ProjectRecruitment> projectRecruitments
     ) {
         return new ProjectInfo(
             project,
             projectSkills,
             projectMembers,
-            projectApplicant,
+            projectApplicants,
             projectRecruitments
         );
     }
