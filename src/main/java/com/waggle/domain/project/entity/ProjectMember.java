@@ -1,9 +1,12 @@
 package com.waggle.domain.project.entity;
 
+import com.waggle.domain.reference.enums.JobRole;
 import com.waggle.domain.user.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -40,6 +43,10 @@ public class ProjectMember {
     @JoinColumn(name = "user_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "job_role", nullable = false)
+    private JobRole jobRole;
 
     @Column(name = "is_leader", nullable = false, columnDefinition = "boolean default false")
     @Schema(description = "프로젝트 리더 여부", example = "true")
