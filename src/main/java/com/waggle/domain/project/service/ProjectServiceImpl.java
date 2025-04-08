@@ -50,9 +50,9 @@ public class ProjectServiceImpl implements ProjectService {
     private final ProjectRepository projectRepository;
     private final ProjectApplicantRepository projectApplicantRepository;
     private final ProjectBookmarkRepository projectBookmarkRepository;
+    private final ProjectMemberRepository projectMemberRepository;
     private final ProjectRecruitmentRepository projectRecruitmentRepository;
     private final ProjectSkillRepository projectSkillRepository;
-    private final ProjectMemberRepository projectMemberRepository;
 
     @Override
     public Project getProjectByProjectId(UUID projectId) {
@@ -140,6 +140,11 @@ public class ProjectServiceImpl implements ProjectService {
         }
 
         projectRepository.delete(project);
+        projectApplicantRepository.deleteByProjectId(projectId);
+        projectBookmarkRepository.deleteByProjectId(projectId);
+        projectMemberRepository.deleteByProjectId(projectId);
+        projectRecruitmentRepository.deleteByProjectId(projectId);
+        projectSkillRepository.deleteByProjectId(projectId);
     }
 
     @Override
