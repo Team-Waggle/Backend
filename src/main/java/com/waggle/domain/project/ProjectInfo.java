@@ -17,4 +17,19 @@ public record ProjectInfo(
     List<ProjectRecruitment> projectRecruitments
 ) {
 
+    public static ProjectInfo of(
+        Project project,
+        List<ProjectSkill> projectSkills,
+        List<ProjectMember> projectMembers,
+        List<ProjectApplicant> projectApplicant,
+        List<ProjectRecruitment> projectRecruitments
+    ) {
+        return new ProjectInfo(
+            project,
+            projectSkills,
+            projectMembers,
+            projectApplicant,
+            projectRecruitments
+        );
+    }
 }
