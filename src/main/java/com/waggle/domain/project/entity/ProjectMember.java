@@ -55,4 +55,12 @@ public class ProjectMember {
     @CreationTimestamp
     @Schema(description = "참가 일자", example = "2021-08-01T00:00:00")
     private LocalDateTime joinedAt;
+
+    public void makeLeader() {
+        isLeader = true;
+    }
+
+    public void makeMember() {
+        isLeader = false;
+    }
 }
