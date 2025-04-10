@@ -24,5 +24,5 @@ public enum Mbti {
     ENTJ("ENTJ", "결단력 있는 통솔자");
 
     private final String code;
-    private final String description;
+    private final String displayName;
 }

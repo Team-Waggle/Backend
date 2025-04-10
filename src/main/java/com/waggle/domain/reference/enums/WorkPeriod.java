@@ -14,5 +14,5 @@ public enum WorkPeriod {
     SIX_MONTHS("6개월"),
     OVER_SIX_MONTHS("6개월 이상");
 
-    private final String description;
+    private final String displayName;
 }

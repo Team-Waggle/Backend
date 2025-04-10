@@ -24,5 +24,5 @@ public enum Sido {
     GYEONGSANGNAM("경상남도"),
     JEJU("제주특별자치도");
 
-    private final String name;
+    private final String displayName;
 }

@@ -17,5 +17,5 @@ public enum CollaborationStyle {
     DETAIL_ORIENTED("디테일 집착형"),
     FLEXIBLE_SOLVER("유연한 문제 해결자");
 
-    private final String name;
+    private final String displayName;
 }

@@ -24,5 +24,5 @@ public enum Industry {
     PARENTING("육아/출산"),
     MEDIA_ADVERTISING("미디어/광고");
 
-    private final String name;
+    private final String displayName;
 }

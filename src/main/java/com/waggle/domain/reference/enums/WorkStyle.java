@@ -17,5 +17,5 @@ public enum WorkStyle {
     DEADLINE_LOVER("마감 압박을 즐기는"),
     CREATIVE_EXPERIMENTER("창의적인 실험가");
 
-    private final String name;
+    private final String displayName;
 }

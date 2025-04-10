@@ -10,5 +10,5 @@ public enum WorkWay {
     OFFLINE("오프라인"),
     ONLINE_OFFLINE("온/오프라인");
 
-    private final String name;
+    private final String displayName;
 }

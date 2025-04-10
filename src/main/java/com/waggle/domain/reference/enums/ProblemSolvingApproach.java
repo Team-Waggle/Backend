@@ -17,5 +17,5 @@ public enum ProblemSolvingApproach {
     INTUITIVE("직관에 의존하는 스타일"),
     OPINION_FOCUSED("의견 조율을 중시하는");
 
-    private final String description;
+    private final String displayName;
 }

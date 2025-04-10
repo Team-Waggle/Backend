@@ -12,5 +12,5 @@ public enum WorkTime {
     NIGHT("심야"),
     DAWN("새벽");
 
-    private final String name;
+    private final String displayName;
 }

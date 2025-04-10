@@ -11,5 +11,5 @@ public enum ApplicationStatus {
     REJECTED("거절됨"),
     CANCELLED("취소됨");
 
-    private final String description;
+    private final String displayName;
 }

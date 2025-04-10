@@ -15,5 +15,5 @@ public enum JobRole {
     PLANNER("기획자"),
     MARKETER("마케터");
 
-    private final String name;
+    private final String displayName;
 }

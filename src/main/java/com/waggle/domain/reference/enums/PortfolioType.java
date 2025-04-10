@@ -18,6 +18,6 @@ public enum PortfolioType {
     FIGMA("Figma", "https://logo.clearbit.com/Figma.com"),
     OTHER("기타", "");
 
-    private final String name;
+    private final String displayName;
     private final String imageUrl;
 }

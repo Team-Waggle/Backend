@@ -17,6 +17,6 @@ public enum CommunicationStyle {
     EMPATHY_FOCUSED("공감 중심의 소통"),
     LOGICAL_PERSUADER("논리적으로 설득형");
 
-    private final String name;
+    private final String displayName;
 }
 

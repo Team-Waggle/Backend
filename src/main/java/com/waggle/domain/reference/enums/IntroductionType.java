@@ -12,6 +12,6 @@ public enum IntroductionType {
     PROBLEM_SOLVING_APPROACH("문제 해결 방식", ProblemSolvingApproach.class),
     MBTI("MBTI", Mbti.class);
 
-    private final String description;
+    private final String displayName;
     private final Class<? extends Enum<?>> enumClass;
 }
