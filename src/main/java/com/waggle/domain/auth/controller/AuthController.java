@@ -60,7 +60,7 @@ public class AuthController {
 //        return SuccessResponse.of(ApiStatus._CREATE_ACCESS_TOKEN, accessToken);
 //    }
 
-    @GetMapping("/token/reissue")
+    @GetMapping("/tokens/reissue")
     @Operation(
         summary = "액세스 토큰 재발급",
         description = """
