@@ -63,8 +63,8 @@ public class UserController {
         )
     })
     public ResponseEntity<BaseResponse<UserResponseDto>> fetchMe() {
-        User currentUserUser = authService.getCurrentUser();
-        UserInfo userInfo = userService.getUserInfoByUserId(currentUserUser.getId());
+        User user = authService.getCurrentUser();
+        UserInfo userInfo = userService.getUserInfoByUser(user);
         return SuccessResponse.of(ApiStatus._OK, UserResponseDto.from(userInfo));
     }
 
@@ -94,8 +94,8 @@ public class UserController {
         @RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
         @RequestPart(value = "updateUserDto") UserInputDto userInputDto
     ) {
-        User updatedUser = userService.updateCurrentUser(profileImage, userInputDto);
-        UserInfo userInfo = userService.getUserInfoByUserId(updatedUser.getId());
+        User user = userService.updateCurrentUser(profileImage, userInputDto);
+        UserInfo userInfo = userService.getUserInfoByUser(user);
         return SuccessResponse.of(ApiStatus._OK, UserResponseDto.from(userInfo));
     }
 
@@ -143,7 +143,8 @@ public class UserController {
         )
     })
     public ResponseEntity<BaseResponse<UserResponseDto>> fetchUser(@PathVariable UUID userId) {
-        UserInfo userInfo = userService.getUserInfoByUserId(userId);
+        User user = userService.getUserById(userId);
+        UserInfo userInfo = userService.getUserInfoByUser(user);
         return SuccessResponse.of(ApiStatus._OK, UserResponseDto.from(userInfo));
     }
 }
