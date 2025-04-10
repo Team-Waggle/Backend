@@ -113,13 +113,13 @@ public class ReferenceController {
         return SuccessResponse.of(ApiStatus._OK, List.of(WorkWay.values()));
     }
 
-    @GetMapping("/sidoes")
+    @GetMapping("/sidos")
     @Operation(summary = "시/도 조회", description = "시/도 목록을 전부 조회합니다.")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "시/도 조회 성공", content = @Content(schema = @Schema(implementation = SidosSuccessResponse.class))),
         @ApiResponse(responseCode = "404", description = "시/도가 존재하지 않음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<BaseResponse<Object>> fetchSidoes() {
+    public ResponseEntity<BaseResponse<Object>> fetchSidos() {
         return SuccessResponse.of(ApiStatus._OK, List.of(Sido.values()));
     }
 
