@@ -111,4 +111,12 @@ public class Project {
         this.contactUrl = contactUrl;
         this.referenceUrl = referenceUrl;
     }
+
+    public void incrementBookmarkCount() {
+        bookmarkCount++;
+    }
+
+    public void decrementBookmarkCount() {
+        bookmarkCount--;
+    }
 }
