@@ -42,8 +42,8 @@ public class ReferenceController {
         @ApiResponse(responseCode = "200", description = "산업 분야 조회 성공", content = @Content(schema = @Schema(implementation = IndustriesSuccessResponse.class))),
         @ApiResponse(responseCode = "404", description = "산업 분야가 존재하지 않음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<BaseResponse<Object>> fetchIndustrial() {
-        return SuccessResponse.of(ApiStatus._OK, referenceService.getIndustrials());
+    public ResponseEntity<BaseResponse<Object>> fetchIndustries() {
+        return SuccessResponse.of(ApiStatus._OK, referenceService.getIndustries());
     }
 
     @GetMapping("/skill")
@@ -52,7 +52,7 @@ public class ReferenceController {
         @ApiResponse(responseCode = "200", description = "기술 조회 성공", content = @Content(schema = @Schema(implementation = SkillsSuccessResponse.class))),
         @ApiResponse(responseCode = "404", description = "기술이 존재하지 않음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<BaseResponse<Object>> fetchSkill() {
+    public ResponseEntity<BaseResponse<Object>> fetchSkills() {
         return SuccessResponse.of(ApiStatus._OK, referenceService.getSkills());
     }
 
@@ -62,8 +62,8 @@ public class ReferenceController {
         @ApiResponse(responseCode = "200", description = "직무 조회 성공", content = @Content(schema = @Schema(implementation = JobsSuccessResponse.class))),
         @ApiResponse(responseCode = "404", description = "직무가 존재하지 않음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<BaseResponse<Object>> fetchJob() {
-        return SuccessResponse.of(ApiStatus._OK, referenceService.getJobs());
+    public ResponseEntity<BaseResponse<Object>> fetchJobRoles() {
+        return SuccessResponse.of(ApiStatus._OK, referenceService.getJobRoles());
     }
 
     @GetMapping("/week-days")
@@ -72,8 +72,8 @@ public class ReferenceController {
         @ApiResponse(responseCode = "200", description = "요일 조회 성공", content = @Content(schema = @Schema(implementation = WeekDaysSuccessResponse.class))),
         @ApiResponse(responseCode = "404", description = "요일이 존재하지 않음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<BaseResponse<Object>> fetchWeekDays() {
-        return SuccessResponse.of(ApiStatus._OK, referenceService.getWeekDays());
+    public ResponseEntity<BaseResponse<Object>> fetchDaysOfWeek() {
+        return SuccessResponse.of(ApiStatus._OK, referenceService.getDaysOfWeek());
     }
 
     @GetMapping("/tow")
@@ -82,8 +82,8 @@ public class ReferenceController {
         @ApiResponse(responseCode = "200", description = "진행 시간대 조회 성공", content = @Content(schema = @Schema(implementation = TimeOfWorkingsSuccessResponse.class))),
         @ApiResponse(responseCode = "404", description = "진행 시간대가 존재하지 않음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<BaseResponse<Object>> fetchTimezone() {
-        return SuccessResponse.of(ApiStatus._OK, referenceService.getTimeOfWorkings());
+    public ResponseEntity<BaseResponse<Object>> fetchWorkTimes() {
+        return SuccessResponse.of(ApiStatus._OK, referenceService.getWorkTimes());
     }
 
     @GetMapping("/dow")
@@ -92,8 +92,8 @@ public class ReferenceController {
         @ApiResponse(responseCode = "200", description = "작업 기간 조회 성공", content = @Content(schema = @Schema(implementation = DurationOfWorkingsSuccessResponse.class))),
         @ApiResponse(responseCode = "404", description = "작업 기간이 존재하지 않음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<BaseResponse<Object>> fetchDurationOfWorking() {
-        return SuccessResponse.of(ApiStatus._OK, referenceService.getDurationOfWorkings());
+    public ResponseEntity<BaseResponse<Object>> fetchWorkPeriods() {
+        return SuccessResponse.of(ApiStatus._OK, referenceService.getWorkPeriods());
     }
 
     @GetMapping("/wow")
@@ -102,8 +102,8 @@ public class ReferenceController {
         @ApiResponse(responseCode = "200", description = "근무 방식 조회 성공", content = @Content(schema = @Schema(implementation = WaysOfWorkingsSuccessResponse.class))),
         @ApiResponse(responseCode = "404", description = "근무 방식이 존재하지 않음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<BaseResponse<Object>> fetchWaysOfWorking() {
-        return SuccessResponse.of(ApiStatus._OK, referenceService.getWaysOfWorkings());
+    public ResponseEntity<BaseResponse<Object>> fetchWorkWays() {
+        return SuccessResponse.of(ApiStatus._OK, referenceService.getWorkWays());
     }
 
     @GetMapping("/area/sido")
@@ -112,7 +112,7 @@ public class ReferenceController {
         @ApiResponse(responseCode = "200", description = "시/도 조회 성공", content = @Content(schema = @Schema(implementation = SidosSuccessResponse.class))),
         @ApiResponse(responseCode = "404", description = "시/도가 존재하지 않음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<BaseResponse<Object>> fetchSido() {
+    public ResponseEntity<BaseResponse<Object>> fetchSidoes() {
         return SuccessResponse.of(ApiStatus._OK, referenceService.getSidoes());
     }
 
@@ -122,8 +122,8 @@ public class ReferenceController {
         @ApiResponse(responseCode = "200", description = "포트폴리오 링크 종류 조회 성공", content = @Content(schema = @Schema(implementation = PortfolioUrlsSuccessResponse.class))),
         @ApiResponse(responseCode = "404", description = "포트폴리오 링크 종류가 존재하지 않음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<BaseResponse<Object>> fetchPortfolioUrl() {
-        return SuccessResponse.of(ApiStatus._OK, referenceService.getPortfolioUrls());
+    public ResponseEntity<BaseResponse<Object>> fetchPortfolioTypes() {
+        return SuccessResponse.of(ApiStatus._OK, referenceService.getPortfolioTypes());
     }
 
     @GetMapping("/main-introduce")
