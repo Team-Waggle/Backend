@@ -48,9 +48,9 @@ public class AuthServiceImpl implements AuthService {
             }
 
             String userId = jwtUtil.getUserIdFromToken(token);
-            return userRepository.findByUserId(UUID.fromString(userId))
+            return userRepository.findById(UUID.fromString(userId))
                 .orElseThrow(() -> {
-                    log.error("User not found with ID: {}", userId);
+                    log.error("User not found with id: {}", userId);
                     return new JwtTokenException(ApiStatus._INVALID_ACCESS_TOKEN);
                 });
         } catch (ExpiredJwtException e) {
