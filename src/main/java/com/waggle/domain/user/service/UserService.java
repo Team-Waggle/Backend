@@ -8,9 +8,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface UserService {
 
+    User getUserById(UUID userId);
+
+    UserInfo getUserInfoByUser(User user);
+
     User updateCurrentUser(MultipartFile profileImage, UserInputDto userInputDto);
 
     void deleteCurrentUser();
-
-    UserInfo getUserInfoByUserId(UUID userId);
 }

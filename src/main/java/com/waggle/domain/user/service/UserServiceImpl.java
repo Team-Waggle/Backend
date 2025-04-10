@@ -52,6 +52,35 @@ public class UserServiceImpl implements UserService {
     private final UserSkillRepository userSkillRepository;
 
     @Override
+    @Transactional(readOnly = true)
+    public User getUserById(UUID userId) {
+        return userRepository.findById(userId)
+            .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public UserInfo getUserInfoByUser(User user) {
+        List<UserJobRole> userJobRoles = userJobRoleRepository.findByUserId(user.getId());
+        List<UserIndustry> userIndustries = userIndustryRepository.findByUserId(user.getId());
+        List<UserSkill> userSkills = userSkillRepository.findByUserId(user.getId());
+        List<UserDayOfWeek> userDaysOfWeek = userDayOfWeekRepository.findByUserId(user.getId());
+        List<UserIntroduction> userIntroductions =
+            userIntroductionRepository.findByUserId(user.getId());
+        List<UserPortfolio> userPortfolios = userPortfolioRepository.findByUserId(user.getId());
+
+        return UserInfo.of(
+            user,
+            userJobRoles,
+            userIndustries,
+            userSkills,
+            userDaysOfWeek,
+            userIntroductions,
+            userPortfolios
+        );
+    }
+
+    @Override
     @Transactional
     public User updateCurrentUser(MultipartFile profileImage, UserInputDto userInputDto) {
         User user = authService.getCurrentUser();
@@ -87,29 +116,6 @@ public class UserServiceImpl implements UserService {
         userDayOfWeekRepository.deleteByUserId(user.getId());
         userIntroductionRepository.deleteByUserId(user.getId());
         userPortfolioRepository.deleteByUserId(user.getId());
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public UserInfo getUserInfoByUserId(UUID userId) {
-        User user = userRepository.findByUserId(userId)
-            .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
-        List<UserJobRole> userJobRoles = userJobRoleRepository.findByUserId(userId);
-        List<UserIndustry> userIndustries = userIndustryRepository.findByUserId(userId);
-        List<UserSkill> userSkills = userSkillRepository.findByUserId(userId);
-        List<UserDayOfWeek> userDaysOfWeek = userDayOfWeekRepository.findByUserId(userId);
-        List<UserIntroduction> userIntroductions = userIntroductionRepository.findByUserId(userId);
-        List<UserPortfolio> userPortfolios = userPortfolioRepository.findByUserId(userId);
-
-        return UserInfo.of(
-            user,
-            userJobRoles,
-            userIndustries,
-            userSkills,
-            userDaysOfWeek,
-            userIntroductions,
-            userPortfolios
-        );
     }
 
     private void updateUserJobRoles(UUID userId, Set<UserJobRoleDto> userJobRoles) {
