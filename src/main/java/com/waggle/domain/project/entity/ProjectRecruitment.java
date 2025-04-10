@@ -38,4 +38,24 @@ public class ProjectRecruitment {
 
     @Column(name = "current_count", nullable = false)
     private int currentCount;
+
+    public boolean isRecruitable() {
+        return remainingCount > 0;
+    }
+
+    public void addMember() {
+        if (remainingCount <= 0) {
+            throw new IllegalStateException("No remaining positions for job role: " + jobRole);
+        }
+        remainingCount--;
+        currentCount++;
+    }
+
+    public void removeMember() {
+        if (currentCount <= 0) {
+            throw new IllegalStateException("No current positions for job role: " + jobRole);
+        }
+        remainingCount++;
+        currentCount--;
+    }
 }
