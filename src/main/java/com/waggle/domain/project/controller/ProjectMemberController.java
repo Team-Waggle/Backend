@@ -3,6 +3,7 @@ package com.waggle.domain.project.controller;
 import com.waggle.domain.project.dto.ProjectResponseDto;
 import com.waggle.domain.project.service.ProjectService;
 import com.waggle.domain.user.dto.UserResponseDto;
+import com.waggle.domain.user.service.UserService;
 import com.waggle.global.response.ApiStatus;
 import com.waggle.global.response.BaseResponse;
 import com.waggle.global.response.ErrorResponse;
@@ -36,6 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProjectMemberController {
 
     private final ProjectService projectService;
+    private final UserService userService;
 
     @GetMapping("/{projectId}")
     @Operation(
@@ -61,10 +63,21 @@ public class ProjectMemberController {
     public ResponseEntity<BaseResponse<Set<UserResponseDto>>> fetchUsers(
         @PathVariable UUID projectId
     ) {
-        return SuccessResponse.of(ApiStatus._OK,
+        // TODO: 정렬 기준 재고
+        return SuccessResponse.of(
+            ApiStatus._OK,
             projectService.getUsersByProjectId(projectId).stream()
-                .map(UserResponseDto::of)
-                .collect(Collectors.toCollection(LinkedHashSet::new)));
+                .map(userService::getUserInfoByUser)
+                .map(UserResponseDto::from)
+//                .sorted(Comparator
+//                    .comparing((UserResponseDto dto) -> {
+//                        // JobRole 이름으로 먼저 정렬 (첫 번째 JobRole 기준 - 없으면 빈 문자열)
+//                        Set<UserJobRoleDto> jobRoles = dto.userJobRoleDtos();
+//                        return jobRoles != null && !jobRoles.isEmpty() ? jobRoles.get(0) : "";
+//                    })
+//                    .thenComparing(UserResponseDto::name))
+                .collect(Collectors.toCollection(LinkedHashSet::new))
+        );
     }
 
     @PutMapping("/{projectId}/reject/{userId}")
@@ -103,14 +116,17 @@ public class ProjectMemberController {
             )
         )
     })
-    public ResponseEntity<BaseResponse<Set<UserResponseDto>>> rejectMember(
+    public ResponseEntity<BaseResponse<Set<UserResponseDto>>> removeMember(
         @PathVariable UUID projectId,
         @PathVariable UUID userId
     ) {
-        return SuccessResponse.of(ApiStatus._OK,
-            projectService.rejectMemberUser(projectId, userId).stream()
-                .map(UserResponseDto::of)
-                .collect(Collectors.toCollection(LinkedHashSet::new)));
+        return SuccessResponse.of(
+            ApiStatus._OK,
+            projectService.removeMemberUser(projectId, userId).stream()
+                .map(userService::getUserInfoByUser)
+                .map(UserResponseDto::from)
+                .collect(Collectors.toCollection(LinkedHashSet::new))
+        );
     }
 
     @PutMapping("/{projectId}/delegate/{userId}")
@@ -187,7 +203,7 @@ public class ProjectMemberController {
         )
     })
     public ResponseEntity<BaseResponse<Object>> quitMyProject(@PathVariable UUID projectId) {
-        projectService.deleteUserProject(projectId);
+        projectService.withdrawFromProject(projectId);
         return SuccessResponse.of(ApiStatus._NO_CONTENT, null);
     }
 
@@ -214,9 +230,13 @@ public class ProjectMemberController {
         )
     })
     public ResponseEntity<BaseResponse<Set<ProjectResponseDto>>> fetchMyProjects() {
-        return SuccessResponse.of(ApiStatus._OK, projectService.getCurrentUserProjects().stream()
-            .map(ProjectResponseDto::from)
-            .collect(Collectors.toCollection(LinkedHashSet::new)));
+        return SuccessResponse.of(
+            ApiStatus._OK,
+            projectService.getCurrentUserProjects().stream()
+                .map(projectService::getProjectInfoByProject)
+                .map(ProjectResponseDto::from)
+                .collect(Collectors.toCollection(LinkedHashSet::new))
+        );
     }
 
     @GetMapping("/who/{userId}")
@@ -250,10 +270,13 @@ public class ProjectMemberController {
     public ResponseEntity<BaseResponse<Set<ProjectResponseDto>>> fetchUserProjects(
         @PathVariable UUID userId
     ) {
-        Set<ProjectResponseDto> projectResponseDtos = projectService.getUserProjects(userId)
-            .stream()
-            .map(ProjectResponseDto::from)
-            .collect(Collectors.toCollection(LinkedHashSet::new));
-        return SuccessResponse.of(ApiStatus._OK, projectResponseDtos);
+
+        return SuccessResponse.of(
+            ApiStatus._OK,
+            projectService.getUserProjects(userId).stream()
+                .map(projectService::getProjectInfoByProject)
+                .map(ProjectResponseDto::from)
+                .collect(Collectors.toCollection(LinkedHashSet::new))
+        );
     }
 }

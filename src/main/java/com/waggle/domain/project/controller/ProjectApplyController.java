@@ -1,8 +1,12 @@
 package com.waggle.domain.project.controller;
 
+import com.waggle.domain.project.ProjectInfo;
+import com.waggle.domain.project.dto.ProjectApplicationDto;
 import com.waggle.domain.project.dto.ProjectResponseDto;
+import com.waggle.domain.project.entity.Project;
 import com.waggle.domain.project.service.ProjectService;
 import com.waggle.domain.user.dto.UserResponseDto;
+import com.waggle.domain.user.service.UserService;
 import com.waggle.global.response.ApiStatus;
 import com.waggle.global.response.BaseResponse;
 import com.waggle.global.response.ErrorResponse;
@@ -27,6 +31,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,6 +42,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProjectApplyController {
 
     private final ProjectService projectService;
+    private final UserService userService;
 
     @GetMapping("/{projectId}")
     @Operation(
@@ -62,10 +68,13 @@ public class ProjectApplyController {
     public ResponseEntity<BaseResponse<Set<UserResponseDto>>> fetchAppliedUsers(
         @PathVariable UUID projectId
     ) {
-        return SuccessResponse.of(ApiStatus._OK,
+        return SuccessResponse.of(
+            ApiStatus._OK,
             projectService.getAppliedUsersByProjectId(projectId).stream()
-                .map(UserResponseDto::of)
-                .collect(Collectors.toCollection(LinkedHashSet::new)));
+                .map(userService::getUserInfoByUser)
+                .map(UserResponseDto::from)
+                .collect(Collectors.toCollection(LinkedHashSet::new))
+        );
     }
 
     @PutMapping("/{projectId}/approve/{userId}")
@@ -108,10 +117,13 @@ public class ProjectApplyController {
         @PathVariable UUID projectId,
         @PathVariable UUID userId
     ) {
-        return SuccessResponse.of(ApiStatus._OK,
+        return SuccessResponse.of(
+            ApiStatus._OK,
             projectService.approveAppliedUser(projectId, userId).stream()
-                .map(UserResponseDto::of)
-                .collect(Collectors.toCollection(LinkedHashSet::new)));
+                .map(userService::getUserInfoByUser)
+                .map(UserResponseDto::from)
+                .collect(Collectors.toCollection(LinkedHashSet::new))
+        );
     }
 
     @PutMapping("/{projectId}/reject/{userId}")
@@ -154,10 +166,13 @@ public class ProjectApplyController {
         @PathVariable UUID projectId,
         @PathVariable UUID userId
     ) {
-        return SuccessResponse.of(ApiStatus._OK,
+        return SuccessResponse.of(
+            ApiStatus._OK,
             projectService.rejectAppliedUser(projectId, userId).stream()
-                .map(UserResponseDto::of)
-                .collect(Collectors.toCollection(LinkedHashSet::new)));
+                .map(userService::getUserInfoByUser)
+                .map(UserResponseDto::from)
+                .collect(Collectors.toCollection(LinkedHashSet::new))
+        );
     }
 
     @GetMapping("/who/me")
@@ -183,10 +198,13 @@ public class ProjectApplyController {
         )
     })
     public ResponseEntity<BaseResponse<Set<ProjectResponseDto>>> getAppliedProjects() {
-        Set<ProjectResponseDto> appliedProjects = projectService.getAppliedProjects().stream()
-            .map(ProjectResponseDto::from)
-            .collect(Collectors.toCollection(LinkedHashSet::new));
-        return SuccessResponse.of(ApiStatus._OK, appliedProjects);
+        return SuccessResponse.of(
+            ApiStatus._OK,
+            projectService.getAppliedProjects().stream()
+                .map(projectService::getProjectInfoByProject)
+                .map(ProjectResponseDto::from)
+                .collect(Collectors.toCollection(LinkedHashSet::new))
+        );
     }
 
     @PostMapping("/{projectId}")
@@ -219,11 +237,12 @@ public class ProjectApplyController {
         )
     })
     public ResponseEntity<BaseResponse<ProjectResponseDto>> applyProject(
-        @PathVariable UUID projectId
+        @PathVariable UUID projectId,
+        @RequestBody ProjectApplicationDto projectApplicationDto
     ) {
-        ProjectResponseDto applyProject = ProjectResponseDto.from(
-            projectService.applyProject(projectId));
-        return SuccessResponse.of(ApiStatus._CREATED, applyProject);
+        Project project = projectService.applyProject(projectId, projectApplicationDto);
+        ProjectInfo projectInfo = projectService.getProjectInfoByProject(project);
+        return SuccessResponse.of(ApiStatus._CREATED, ProjectResponseDto.from(projectInfo));
     }
 
     @DeleteMapping("/{projectId}")
@@ -254,7 +273,7 @@ public class ProjectApplyController {
         )
     })
     public ResponseEntity<BaseResponse<Object>> cancelApplyProject(@PathVariable UUID projectId) {
-        projectService.cancelApplyProject(projectId);
+        projectService.cancelProjectApplication(projectId);
         return SuccessResponse.of(ApiStatus._NO_CONTENT, null);
     }
 }

@@ -1,5 +1,6 @@
 package com.waggle.domain.project.controller;
 
+import com.waggle.domain.project.ProjectInfo;
 import com.waggle.domain.project.dto.ProjectInputDto;
 import com.waggle.domain.project.dto.ProjectResponseDto;
 import com.waggle.domain.project.entity.Project;
@@ -63,8 +64,9 @@ public class ProjectPostController {
     public ResponseEntity<BaseResponse<ProjectResponseDto>> fetchProject(
         @PathVariable UUID projectId
     ) {
-        Project fetchProject = projectService.getProjectByProjectId(projectId);
-        return SuccessResponse.of(ApiStatus._OK, ProjectResponseDto.from(fetchProject));
+        Project project = projectService.getProjectById(projectId);
+        ProjectInfo projectInfo = projectService.getProjectInfoByProject(project);
+        return SuccessResponse.of(ApiStatus._OK, ProjectResponseDto.from(projectInfo));
     }
 
     @PostMapping("") //경로에 있는 post는 post 방식이 아니라 게시글을 영어로 한거임
@@ -93,8 +95,9 @@ public class ProjectPostController {
     public ResponseEntity<BaseResponse<ProjectResponseDto>> createProject(
         @RequestBody ProjectInputDto projectInputDto
     ) {
-        Project newProject = projectService.createProject(projectInputDto);
-        return SuccessResponse.of(ApiStatus._CREATED, ProjectResponseDto.from(newProject));
+        Project project = projectService.createProject(projectInputDto);
+        ProjectInfo projectInfo = projectService.getProjectInfoByProject(project);
+        return SuccessResponse.of(ApiStatus._CREATED, ProjectResponseDto.from(projectInfo));
     }
 
     @PutMapping("/{projectId}")
@@ -137,8 +140,9 @@ public class ProjectPostController {
         @PathVariable UUID projectId,
         @RequestBody ProjectInputDto projectInputDto
     ) {
-        Project updateProject = projectService.updateProject(projectId, projectInputDto);
-        return SuccessResponse.of(ApiStatus._OK, ProjectResponseDto.from(updateProject));
+        Project project = projectService.updateProject(projectId, projectInputDto);
+        ProjectInfo projectInfo = projectService.getProjectInfoByProject(project);
+        return SuccessResponse.of(ApiStatus._OK, ProjectResponseDto.from(projectInfo));
     }
 
     @DeleteMapping("/{projectId}")

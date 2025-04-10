@@ -71,8 +71,10 @@ public class ProjectBookmarkController {
     public ResponseEntity<BaseResponse<Boolean>> toggleMyBookmark(
         @PathVariable UUID projectId
     ) {
-        boolean isBookmarked = projectService.toggleCurrentUserBookmark(projectId);
-        return SuccessResponse.of(ApiStatus._OK, isBookmarked);
+        return SuccessResponse.of(
+            ApiStatus._OK,
+            projectService.toggleCurrentUserBookmark(projectId)
+        );
     }
 
     @GetMapping(value = "/who/me")
@@ -105,11 +107,13 @@ public class ProjectBookmarkController {
         )
     })
     public ResponseEntity<BaseResponse<Set<ProjectResponseDto>>> fetchMyBookmarkProjects() {
-        Set<ProjectResponseDto> projectResponseDtos = projectService.getCurrentUserBookmarkProjects()
-            .stream()
-            .map(ProjectResponseDto::from)
-            .collect(Collectors.toSet());
-        return SuccessResponse.of(ApiStatus._OK, projectResponseDtos);
+        return SuccessResponse.of(
+            ApiStatus._OK,
+            projectService.getCurrentUserBookmarkProjects().stream()
+                .map(projectService::getProjectInfoByProject)
+                .map(ProjectResponseDto::from)
+                .collect(Collectors.toSet())
+        );
     }
 
     @GetMapping("/who/{userId}")
@@ -143,10 +147,12 @@ public class ProjectBookmarkController {
     public ResponseEntity<BaseResponse<Set<ProjectResponseDto>>> fetchUserBookmarkProjects(
         @PathVariable UUID userId
     ) {
-        Set<ProjectResponseDto> projectResponseDtos = projectService.getUserBookmarkProjects(userId)
-            .stream()
-            .map(ProjectResponseDto::from)
-            .collect(Collectors.toCollection(LinkedHashSet::new));
-        return SuccessResponse.of(ApiStatus._OK, projectResponseDtos);
+        return SuccessResponse.of(
+            ApiStatus._OK,
+            projectService.getUserBookmarkProjects(userId).stream()
+                .map(projectService::getProjectInfoByProject)
+                .map(ProjectResponseDto::from)
+                .collect(Collectors.toCollection(LinkedHashSet::new))
+        );
     }
 }
