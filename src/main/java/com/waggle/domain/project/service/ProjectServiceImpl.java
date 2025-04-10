@@ -83,16 +83,23 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional(readOnly = true)
-    public ProjectInfo getProjectInfoByProjectId(UUID projectId) {
-        Project project = projectRepository.findById(projectId)
+    public Project getProjectById(UUID projectId) {
+        return projectRepository.findById(projectId)
             .orElseThrow(() -> new EntityNotFoundException(
                 "Project not found with id: " + projectId));
-        List<ProjectSkill> projectSkills = projectSkillRepository.findByProjectId(projectId);
-        List<ProjectMember> projectMembers = projectMemberRepository.findByProjectId(projectId);
+
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ProjectInfo getProjectInfoByProject(Project project) {
+        List<ProjectSkill> projectSkills = projectSkillRepository.findByProjectId(project.getId());
+        List<ProjectMember> projectMembers =
+            projectMemberRepository.findByProjectId(project.getId());
         List<ProjectApplicant> projectApplicants =
-            projectApplicantRepository.findByProjectId(projectId);
+            projectApplicantRepository.findByProjectId(project.getId());
         List<ProjectRecruitment> projectRecruitments =
-            projectRecruitmentRepository.findByProjectId(projectId);
+            projectRecruitmentRepository.findByProjectId(project.getId());
 
         return ProjectInfo.of(
             project,

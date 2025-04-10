@@ -12,7 +12,9 @@ public interface ProjectService {
 
     Project createProject(ProjectInputDto projectInputDto);
 
-    ProjectInfo getProjectInfoByProjectId(UUID projectId);
+    Project getProjectById(UUID projectId);
+
+    ProjectInfo getProjectInfoByProject(Project project);
 
     Project updateProject(UUID projectId, ProjectInputDto projectInputDto);
 
