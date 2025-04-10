@@ -23,4 +23,3 @@ public enum CommunicationStyle {
     @JsonProperty("display_name")
     private final String displayName;
 }
-
