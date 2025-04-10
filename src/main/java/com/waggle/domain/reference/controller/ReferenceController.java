@@ -39,11 +39,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "참조 데이터", description = "참조 데이터 관련 API")
 @RestController
-@RequestMapping("api/v1/reference")
+@RequestMapping("api/v1")
 @RequiredArgsConstructor
 public class ReferenceController {
 
-    @GetMapping("/industrial")
+    @GetMapping("/industries")
     @Operation(summary = "산업 분야 조회", description = "산업 분야를 전부 조회합니다.")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "산업 분야 조회 성공", content = @Content(schema = @Schema(implementation = IndustriesSuccessResponse.class))),
@@ -53,7 +53,7 @@ public class ReferenceController {
         return SuccessResponse.of(ApiStatus._OK, List.of(Industry.values()));
     }
 
-    @GetMapping("/skill")
+    @GetMapping("/skills")
     @Operation(summary = "사용 기술 조회", description = "사용 기술을 전부 조회합니다.")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "기술 조회 성공", content = @Content(schema = @Schema(implementation = SkillsSuccessResponse.class))),
@@ -63,7 +63,7 @@ public class ReferenceController {
         return SuccessResponse.of(ApiStatus._OK, List.of(Skill.values()));
     }
 
-    @GetMapping("/job")
+    @GetMapping("/job-roles")
     @Operation(summary = "직무 조회", description = "직무를 전부 조회합니다.")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "직무 조회 성공", content = @Content(schema = @Schema(implementation = JobsSuccessResponse.class))),
@@ -73,7 +73,7 @@ public class ReferenceController {
         return SuccessResponse.of(ApiStatus._OK, List.of(JobRole.values()));
     }
 
-    @GetMapping("/week-days")
+    @GetMapping("/days-of-week")
     @Operation(summary = "요일 조회", description = "요일 목록을 전부 조회합니다.")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "요일 조회 성공", content = @Content(schema = @Schema(implementation = WeekDaysSuccessResponse.class))),
@@ -83,7 +83,7 @@ public class ReferenceController {
         return SuccessResponse.of(ApiStatus._OK, List.of(DayOfWeek.values()));
     }
 
-    @GetMapping("/tow")
+    @GetMapping("/work-times")
     @Operation(summary = "진행 시간대 조회", description = "진행 시간대 목록을 전부 조회합니다.")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "진행 시간대 조회 성공", content = @Content(schema = @Schema(implementation = TimeOfWorkingsSuccessResponse.class))),
@@ -93,7 +93,7 @@ public class ReferenceController {
         return SuccessResponse.of(ApiStatus._OK, List.of(WorkTime.values()));
     }
 
-    @GetMapping("/dow")
+    @GetMapping("/work-periods")
     @Operation(summary = "진행 기간 조회", description = "진행 기간 목록을 전부 조회합니다.")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "작업 기간 조회 성공", content = @Content(schema = @Schema(implementation = DurationOfWorkingsSuccessResponse.class))),
@@ -103,7 +103,7 @@ public class ReferenceController {
         return SuccessResponse.of(ApiStatus._OK, List.of(WorkPeriod.values()));
     }
 
-    @GetMapping("/wow")
+    @GetMapping("/work-ways")
     @Operation(summary = "진행 방식 조회", description = "진행 방식 목록을 전부 조회합니다.")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "근무 방식 조회 성공", content = @Content(schema = @Schema(implementation = WaysOfWorkingsSuccessResponse.class))),
@@ -113,7 +113,7 @@ public class ReferenceController {
         return SuccessResponse.of(ApiStatus._OK, List.of(WorkWay.values()));
     }
 
-    @GetMapping("/area/sido")
+    @GetMapping("/sidoes")
     @Operation(summary = "시/도 조회", description = "시/도 목록을 전부 조회합니다.")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "시/도 조회 성공", content = @Content(schema = @Schema(implementation = SidosSuccessResponse.class))),
@@ -123,7 +123,7 @@ public class ReferenceController {
         return SuccessResponse.of(ApiStatus._OK, List.of(Sido.values()));
     }
 
-    @GetMapping("/portfolio-url")
+    @GetMapping("/portfolio-types")
     @Operation(summary = "포트폴리오 링크 종류 조회", description = "포트폴리오 링크 종류를 전부 조회합니다.")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "포트폴리오 링크 종류 조회 성공", content = @Content(schema = @Schema(implementation = PortfolioUrlsSuccessResponse.class))),
@@ -133,7 +133,7 @@ public class ReferenceController {
         return SuccessResponse.of(ApiStatus._OK, List.of(PortfolioType.values()));
     }
 
-    @GetMapping("/main-introduce")
+    @GetMapping("/introduction-types")
     @Operation(summary = "자기소개 키워드 대분류 조회", description = "자기소개 키워드의 대분류 목록을 전부 조회합니다.")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "대분류 키워드 조회 성공", content = @Content(schema = @Schema(implementation = MainIntroducesSuccessResponse.class))),
