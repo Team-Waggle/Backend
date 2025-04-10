@@ -1,10 +1,13 @@
 package com.waggle.domain.reference.enums;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum Skill {
     JAVA("Java", "https://logo.clearbit.com/Java.com"),
     JAVASCRIPT("JavaScript", "https://logo.clearbit.com/JavaScript.com"),
@@ -76,6 +79,9 @@ public enum Skill {
         "https://maxonassets.imgix.net/images/Products/Cinema-4D/C4D-Iso-logo.png?fm=webp&auto=format,compress&w=1920&h=1932&ar=16:9&fit=clip&crop=faces&q=80"
     );
 
+    @JsonProperty("display_name")
     private final String displayName;
+
+    @JsonProperty("image_url")
     private final String imageUrl;
 }

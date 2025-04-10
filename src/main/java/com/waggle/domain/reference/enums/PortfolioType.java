@@ -1,10 +1,13 @@
 package com.waggle.domain.reference.enums;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum PortfolioType {
     GITHUB("GitHub", "https://logo.clearbit.com/GitHub.com"),
     NOTION("Notion", "https://logo.clearbit.com/Notion.com"),
@@ -18,6 +21,9 @@ public enum PortfolioType {
     FIGMA("Figma", "https://logo.clearbit.com/Figma.com"),
     OTHER("기타", "");
 
+    @JsonProperty("display_name")
     private final String displayName;
+
+    @JsonProperty("image_url")
     private final String imageUrl;
 }

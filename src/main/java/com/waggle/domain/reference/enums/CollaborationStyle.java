@@ -1,10 +1,13 @@
 package com.waggle.domain.reference.enums;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum CollaborationStyle {
     LEADERSHIP("리더십 스타일"),
     SUPPORTER("서포터형"),
@@ -17,5 +20,6 @@ public enum CollaborationStyle {
     DETAIL_ORIENTED("디테일 집착형"),
     FLEXIBLE_SOLVER("유연한 문제 해결자");
 
+    @JsonProperty("display_name")
     private final String displayName;
 }

@@ -1,10 +1,13 @@
 package com.waggle.domain.reference.enums;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum WorkStyle {
     GOAL_ORIENTED("목표 지향적"),
     PUNCTUAL("시간 엄수형"),
@@ -17,5 +20,6 @@ public enum WorkStyle {
     DEADLINE_LOVER("마감 압박을 즐기는"),
     CREATIVE_EXPERIMENTER("창의적인 실험가");
 
+    @JsonProperty("display_name")
     private final String displayName;
 }

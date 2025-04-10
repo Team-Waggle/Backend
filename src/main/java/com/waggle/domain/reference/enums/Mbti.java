@@ -1,10 +1,13 @@
 package com.waggle.domain.reference.enums;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum Mbti {
     ISTJ("ISTJ", "청렴결백한 논리주의자"),
     ISFJ("ISFJ", "용감한 수호자"),
@@ -23,6 +26,9 @@ public enum Mbti {
     ENFJ("ENFJ", "따뜻한 카리스마 리더"),
     ENTJ("ENTJ", "결단력 있는 통솔자");
 
+    @JsonProperty("code")
     private final String code;
+
+    @JsonProperty("display_name")
     private final String displayName;
 }
