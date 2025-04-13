@@ -19,7 +19,6 @@ import org.hibernate.validator.constraints.URL;
 
 @Schema(description = "프로젝트 생성 dto")
 public record ProjectInputDto(
-
     @NotBlank(message = "제목은 필수 입력 항목입니다")
     @Size(max = 50, message = "제목은 최대 50자까지 입력 가능합니다")
     @Schema(description = "제목", example = "Waggle 백엔드 모집합니다.")

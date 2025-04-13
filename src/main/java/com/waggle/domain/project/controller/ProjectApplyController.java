@@ -20,6 +20,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -239,7 +240,7 @@ public class ProjectApplyController {
     })
     public ResponseEntity<BaseResponse<ProjectResponseDto>> applyProject(
         @PathVariable UUID projectId,
-        @RequestBody ProjectApplicationDto projectApplicationDto
+        @Valid @RequestBody ProjectApplicationDto projectApplicationDto
     ) {
         Project project = projectService.applyProject(projectId, projectApplicationDto);
         ProjectInfo projectInfo = projectService.getProjectInfoByProject(project);

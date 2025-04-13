@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -92,7 +93,7 @@ public class UserController {
     })
     public ResponseEntity<BaseResponse<UserResponseDto>> updateMe(
         @RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
-        @RequestPart(value = "updateUserDto") UserInputDto userInputDto
+        @Valid @RequestPart(value = "updateUserDto") UserInputDto userInputDto
     ) {
         User user = userService.updateCurrentUser(profileImage, userInputDto);
         UserInfo userInfo = userService.getUserInfoByUser(user);
