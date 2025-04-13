@@ -498,7 +498,8 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     private User getLeader(Project project) {
-        ProjectMember leader = projectMemberRepository.findByProjectIdAndLeaderTrue(project.getId())
+        ProjectMember leader = projectMemberRepository.findByProjectIdAndIsLeaderTrue(
+                project.getId())
             .orElseThrow(() -> new EntityNotFoundException(
                 "Leader not found with project id: " + project.getId()));
         return leader.getUser();

@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProjectMemberRepository extends JpaRepository<ProjectMember, UUID> {
 
-    Optional<ProjectMember> findByProjectIdAndLeaderTrue(UUID projectId);
+    Optional<ProjectMember> findByProjectIdAndIsLeaderTrue(UUID projectId);
 
     Optional<ProjectMember> findByProjectIdAndUserId(UUID projectId, UUID userId);
 
