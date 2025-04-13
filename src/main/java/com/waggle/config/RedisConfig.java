@@ -1,5 +1,6 @@
 package com.waggle.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -7,12 +8,10 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import lombok.extern.slf4j.Slf4j;
-
 @Configuration
 @Slf4j
 public class RedisConfig {
-    
+
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         log.info("Redis 연결중...");

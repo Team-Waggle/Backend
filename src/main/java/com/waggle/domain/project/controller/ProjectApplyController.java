@@ -37,14 +37,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "프로젝트 지원", description = "프로젝트 지원 관련 API")
 @RestController
-@RequestMapping("api/v1/project/apply")
+@RequestMapping("api/v1/projects")
 @RequiredArgsConstructor
 public class ProjectApplyController {
 
     private final ProjectService projectService;
     private final UserService userService;
 
-    @GetMapping("/{projectId}")
+    @GetMapping("/{projectId}/applications")
     @Operation(
         summary = "프로젝트 지원자 조회",
         description = "프로젝트에 지원한 사용자들을 조회한다."
@@ -77,7 +77,7 @@ public class ProjectApplyController {
         );
     }
 
-    @PutMapping("/{projectId}/approve/{userId}")
+    @PutMapping("/{projectId}/users/{userId}/approval")
     @Operation(
         summary = "프로젝트 모집글 참여자 승인",
         description = "프로젝트 모집글에 참여한 사용자를 승인한다.",
@@ -126,7 +126,7 @@ public class ProjectApplyController {
         );
     }
 
-    @PutMapping("/{projectId}/reject/{userId}")
+    @PutMapping("/{projectId}/users/{userId}/rejection")
     @Operation(
         summary = "프로젝트 모집글 참여자 거절",
         description = "프로젝트 모집글에 참여한 사용자를 거절한다.",
@@ -166,6 +166,7 @@ public class ProjectApplyController {
         @PathVariable UUID projectId,
         @PathVariable UUID userId
     ) {
+        Class<?> clazz = projectService.getClass();
         return SuccessResponse.of(
             ApiStatus._OK,
             projectService.rejectAppliedUser(projectId, userId).stream()

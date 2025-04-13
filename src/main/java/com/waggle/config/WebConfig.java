@@ -1,17 +1,17 @@
 package com.waggle.config;
 
 import com.waggle.global.request.OctetStreamReadMsgConverter;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.util.List;
-
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-    private OctetStreamReadMsgConverter octetStreamReadMsgConverter;
+
+    private final OctetStreamReadMsgConverter octetStreamReadMsgConverter;
 
     @Autowired
     public WebConfig(OctetStreamReadMsgConverter octetStreamReadMsgConverter) {
@@ -26,11 +26,11 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                //.allowedOrigins("https://waggle.o-r.kr")
-                .allowedOriginPatterns("*")
-                .allowedMethods("GET", "POST", "PUT", "DELETE")
-                .allowCredentials(true)
-                .allowedHeaders("*")
-                .allowCredentials(true);
+            //.allowedOrigins("https://waggle.o-r.kr")
+            .allowedOriginPatterns("*")
+            .allowedMethods("GET", "POST", "PUT", "DELETE")
+            .allowCredentials(true)
+            .allowedHeaders("*")
+            .allowCredentials(true);
     }
 }

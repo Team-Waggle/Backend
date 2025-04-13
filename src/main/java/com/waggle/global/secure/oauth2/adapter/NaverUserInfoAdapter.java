@@ -1,8 +1,7 @@
 package com.waggle.global.secure.oauth2.adapter;
 
-import lombok.AllArgsConstructor;
-
 import java.util.Map;
+import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class NaverUserInfoAdapter implements OAuth2UserInfo {

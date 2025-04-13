@@ -5,27 +5,27 @@ import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.waggle.global.exception.S3Exception;
 import com.waggle.global.response.ApiStatus;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Set;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class S3Service {
 
-    private final AmazonS3 amazonS3;
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
     private static final Set<String> ALLOWED_FILE_TYPES = Set.of(
-            "image/jpeg", "image/png", "image/gif"
+        "image/jpeg", "image/png", "image/gif"
     );
+
+    private final AmazonS3 amazonS3;
 
     @Value("${AWS_BUCKET}")
     private String bucket;
@@ -47,7 +47,7 @@ public class S3Service {
 
     public void deleteFile(String fileUrl) {
         try {
-            String fileName = extractfilenamefromurl(fileUrl);
+            String fileName = extractFilenameFromUrl(fileUrl);
 //            if (!amazonS3.doesObjectExist(bucket, fileName)) {
 //                throw new S3Exception(ApiStatus._S3_FILE_NOT_FOUND);
 //            }
@@ -60,7 +60,7 @@ public class S3Service {
 
     public boolean isFileExist(String fileUrl) {
         try {
-            String fileName = extractfilenamefromurl(fileUrl);
+            String fileName = extractFilenameFromUrl(fileUrl);
             return amazonS3.doesObjectExist(bucket, fileName);
         } catch (AmazonS3Exception e) {
             throw new S3Exception(ApiStatus._S3_FILE_NOT_FOUND);
@@ -85,7 +85,7 @@ public class S3Service {
         }
     }
 
-    private String extractfilenamefromurl(String fileUrl) {
+    private String extractFilenameFromUrl(String fileUrl) {
         try {
             URL url = new URL(fileUrl);
             return url.getPath().substring(1);
