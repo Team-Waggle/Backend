@@ -1,5 +1,6 @@
 package com.waggle.domain.project.controller;
 
+import com.waggle.domain.ApiV1Controller;
 import com.waggle.domain.project.dto.ProjectResponseDto;
 import com.waggle.domain.project.service.ProjectService;
 import com.waggle.domain.user.dto.UserResponseDto;
@@ -32,9 +33,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "프로젝트 멤버", description = "프로젝트 멤버 관련 API")
 @RestController
-@RequestMapping("api/v1/project/member")
+@RequestMapping("/projects/member")
 @RequiredArgsConstructor
-public class ProjectMemberController {
+public class ProjectMemberController extends ApiV1Controller {
 
     private final ProjectService projectService;
     private final UserService userService;

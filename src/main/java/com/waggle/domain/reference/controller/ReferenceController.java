@@ -1,5 +1,6 @@
 package com.waggle.domain.reference.controller;
 
+import com.waggle.domain.ApiV1Controller;
 import com.waggle.domain.reference.enums.Industry;
 import com.waggle.domain.reference.enums.IntroductionType;
 import com.waggle.domain.reference.enums.JobRole;
@@ -34,14 +35,12 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "참조 데이터", description = "참조 데이터 관련 API")
 @RestController
-@RequestMapping("api/v1")
 @RequiredArgsConstructor
-public class ReferenceController {
+public class ReferenceController extends ApiV1Controller {
 
     @GetMapping("/industries")
     @Operation(summary = "산업 분야 조회", description = "산업 분야를 전부 조회합니다.")

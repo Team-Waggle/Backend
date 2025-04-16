@@ -1,5 +1,6 @@
 package com.waggle.domain.auth.controller;
 
+import com.waggle.domain.ApiV1Controller;
 import com.waggle.domain.auth.dto.AccessTokenVo;
 import com.waggle.domain.auth.service.AuthService;
 import com.waggle.global.exception.JwtTokenException;
@@ -24,9 +25,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "인증", description = "인증 관련 API")
 @RestController
-@RequestMapping("api/v1/auth")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
-public class AuthController {
+public class AuthController extends ApiV1Controller {
 
     private final AuthService authService;
 

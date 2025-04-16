@@ -1,5 +1,6 @@
 package com.waggle.domain.project.controller;
 
+import com.waggle.domain.ApiV1Controller;
 import com.waggle.domain.project.dto.ProjectResponseDto;
 import com.waggle.domain.project.service.ProjectService;
 import com.waggle.global.response.ApiStatus;
@@ -28,9 +29,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "프로젝트 북마크", description = "프로젝트 북마크 관련 API")
 @RestController
-@RequestMapping("api/v1/project/bookmark")
+@RequestMapping("/projects/bookmark")
 @RequiredArgsConstructor
-public class ProjectBookmarkController {
+public class ProjectBookmarkController extends ApiV1Controller {
 
     private final ProjectService projectService;
 
