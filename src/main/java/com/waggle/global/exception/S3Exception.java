@@ -5,6 +5,7 @@ import lombok.Getter;
 
 @Getter
 public class S3Exception extends RuntimeException {
+
     private final ApiStatus status;
 
     public S3Exception(ApiStatus status) {

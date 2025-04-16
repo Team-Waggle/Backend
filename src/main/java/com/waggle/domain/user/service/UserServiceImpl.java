@@ -1,72 +1,105 @@
 package com.waggle.domain.user.service;
 
-import com.waggle.domain.project.repository.ProjectRepository;
-import com.waggle.domain.reference.entity.*;
-import com.waggle.domain.reference.service.ReferenceService;
+import com.waggle.domain.auth.service.AuthService;
+import com.waggle.domain.reference.enums.Industry;
+import com.waggle.domain.reference.enums.IntroductionType;
+import com.waggle.domain.reference.enums.Skill;
+import com.waggle.domain.user.UserInfo;
 import com.waggle.domain.user.dto.UserInputDto;
-import com.waggle.domain.user.entity.*;
+import com.waggle.domain.user.dto.UserIntroductionDto;
+import com.waggle.domain.user.dto.UserJobRoleDto;
+import com.waggle.domain.user.dto.UserPortfolioDto;
+import com.waggle.domain.user.entity.User;
+import com.waggle.domain.user.entity.UserDayOfWeek;
+import com.waggle.domain.user.entity.UserIndustry;
+import com.waggle.domain.user.entity.UserIntroduction;
+import com.waggle.domain.user.entity.UserJobRole;
+import com.waggle.domain.user.entity.UserPortfolio;
+import com.waggle.domain.user.entity.UserSkill;
+import com.waggle.domain.user.repository.UserDayOfWeekRepository;
+import com.waggle.domain.user.repository.UserIndustryRepository;
+import com.waggle.domain.user.repository.UserIntroductionRepository;
+import com.waggle.domain.user.repository.UserJobRoleRepository;
+import com.waggle.domain.user.repository.UserPortfolioRepository;
 import com.waggle.domain.user.repository.UserRepository;
+import com.waggle.domain.user.repository.UserSkillRepository;
 import com.waggle.global.aws.service.S3Service;
-import com.waggle.global.exception.JwtTokenException;
-import com.waggle.global.response.ApiStatus;
-import com.waggle.global.secure.jwt.JwtUtil;
+import jakarta.persistence.EntityNotFoundException;
+import java.time.DayOfWeek;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.*;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final JwtUtil jwtUtil;
-    private final UserRepository userRepository;
-    private final ProjectRepository projectRepository;
-    private final ReferenceService referenceService;
+    private final AuthService authService;
     private final S3Service s3Service;
+    private final UserRepository userRepository;
+    private final UserDayOfWeekRepository userDayOfWeekRepository;
+    private final UserIndustryRepository userIndustryRepository;
+    private final UserIntroductionRepository userIntroductionRepository;
+    private final UserJobRoleRepository userJobRoleRepository;
+    private final UserPortfolioRepository userPortfolioRepository;
+    private final UserSkillRepository userSkillRepository;
 
     @Override
-    public User getCurrentUser() {
-        String authorizationHeader = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
-                .getRequest()
-                .getHeader("Authorization");
+    @Transactional(readOnly = true)
+    public User getUserById(UUID userId) {
+        return userRepository.findById(userId)
+            .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+    }
 
-        String token = jwtUtil.getTokenFromHeader(authorizationHeader);
+    @Override
+    @Transactional(readOnly = true)
+    public UserInfo getUserInfoByUser(User user) {
+        List<UserJobRole> userJobRoles = userJobRoleRepository.findByUserId(user.getId());
+        List<UserIndustry> userIndustries = userIndustryRepository.findByUserId(user.getId());
+        List<UserSkill> userSkills = userSkillRepository.findByUserId(user.getId());
+        List<UserDayOfWeek> userDaysOfWeek = userDayOfWeekRepository.findByUserId(user.getId());
+        List<UserIntroduction> userIntroductions =
+            userIntroductionRepository.findByUserId(user.getId());
+        List<UserPortfolio> userPortfolios = userPortfolioRepository.findByUserId(user.getId());
 
-        String userId = jwtUtil.getUserIdFromToken(token);
-        if (userId == null) {
-            throw new JwtTokenException(ApiStatus._INVALID_ACCESS_TOKEN);
-        }
-
-        return userRepository.findByUserId(UUID.fromString(userId))
-                .orElseThrow(() -> new JwtTokenException(ApiStatus._INVALID_ACCESS_TOKEN));
+        return UserInfo.of(
+            user,
+            userJobRoles,
+            userIndustries,
+            userSkills,
+            userDaysOfWeek,
+            userIntroductions,
+            userPortfolios
+        );
     }
 
     @Override
     @Transactional
     public User updateCurrentUser(MultipartFile profileImage, UserInputDto userInputDto) {
-        User user = getCurrentUser();
-        //user.clearInfo();
+        User user = authService.getCurrentUser();
 
-        user.setProfileImageUrl(getProfileImageUrl(profileImage, user));
-        user.setName(userInputDto.getName());
-        setUserJobs(userInputDto, user);
-        setUserIndustries(userInputDto, user);
-        setUserSkills(userInputDto, user);
-        setUserWeekDays(userInputDto, user);
-        user.setPreferTow(referenceService.getTimeOfWorkingById(userInputDto.getPreferTowId()));
-        user.setPreferWow(referenceService.getWaysOfWorkingById(userInputDto.getPreferWowId()));
-        user.setPreferSido(referenceService.getSidoesById(userInputDto.getPreferSidoId()));
-        setIntroduces(userInputDto, user);
-        user.setDetail(userInputDto.getDetail());
-        setUserPortfolioUrls(userInputDto, user);
+        user.update(
+            userInputDto.name(),
+            getProfileImageUrl(profileImage, user),
+            userInputDto.workTime(),
+            userInputDto.workWay(),
+            userInputDto.sido(),
+            userInputDto.detail()
+        );
+
+        updateUserJobRoles(user.getId(), userInputDto.jobRoles());
+        updateUserIndustries(user.getId(), userInputDto.industries());
+        updateUserSkills(user.getId(), userInputDto.skills());
+        updateUserDaysOfWeek(user.getId(), userInputDto.daysOfWeek());
+        updateUserIntroduction(user.getId(), userInputDto.introduction());
+        updateUserPortfolios(user.getId(), userInputDto.portfolios());
 
         return userRepository.save(user);
     }
@@ -74,88 +107,172 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void deleteCurrentUser() {
-        User user = getCurrentUser();
+        User user = authService.getCurrentUser();
         s3Service.deleteFile(user.getProfileImageUrl());
         userRepository.delete(user);
+        userJobRoleRepository.deleteByUserId(user.getId());
+        userIndustryRepository.deleteByUserId(user.getId());
+        userSkillRepository.deleteByUserId(user.getId());
+        userDayOfWeekRepository.deleteByUserId(user.getId());
+        userIntroductionRepository.deleteByUserId(user.getId());
+        userPortfolioRepository.deleteByUserId(user.getId());
     }
 
-    @Override
-    public User getUserByUserId(String userId) {
-        return userRepository.findByUserId(UUID.fromString(userId))
-                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+    private void updateUserJobRoles(UUID userId, Set<UserJobRoleDto> userJobRoles) {
+        if (userJobRoles == null) {
+            return;
+        }
+
+        userJobRoleRepository.deleteByUserId(userId);
+
+        User user = userRepository.getReferenceById(userId);
+        List<UserJobRole> entities = userJobRoles.stream()
+            .map(dto -> UserJobRole.builder()
+                .user(user)
+                .jobRole(dto.jobRole())
+                .yearCount(dto.yearCount())
+                .build())
+            .toList();
+
+        userJobRoleRepository.saveAll(entities);
     }
 
-    private void setUserJobs(UserInputDto userInputDto, User user) {
-        user.getUserJobs().clear();
-        userInputDto.getJobs().forEach(userJobDto -> {
-            Job job = referenceService.getJobById(userJobDto.getJobId());
-            UserJob userJob = UserJob.builder()
-                    .job(job)
+    private void updateUserIndustries(UUID userId, Set<Industry> industries) {
+        if (industries == null) {
+            return;
+        }
+
+        userIndustryRepository.deleteByUserId(userId);
+
+        User user = userRepository.getReferenceById(userId);
+        List<UserIndustry> entities = industries.stream()
+            .map(industry -> UserIndustry.builder()
+                .user(user)
+                .industry(industry)
+                .build())
+            .toList();
+
+        userIndustryRepository.saveAll(entities);
+    }
+
+    private void updateUserSkills(UUID userId, Set<Skill> skills) {
+        if (skills == null) {
+            return;
+        }
+
+        userSkillRepository.deleteByUserId(userId);
+
+        User user = userRepository.getReferenceById(userId);
+        List<UserSkill> entities = skills.stream()
+            .map(skill -> UserSkill.builder()
+                .user(user)
+                .skill(skill)
+                .build())
+            .toList();
+
+        userSkillRepository.saveAll(entities);
+    }
+
+    private void updateUserDaysOfWeek(UUID userId, Set<DayOfWeek> dayOfWeeks) {
+        if (dayOfWeeks == null) {
+            return;
+        }
+
+        userDayOfWeekRepository.deleteByUserId(userId);
+
+        User user = userRepository.getReferenceById(userId);
+        List<UserDayOfWeek> entities = dayOfWeeks.stream()
+            .map(dayOfWeek -> UserDayOfWeek.builder()
+                .user(user)
+                .dayOfWeek(dayOfWeek)
+                .build())
+            .toList();
+
+        userDayOfWeekRepository.saveAll(entities);
+    }
+
+    private void updateUserIntroduction(UUID userId, UserIntroductionDto introduction) {
+        if (introduction == null) {
+            return;
+        }
+
+        userIntroductionRepository.deleteByUserId(userId);
+
+        User user = userRepository.getReferenceById(userId);
+        List<UserIntroduction> entities = new ArrayList<>();
+
+        if (introduction.communicationStyles() != null) {
+            introduction.communicationStyles().forEach(style ->
+                entities.add(UserIntroduction.builder()
                     .user(user)
-                    .yearCnt(userJobDto.getYearCnt())
-                    .build();
-            user.getUserJobs().add(userJob);
-        });
+                    .introductionType(IntroductionType.COMMUNICATION_STYLE)
+                    .subIntroduction(style.name())
+                    .build()
+                )
+            );
+        }
+
+        if (introduction.collaborationStyles() != null) {
+            introduction.collaborationStyles().forEach(style ->
+                entities.add(UserIntroduction.builder()
+                    .user(user)
+                    .introductionType(IntroductionType.COLLABORATION_STYLE)
+                    .subIntroduction(style.name())
+                    .build()
+                )
+            );
+        }
+
+        if (introduction.workStyles() != null) {
+            introduction.workStyles().forEach(style ->
+                entities.add(UserIntroduction.builder()
+                    .user(user)
+                    .introductionType(IntroductionType.WORK_STYLE)
+                    .subIntroduction(style.name())
+                    .build()
+                )
+            );
+        }
+
+        if (introduction.problemSolvingApproaches() != null) {
+            introduction.problemSolvingApproaches().forEach(approach ->
+                entities.add(UserIntroduction.builder()
+                    .user(user)
+                    .introductionType(IntroductionType.PROBLEM_SOLVING_APPROACH)
+                    .subIntroduction(approach.name())
+                    .build()
+                )
+            );
+        }
+
+        if (introduction.mbti() != null) {
+            entities.add(UserIntroduction.builder()
+                .user(user)
+                .introductionType(IntroductionType.MBTI)
+                .subIntroduction(introduction.mbti().name())
+                .build());
+        }
+
+        userIntroductionRepository.saveAll(entities);
     }
 
-    private void setUserIndustries(UserInputDto userInputDto, User user) {
-        user.getUserIndustries().clear();
-        userInputDto.getIndustries().forEach(industryId -> {
-            Industry industry = referenceService.getIndustryById(industryId);
-            UserIndustry userIndustry = UserIndustry.builder()
-                    .industry(industry)
-                    .user(user)
-                    .build();
-            user.getUserIndustries().add(userIndustry);
-        });
-    }
+    private void updateUserPortfolios(UUID userId, Set<UserPortfolioDto> portfolios) {
+        if (portfolios == null) {
+            return;
+        }
 
-    private void setUserSkills(UserInputDto userInputDto, User user) {
-        user.getUserSkills().clear();
-        userInputDto.getSkills().forEach(skillId -> {
-            Skill skill = referenceService.getSkillById(skillId);
-            UserSkill userSkill = UserSkill.builder()
-                    .skill(skill)
-                    .user(user)
-                    .build();
-            user.getUserSkills().add(userSkill);
-        });
-    }
+        userPortfolioRepository.deleteByUserId(userId);
 
-    private void setUserWeekDays(UserInputDto userInputDto, User user) {
-        user.getUserWeekDays().clear();
-        userInputDto.getPreferWeekDays().forEach(userWeekDayId -> {
-            WeekDays weekDays = referenceService.getWeekDaysById(userWeekDayId);
-            UserWeekDays userWeekDay = UserWeekDays.builder()
-                    .user(user)
-                    .weekDays(weekDays)
-                    .build();
-            user.getUserWeekDays().add(userWeekDay);
-        });
-    }
+        User user = userRepository.getReferenceById(userId);
+        List<UserPortfolio> entities = portfolios.stream()
+            .map(dto -> UserPortfolio.builder()
+                .user(user)
+                .portfolioType(dto.portfolioType())
+                .url(dto.url())
+                .build())
+            .toList();
 
-    private void setUserPortfolioUrls(UserInputDto userInputDto, User user) {
-        user.getUserPortfolioUrls().clear();
-        userInputDto.getPortfolioUrls().forEach(portfolioUrlDto -> {
-            PortfolioUrl portfolioUrl = referenceService.getPortfolioUrlById(portfolioUrlDto.getPortfolioUrlId());
-            UserPortfolioUrl userPortfolioUrl = UserPortfolioUrl.builder()
-                    .portfolioUrl(portfolioUrl)
-                    .user(user)
-                    .url(portfolioUrlDto.getUrl())
-                    .build();
-            user.getUserPortfolioUrls().add(userPortfolioUrl);
-        });
-    }
-
-    private void setIntroduces(UserInputDto userInputDto, User user) {
-        userInputDto.getIntroduces().forEach(introduceId -> {
-            SubIntroduce introduce = referenceService.getSubIntroduceById(introduceId);
-            UserIntroduce userIntroduce = UserIntroduce.builder()
-                    .user(user)
-                    .subIntroduce(introduce)
-                    .build();
-            user.getUserIntroduces().add(userIntroduce);
-        });
+        userPortfolioRepository.saveAll(entities);
     }
 
     private String getProfileImageUrl(MultipartFile profileImage, User user) {

@@ -1,400 +1,507 @@
 package com.waggle.domain.project.service;
 
+import com.waggle.domain.auth.service.AuthService;
+import com.waggle.domain.project.ProjectInfo;
+import com.waggle.domain.project.dto.ProjectApplicationDto;
 import com.waggle.domain.project.dto.ProjectInputDto;
-import com.waggle.domain.project.entity.*;
+import com.waggle.domain.project.dto.ProjectRecruitmentDto;
+import com.waggle.domain.project.entity.Project;
+import com.waggle.domain.project.entity.ProjectApplicant;
+import com.waggle.domain.project.entity.ProjectBookmark;
+import com.waggle.domain.project.entity.ProjectMember;
+import com.waggle.domain.project.entity.ProjectRecruitment;
+import com.waggle.domain.project.entity.ProjectSkill;
+import com.waggle.domain.project.repository.ProjectApplicantRepository;
+import com.waggle.domain.project.repository.ProjectBookmarkRepository;
+import com.waggle.domain.project.repository.ProjectMemberRepository;
+import com.waggle.domain.project.repository.ProjectRecruitmentRepository;
 import com.waggle.domain.project.repository.ProjectRepository;
-import com.waggle.domain.reference.service.ReferenceService;
+import com.waggle.domain.project.repository.ProjectSkillRepository;
+import com.waggle.domain.reference.enums.ApplicationStatus;
+import com.waggle.domain.reference.enums.JobRole;
+import com.waggle.domain.reference.enums.Skill;
 import com.waggle.domain.user.entity.User;
-import com.waggle.domain.user.repository.UserRepository;
-import com.waggle.domain.user.service.UserService;
 import com.waggle.global.exception.AccessDeniedException;
 import com.waggle.global.exception.ProjectException;
 import com.waggle.global.response.ApiStatus;
+import jakarta.persistence.EntityNotFoundException;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ProjectServiceImpl implements ProjectService{
+public class ProjectServiceImpl implements ProjectService {
 
+    private final AuthService authService;
     private final ProjectRepository projectRepository;
-    private final UserRepository userRepository;
-    private final UserService userService;
-    private final ReferenceService referenceService;
+    private final ProjectApplicantRepository projectApplicantRepository;
+    private final ProjectBookmarkRepository projectBookmarkRepository;
+    private final ProjectMemberRepository projectMemberRepository;
+    private final ProjectRecruitmentRepository projectRecruitmentRepository;
+    private final ProjectSkillRepository projectSkillRepository;
 
     @Override
-    public Project getProjectByProjectId(UUID id) {
-        return projectRepository.findById(id)
-                .orElseThrow(() -> new EmptyResultDataAccessException(1));
-    }
-
-    @Override
+    @Transactional
     public Project createProject(ProjectInputDto projectInputDto) {
-        Project newProject = Project.builder()
-                .title(projectInputDto.getTitle())
-                .industry(referenceService.getIndustryById(projectInputDto.getIndustryId()))
-                .waysOfWorking(referenceService.getWaysOfWorkingById(projectInputDto.getWayOfWorkingId()))
-                .recruitmentDate(projectInputDto.getRecruitmentDate())
-                .durationOfWorking(referenceService.getDurationOfWorkingById(projectInputDto.getDurationOfWorkingId()))
-                .detail(projectInputDto.getDetail())
-                .connectUrl(projectInputDto.getConnectUrl())
-                .referenceUrl(projectInputDto.getReferenceUrl())
-                .bookmarkCnt(0)
-                .build();
-        newProject = projectRepository.save(newProject);
+        Project project = Project.builder()
+            .title(projectInputDto.title())
+            .industry(projectInputDto.industry())
+            .workWay(projectInputDto.workWay())
+            .recruitmentEndDate(projectInputDto.recruitmentEndDate())
+            .workPeriod(projectInputDto.workPeriod())
+            .detail(projectInputDto.detail())
+            .contactUrl(projectInputDto.contactUrl())
+            .referenceUrl(projectInputDto.referenceUrl())
+            .bookmarkCount(0)
+            .build();
+        project = projectRepository.save(project);
 
-        Set<ProjectMember> projectMembers = new HashSet<>();
-        projectMembers.add(ProjectMember.builder()
-                .project(newProject)
-                .user(userService.getCurrentUser())
-                .isLeader(true)
-                .build());
-        newProject.setProjectMembers(projectMembers);
-        newProject.setProjectApplicants(new HashSet<>());
-        newProject.setRecruitmentJobs(getProjectRecruitmentJobs(projectInputDto, newProject));
-        newProject.setMemberJobs(getProjectMemberJobs(projectInputDto, newProject));
-        newProject.setProjectSkills(getProjectSkills(projectInputDto, newProject));
-        projectRepository.save(newProject);
+        User user = authService.getCurrentUser();
+        ProjectMember projectMember = createProjectMember(project, user, JobRole.PLANNER, true);
+        projectMemberRepository.save(projectMember);
 
-        return newProject;
+        Set<ProjectSkill> projectSkills = createProjectSkills(project, projectInputDto.skills());
+        projectSkillRepository.saveAll(projectSkills);
+
+        Set<ProjectRecruitment> projectRecruitments = createProjectRecruitments(
+            project,
+            projectInputDto.projectRecruitmentDtos()
+        );
+        projectRecruitmentRepository.saveAll(projectRecruitments);
+
+        return project;
     }
 
     @Override
-    public Project updateProject(UUID id, ProjectInputDto projectInputDto) {
-        Project project = projectRepository.findById(id)
-                .orElseThrow(() -> new EmptyResultDataAccessException(1));
-        User currentUser = userService.getCurrentUser();
+    @Transactional(readOnly = true)
+    public Project getProjectById(UUID projectId) {
+        return projectRepository.findById(projectId)
+            .orElseThrow(() -> new EntityNotFoundException(
+                "Project not found with id: " + projectId));
 
-        if (!getLeader(project).getId().equals(currentUser.getId())) {
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ProjectInfo getProjectInfoByProject(Project project) {
+        List<ProjectSkill> projectSkills = projectSkillRepository.findByProjectId(project.getId());
+        List<ProjectMember> projectMembers =
+            projectMemberRepository.findByProjectId(project.getId());
+        List<ProjectApplicant> projectApplicants =
+            projectApplicantRepository.findByProjectId(project.getId());
+        List<ProjectRecruitment> projectRecruitments =
+            projectRecruitmentRepository.findByProjectId(project.getId());
+
+        return ProjectInfo.of(
+            project,
+            projectSkills,
+            projectMembers,
+            projectApplicants,
+            projectRecruitments
+        );
+    }
+
+    @Override
+    @Transactional
+    public Project updateProject(UUID projectId, ProjectInputDto projectInputDto) {
+        Project project = projectRepository.findById(projectId)
+            .orElseThrow(() -> new EntityNotFoundException(
+                "Project not found with id: " + projectId));
+        User user = authService.getCurrentUser();
+
+        if (!getLeader(project).getId().equals(user.getId())) {
             throw new AccessDeniedException(ApiStatus._NOT_LEADER);
         }
 
-        project.setTitle(projectInputDto.getTitle());
-        project.setIndustry(referenceService.getIndustryById(projectInputDto.getIndustryId()));
-        project.setWaysOfWorking(referenceService.getWaysOfWorkingById(projectInputDto.getWayOfWorkingId()));
-        project.setRecruitmentDate(projectInputDto.getRecruitmentDate());
-        project.setDurationOfWorking(referenceService.getDurationOfWorkingById(projectInputDto.getDurationOfWorkingId()));
-        project.setRecruitmentJobs(getProjectRecruitmentJobs(projectInputDto, project));
-        project.setMemberJobs(getProjectMemberJobs(projectInputDto, project));
-        project.setProjectSkills(getProjectSkills(projectInputDto, project));
-        project.setDetail(projectInputDto.getDetail());
-        project.setConnectUrl(projectInputDto.getConnectUrl());
-        project.setReferenceUrl(projectInputDto.getReferenceUrl());
-        projectRepository.save(project);
+        project.update(
+            projectInputDto.title(),
+            projectInputDto.industry(),
+            projectInputDto.workWay(),
+            projectInputDto.recruitmentEndDate(),
+            projectInputDto.workPeriod(),
+            projectInputDto.detail(),
+            projectInputDto.contactUrl(),
+            projectInputDto.referenceUrl()
+        );
+
+        projectSkillRepository.deleteByProjectId(projectId);
+        Set<ProjectSkill> projectSkills = createProjectSkills(project, projectInputDto.skills());
+        projectSkillRepository.saveAll(projectSkills);
+
+        projectRecruitmentRepository.deleteByProjectId(projectId);
+        Set<ProjectRecruitment> projectRecruitments = createProjectRecruitments(
+            project,
+            projectInputDto.projectRecruitmentDtos()
+        );
+        projectRecruitmentRepository.saveAll(projectRecruitments);
+
         return project;
     }
 
     @Override
     @Transactional
-    public void deleteProject(UUID id) {
-        //id가 아닌 다른 기준으로 값을 삭제할 때
-        /*Project project = projectRepository.findById(id)
-                .orElseThrow(() -> new EmptyResultDataAccessException(1));
-        projectRepository.delete(project);*/
+    public void deleteProject(UUID projectId) {
+        Project project = projectRepository.findById(projectId)
+            .orElseThrow(() -> new EntityNotFoundException(
+                "Project not found with id: " + projectId));
+        User user = authService.getCurrentUser();
 
-        //id 기준
-        Project project = projectRepository.findById(id)
-                .orElseThrow(() -> new EmptyResultDataAccessException(1));
-        User currentUser = userService.getCurrentUser();
-
-        if (!getLeader(project).getId().equals(currentUser.getId())) {
+        if (!getLeader(project).getId().equals(user.getId())) {
             throw new AccessDeniedException(ApiStatus._NOT_LEADER);
         }
 
         projectRepository.delete(project);
+        projectApplicantRepository.deleteByProjectId(projectId);
+        projectBookmarkRepository.deleteByProjectId(projectId);
+        projectMemberRepository.deleteByProjectId(projectId);
+        projectRecruitmentRepository.deleteByProjectId(projectId);
+        projectSkillRepository.deleteByProjectId(projectId);
     }
 
     @Override
-    public Set<User> getUsersByProjectId(UUID id) {
-        Project project = projectRepository.findById(id)
-                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+    @Transactional(readOnly = true)
+    public Set<User> getUsersByProjectId(UUID projectId) {
+        List<ProjectMember> projectMembers = projectMemberRepository.findByProjectId(projectId);
 
-        return project.getProjectMembers().stream()
-                .map(ProjectMember::getUser)
-                .sorted(Comparator
-                        .comparing((User user) -> user.getUserJobs().stream()
-                                .map(userJob -> userJob.getJob().getId())
-                                .min(Long::compareTo)
-                                .orElse(Long.MAX_VALUE)) // job_id 기준 정렬, 없으면 가장 큰 값으로
-                        .thenComparing(User::getName)) // job_id가 같으면 이름순 정렬
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+        return projectMembers.stream()
+            .map(ProjectMember::getUser)
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Override
-    public Set<User> getAppliedUsersByProjectId(UUID id) {
-        Project project = projectRepository.findById(id)
-                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+    public Set<User> getAppliedUsersByProjectId(UUID projectId) {
+        List<ProjectApplicant> projectApplicants =
+            projectApplicantRepository.findByProjectId(projectId);
 
-        return project.getProjectApplicants().stream()
-                .map(ProjectApplicant::getUser)
-                .sorted(Comparator
-                        .comparing((User user) -> user.getUserJobs().stream()
-                                .map(userJob -> userJob.getJob().getId())
-                                .min(Long::compareTo)
-                                .orElse(Long.MAX_VALUE)) // job_id 기준 정렬, 없으면 가장 큰 값으로
-                        .thenComparing(User::getName)) // job_id가 같으면 이름순 정렬
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+        return projectApplicants.stream()
+            .map(ProjectApplicant::getUser)
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Override
     @Transactional
-    public Set<User> approveAppliedUser(UUID projectId, String userId) {
+    public Set<User> approveAppliedUser(UUID projectId, UUID userId) {
         Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new EmptyResultDataAccessException(1));
-        User currentUser = userService.getCurrentUser();
+            .orElseThrow(() -> new EntityNotFoundException(
+                "Project not found with id: " + projectId));
+        User user = authService.getCurrentUser();
 
-        if (!getLeader(project).getId().equals(currentUser.getId())) {
+        if (!getLeader(project).getId().equals(user.getId())) {
             throw new AccessDeniedException(ApiStatus._NOT_LEADER);
         }
 
-        User user = userService.getUserByUserId(userId);
-        ProjectMember projectMember = ProjectMember.builder()
-                .project(project)
-                .user(user)
-                .isLeader(false)
-                .joinedAt(LocalDateTime.now())
-                .build();
-        project.getProjectMembers().add(projectMember);;
+        ProjectApplicant projectApplicant = projectApplicantRepository
+            .findByProjectIdAndUserId(projectId, userId)
+            .orElseThrow(() -> new EntityNotFoundException(
+                "Applicant not found for project id: " + projectId + " and user id: " + userId));
+        projectApplicant.updateStatus(ApplicationStatus.APPROVED);
 
-        project.getProjectApplicants().removeIf(member -> member.getUser().getId().equals(user.getId()));
-        projectRepository.save(project);
+        JobRole jobRole = projectApplicant.getJobRole();
+        ProjectRecruitment recruitment = projectRecruitmentRepository
+            .findByProjectIdAndJobRole(projectId, jobRole)
+            .orElseThrow(() -> new EntityNotFoundException(
+                "Recruitment not found for project id: " + projectId + "and job role: " + jobRole));
+        recruitment.addMember();
+
+        ProjectMember member = createProjectMember(
+            project,
+            projectApplicant.getUser(),
+            jobRole,
+            false
+        );
+        projectMemberRepository.save(member);
 
         return getUsersByProjectId(projectId);
     }
 
     @Override
     @Transactional
-    public Set<User> rejectAppliedUser(UUID projectId, String userId) {
+    public Set<User> rejectAppliedUser(UUID projectId, UUID userId) {
         Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new EmptyResultDataAccessException(1));
-        User currentUser = userService.getCurrentUser();
+            .orElseThrow(() -> new EntityNotFoundException(
+                "Project not found with id: " + projectId));
+        User user = authService.getCurrentUser();
 
-        if (!getLeader(project).getId().equals(currentUser.getId())) {
+        if (!getLeader(project).getId().equals(user.getId())) {
             throw new AccessDeniedException(ApiStatus._NOT_LEADER);
         }
 
-        User user = userService.getUserByUserId(userId);
-        project.getProjectApplicants().removeIf(member -> member.getUser().getId().equals(user.getId()));
-        projectRepository.save(project);
+        ProjectApplicant projectApplicant = projectApplicantRepository
+            .findByProjectIdAndUserId(projectId, userId)
+            .orElseThrow(() -> new EntityNotFoundException(
+                "Applicant not found for project id: " + projectId + " and user id: " + userId));
+        projectApplicant.updateStatus(ApplicationStatus.REJECTED);
 
         return getUsersByProjectId(projectId);
     }
 
     @Override
     @Transactional
-    public Set<User> rejectMemberUser(UUID projectId, String userId) {
+    public Set<User> removeMemberUser(UUID projectId, UUID userId) {
         Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new EmptyResultDataAccessException(1));
-        User currentUser = userService.getCurrentUser();
+            .orElseThrow(() -> new EntityNotFoundException(
+                "Project not found with id: " + projectId));
+        User user = authService.getCurrentUser();
 
-        if (!getLeader(project).getId().equals(currentUser.getId())) {
+        if (!getLeader(project).getId().equals(user.getId())) {
             throw new AccessDeniedException(ApiStatus._NOT_LEADER);
         }
 
-        User user = userService.getUserByUserId(userId);
-        project.getProjectMembers().removeIf(member -> member.getUser().getId().equals(user.getId()));
-        projectRepository.save(project);
+        ProjectMember projectMember = projectMemberRepository
+            .findByProjectIdAndUserId(projectId, userId)
+            .orElseThrow(() -> new EntityNotFoundException(
+                "Member not found for project id: " + projectId + " and user id: " + userId));
+
+        if (projectMember.isLeader()) {
+            throw new IllegalStateException("Cannot remove the project leader");
+        }
+
+        JobRole jobRole = projectMember.getJobRole();
+        ProjectRecruitment recruitment = projectRecruitmentRepository
+            .findByProjectIdAndJobRole(projectId, jobRole)
+            .orElseThrow(() -> new EntityNotFoundException(
+                "Recruitment not found for project id: " + projectId + "and job role: " + jobRole));
+        recruitment.removeMember();
+
+        projectMemberRepository.delete(projectMember);
 
         return getUsersByProjectId(projectId);
     }
 
     @Override
-    public void delegateLeader(UUID projectId, String userId) {
+    @Transactional
+    public void delegateLeader(UUID projectId, UUID userId) {
         Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new EmptyResultDataAccessException(1));
-        User currentUser = userService.getCurrentUser();
+            .orElseThrow(() -> new EntityNotFoundException(
+                "Project not found with id: " + projectId));
+        User user = authService.getCurrentUser();
 
-        if (!getLeader(project).getId().equals(currentUser.getId())) {
+        if (!getLeader(project).getId().equals(user.getId())) {
             throw new AccessDeniedException(ApiStatus._NOT_LEADER);
         }
 
-        User user = userService.getUserByUserId(userId);
+        ProjectMember leader = projectMemberRepository
+            .findByProjectIdAndUserId(projectId, user.getId())
+            .orElseThrow(() -> new EntityNotFoundException(
+                "Member not found for project id: " + projectId + " and user id: "
+                    + user.getId()));
+        ProjectMember member = projectMemberRepository
+            .findByProjectIdAndUserId(projectId, userId)
+            .orElseThrow(() -> new EntityNotFoundException(
+                "Member not found for project id: " + projectId + " and user id: " + userId));
 
-        project.getProjectMembers().stream()
-                .filter(member -> member.getUser().getId().equals(currentUser.getId()))
-                .findFirst()
-                .ifPresent(member -> member.setLeader(false));
-
-        project.getProjectMembers().stream()
-                .filter(member -> member.getUser().getId().equals(user.getId()))
-                .findFirst()
-                .ifPresent(member -> member.setLeader(true));
-
-        projectRepository.save(project);
+        leader.makeMember();
+        member.makeLeader();
     }
 
     @Override
-    public Set<Project> getUserProjects(String userId) {
-        User user = userService.getUserByUserId(userId);
-        return user.getProjectMembers().stream()
-                .map(ProjectMember::getProject)
-                .sorted(Comparator.comparing(Project::getCreatedAt).reversed())
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+    @Transactional(readOnly = true)
+    public Set<Project> getUserProjects(UUID userId) {
+        return projectMemberRepository.findByUserId(userId).stream()
+            .map(ProjectMember::getProject)
+            .sorted(Comparator.comparing(Project::getCreatedAt).reversed())
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Override
     @Transactional
-    public void deleteUserProject(String projectId) {
-        User user = userService.getCurrentUser();
-        Project project = projectRepository.findById(UUID.fromString(projectId))
-                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+    public void withdrawFromProject(UUID projectId) {
+        User user = authService.getCurrentUser();
+        ProjectMember member = projectMemberRepository
+            .findByProjectIdAndUserId(projectId, user.getId())
+            .orElseThrow(() -> new EntityNotFoundException(
+                "Member not found for project id: " + projectId + " and user id: " + user.getId()));
 
-        if (!project.getProjectMembers().stream().anyMatch(projectMember -> projectMember.getUser().getId().equals(user.getId()))) {
-            throw new ProjectException(ApiStatus._NOT_JOINED_PROJECT);
+        // TODO: 자동 리더 위임 로직 구현
+        if (member.isLeader()) {
+            throw new IllegalStateException("Leader cannot withdraw from the project");
         }
 
-        project.getProjectMembers().removeIf(projectMember -> projectMember.getUser().getId().equals(user.getId()));
-        projectRepository.save(project);
+        projectMemberRepository.delete(member);
+
+        JobRole jobRole = member.getJobRole();
+        ProjectRecruitment recruitment = projectRecruitmentRepository
+            .findByProjectIdAndJobRole(projectId, jobRole)
+            .orElseThrow(() -> new EntityNotFoundException(
+                "Recruitment not found for project id: " + projectId + "and job role: " + jobRole));
+        recruitment.removeMember();
     }
 
     @Override
-    public Set<Project> getUserBookmarkProjects(String userId) {
-        User user = userService.getUserByUserId(userId);
-        return user.getProjectBookmarks().stream()
-                .map(ProjectBookmark::getProject)
-                .sorted(Comparator.comparing(Project::getCreatedAt).reversed())
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+    @Transactional(readOnly = true)
+    public Set<Project> getUserBookmarkProjects(UUID userId) {
+        return projectBookmarkRepository.findByUserId(userId).stream()
+            .map(ProjectBookmark::getProject)
+            .sorted(Comparator.comparing(Project::getCreatedAt).reversed())
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Override
-    public Project applyProject(String projectId) {
-        User user = userService.getCurrentUser();
-        Project project = projectRepository.findById(UUID.fromString(projectId))
-                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+    @Transactional
+    public Project applyProject(UUID projectId, ProjectApplicationDto projectApplicationDto) {
+        User user = authService.getCurrentUser();
 
-        if (project.getProjectMembers().stream().anyMatch(projectMember -> projectMember.getUser().getId().equals(user.getId()))) {
+        JobRole jobRole = projectApplicationDto.jobRole();
+        ProjectRecruitment recruitment = projectRecruitmentRepository
+            .findByProjectIdAndJobRole(projectId, jobRole)
+            .orElseThrow(() -> new EntityNotFoundException(
+                "Recruitment not found for project id: " + projectId + "and job role: " + jobRole));
+
+        if (!recruitment.isRecruitable()) {
+            throw new IllegalStateException(
+                "Not allowed to apply the project for job role: " + jobRole);
+        }
+
+        if (projectMemberRepository.existsByProjectIdAndUserId(projectId, user.getId())) {
             throw new ProjectException(ApiStatus._ALREADY_JOINED_PROJECT);
         }
 
-        if (project.getProjectApplicants().stream().anyMatch(projectMember -> projectMember.getUser().getId().equals(user.getId()))) {
+        if (projectApplicantRepository
+            .existsByProjectIdAndUserIdAndStatusNot(
+                projectId,
+                user.getId(),
+                ApplicationStatus.CANCELLED
+            )
+        ) {
             throw new ProjectException(ApiStatus._ALREADY_APPLIED_PROJECT);
         }
 
-        project.getProjectApplicants().add(ProjectApplicant.builder()
-                .project(project)
-                .user(user)
-                .build());
+        Project project = projectRepository.findById(projectId)
+            .orElseThrow(() -> new EntityNotFoundException(
+                "Project not found with id: " + projectId));
+        ProjectApplicant applicant = ProjectApplicant.builder()
+            .project(project)
+            .user(user)
+            .jobRole(jobRole)
+            .status(ApplicationStatus.PENDING)
+            .build();
+        projectApplicantRepository.save(applicant);
 
-        projectRepository.save(project);
         return project;
     }
 
     @Override
     @Transactional
-    public void cancelApplyProject(String projectId) {
-        User user = userService.getCurrentUser();
-        Project project = projectRepository.findById(UUID.fromString(projectId))
-                .orElseThrow(() -> new EmptyResultDataAccessException(1));
-
-        project.getProjectApplicants().removeIf(projectApplicant -> projectApplicant.getUser().getId().equals(user.getId()));
-        projectRepository.save(project);
+    public void cancelProjectApplication(UUID projectId) {
+        User user = authService.getCurrentUser();
+        ProjectApplicant applicant = projectApplicantRepository
+            .findByProjectIdAndUserId(projectId, user.getId())
+            .orElseThrow(() -> new EntityNotFoundException(
+                "Applicant not found for project id: " + projectId + " and user id: "
+                    + user.getId()));
+        applicant.updateStatus(ApplicationStatus.CANCELLED);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Set<Project> getAppliedProjects() {
-        User user = userService.getCurrentUser();
-        return user.getProjectApplicants().stream()
-                .sorted(Comparator.comparing(ProjectApplicant::getAppliedAt).reversed())
-                .map(ProjectApplicant::getProject)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+        User user = authService.getCurrentUser();
+        return projectApplicantRepository.findByUserId(user.getId()).stream()
+            .sorted(Comparator.comparing(ProjectApplicant::getAppliedAt).reversed())
+            .map(ProjectApplicant::getProject)
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Set<Project> getCurrentUserProjects() {
-        User user = userService.getCurrentUser();
-        return user.getProjectMembers().stream()
-                .map(ProjectMember::getProject)
-                .sorted(Comparator.comparing(Project::getCreatedAt).reversed())
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+        User user = authService.getCurrentUser();
+        List<ProjectMember> projectMembers = projectMemberRepository.findByUserId(user.getId());
+
+        return projectMembers.stream()
+            .map(ProjectMember::getProject)
+            .sorted(Comparator.comparing(Project::getCreatedAt).reversed())
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
-    private Set<ProjectRecruitmentJob> getProjectRecruitmentJobs(ProjectInputDto projectInputDto, Project project) {
-        Set<ProjectRecruitmentJob> projectRecruitmentJobs = new HashSet<>();
-        projectInputDto.getRecruitmentJobs().forEach(jobDto -> {
-            log.info("jobDto: {}", jobDto);
-            ProjectRecruitmentJob projectRecruitmentJob = ProjectRecruitmentJob.builder()
-                    .project(project)
-                    .job(referenceService.getJobById(jobDto.getJobId()))
-                    .recruitmentCnt(jobDto.getCnt())
-                    .build();
-            projectRecruitmentJobs.add(projectRecruitmentJob);
-        });
-        return projectRecruitmentJobs;
-    }
-
-    private Set<ProjectMemberJob> getProjectMemberJobs(ProjectInputDto projectInputDto, Project project) {
-        Set<ProjectMemberJob> projectMemberJobs = new HashSet<>();
-        projectInputDto.getMemberJobs().forEach(jobDto -> {
-            ProjectMemberJob projectMemberJob = ProjectMemberJob.builder()
-                    .project(project)
-                    .job(referenceService.getJobById(jobDto.getJobId()))
-                    .memberCnt(jobDto.getCnt())
-                    .build();
-            projectMemberJobs.add(projectMemberJob);
-        });
-        return projectMemberJobs;
-    }
-
-    private Set<ProjectSkill> getProjectSkills(ProjectInputDto projectInputDto, Project project) {
-        Set<ProjectSkill> projectSkills = new HashSet<>();
-        projectInputDto.getSkillIds().forEach(skillId -> {
-            ProjectSkill projectSkill = ProjectSkill.builder()
-                    .project(project)
-                    .skill(referenceService.getSkillById(skillId))
-                    .build();
-            projectSkills.add(projectSkill);
-        });
-        return projectSkills;
-    }
-
-    private User getLeader(Project project) {
-        return project.getProjectMembers().stream()
-                .filter(ProjectMember::isLeader)
-                .map(ProjectMember::getUser)
-                .findFirst()
-                .orElseThrow(() -> new EmptyResultDataAccessException(1));
-    }
-
+    // TODO: 동시성 처리 필요
     @Override
-    public boolean toggleCurrentUserBookmark(String projectId) {
-        User user = userService.getCurrentUser();
-        Project project = projectRepository.findById(UUID.fromString(projectId))
-                .orElseThrow(() -> new EmptyResultDataAccessException(1));
-        boolean isBookmarked;
+    @Transactional
+    public boolean toggleCurrentUserBookmark(UUID projectId) {
+        User user = authService.getCurrentUser();
+        Project project = projectRepository.findById(projectId)
+            .orElseThrow(() -> new EntityNotFoundException(
+                "Project not found with id: " + projectId));
 
-        if (user.getProjectBookmarks().stream().anyMatch(projectBookmark -> projectBookmark.getProject().getId().equals(project.getId()))) {
-            user.getProjectBookmarks().removeIf(projectBookmark -> projectBookmark.getProject().getId().equals(project.getId()));
-            project.setBookmarkCnt(project.getBookmarkCnt() - 1);
-            isBookmarked = false;
+        if (projectBookmarkRepository.existsByProjectIdAndUserId(projectId, user.getId())) {
+            projectBookmarkRepository.deleteByProjectIdAndUserId(projectId, user.getId());
+            project.decrementBookmarkCount();
+            return false;
         } else {
-            user.getProjectBookmarks().add(ProjectBookmark.builder()
-                    .project(project)
-                    .user(user)
-                    .build());
-            project.setBookmarkCnt(project.getBookmarkCnt() + 1);
-            isBookmarked = true;
+            ProjectBookmark bookmark = ProjectBookmark.builder()
+                .project(project)
+                .user(user)
+                .build();
+            projectBookmarkRepository.save(bookmark);
+            project.incrementBookmarkCount();
+            return true;
         }
-
-        userRepository.save(user);
-        projectRepository.save(project);
-
-        return isBookmarked;
     }
 
     @Override
     public Set<Project> getCurrentUserBookmarkProjects() {
-        User user = userService.getCurrentUser();
-        return user.getProjectBookmarks().stream()
-                .map(ProjectBookmark::getProject)
-                .sorted(Comparator.comparing(Project::getCreatedAt).reversed())
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+        User user = authService.getCurrentUser();
+        return projectBookmarkRepository.findByUserId(user.getId()).stream()
+            .map(ProjectBookmark::getProject)
+            .sorted(Comparator.comparing(Project::getCreatedAt).reversed())
+            .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    private ProjectMember createProjectMember(
+        Project project,
+        User user,
+        JobRole jobRole,
+        boolean isLeader
+    ) {
+        return ProjectMember.builder()
+            .project(project)
+            .user(user)
+            .jobRole(jobRole)
+            .isLeader(isLeader)
+            .build();
+    }
+
+    private Set<ProjectRecruitment> createProjectRecruitments(
+        Project project,
+        Set<ProjectRecruitmentDto> projectRecruitmentDtos
+    ) {
+        return projectRecruitmentDtos.stream()
+            .map(dto ->
+                ProjectRecruitment.builder()
+                    .project(project)
+                    .jobRole(dto.jobRole())
+                    .remainingCount(dto.remainingCount())
+                    .currentCount(dto.currentCount())
+                    .build())
+            .collect(Collectors.toSet());
+    }
+
+    private Set<ProjectSkill> createProjectSkills(
+        Project project,
+        Set<Skill> skills
+    ) {
+        return skills.stream()
+            .map(skill -> ProjectSkill.builder()
+                .project(project)
+                .skill(skill)
+                .build())
+            .collect(Collectors.toSet());
+    }
+
+    private User getLeader(Project project) {
+        ProjectMember leader = projectMemberRepository.findByProjectIdAndIsLeaderTrue(
+                project.getId())
+            .orElseThrow(() -> new EntityNotFoundException(
+                "Leader not found with project id: " + project.getId()));
+        return leader.getUser();
     }
 }

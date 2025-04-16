@@ -1,11 +1,10 @@
 package com.waggle.global.secure.oauth2.adapter;
 
+import java.util.Map;
 import lombok.AllArgsConstructor;
 
-import java.util.Map;
-
 @AllArgsConstructor
-public class KakaoUserInfoAdapter implements OAuth2UserInfo{
+public class KakaoUserInfoAdapter implements OAuth2UserInfo {
 
     private Map<String, Object> attributes;
 
@@ -21,7 +20,8 @@ public class KakaoUserInfoAdapter implements OAuth2UserInfo{
 
     @Override
     public String getName() {
-        Map<String, Object> profile = (Map<String, Object>) ((Map<String, Object>) attributes.get("kakao_account")).get("profile");
+        Map<String, Object> profile = (Map<String, Object>) ((Map<String, Object>) attributes.get(
+            "kakao_account")).get("profile");
         return (String) profile.get("nickname");
     }
 
@@ -32,7 +32,8 @@ public class KakaoUserInfoAdapter implements OAuth2UserInfo{
 
     @Override
     public String getProfileImage() {
-        Map<String, Object> profile = (Map<String, Object>) ((Map<String, Object>) attributes.get("kakao_account")).get("profile");
+        Map<String, Object> profile = (Map<String, Object>) ((Map<String, Object>) attributes.get(
+            "kakao_account")).get("profile");
         return (String) profile.get("profile_image_url");
     }
 }

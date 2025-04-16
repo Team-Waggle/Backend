@@ -7,5 +7,6 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public class AccessDeniedException extends RuntimeException {
+
     private final ApiStatus status;
 }

@@ -1,5 +1,8 @@
 package com.waggle.config;
 
+import com.waggle.global.secure.oauth2.handler.OAuth2LoginFailureHandler;
+import com.waggle.global.secure.oauth2.handler.OAuth2LoginSuccessHandler;
+import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,11 +13,6 @@ import org.springframework.security.config.annotation.web.configurers.HttpBasicC
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
-
-import com.waggle.global.secure.oauth2.handler.OAuth2LoginFailureHandler;
-import com.waggle.global.secure.oauth2.handler.OAuth2LoginSuccessHandler;
-
-import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
@@ -37,21 +35,20 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.
-                httpBasic(HttpBasicConfigurer::disable)
-                .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource())) // CORS 설정 추가
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorize ->
-                        authorize
-                                .requestMatchers("/**").permitAll()
-                )
-
-                .oauth2Login(oauth -> // OAuth2 로그인 기능에 대한 여러 설정의 진입점
-                        oauth
-                                .successHandler(oAuth2LoginSuccessHandler) // 로그인 성공 시 핸들러
-                                .failureHandler(oAuth2LoginFailureHandler) // 로그인 실패 시 핸들러
-                );
-
-        return httpSecurity.build();
+        return httpSecurity.
+            httpBasic(HttpBasicConfigurer::disable)
+            .cors(corsConfigurer -> corsConfigurer.configurationSource(
+                corsConfigurationSource())) // CORS 설정 추가
+            .csrf(AbstractHttpConfigurer::disable)
+            .authorizeHttpRequests(authorize ->
+                authorize
+                    .requestMatchers("/**").permitAll()
+            )
+            .oauth2Login(oauth -> // OAuth2 로그인 기능에 대한 여러 설정의 진입점
+                oauth
+                    .successHandler(oAuth2LoginSuccessHandler) // 로그인 성공 시 핸들러
+                    .failureHandler(oAuth2LoginFailureHandler) // 로그인 실패 시 핸들러
+            )
+            .build();
     }
 }
