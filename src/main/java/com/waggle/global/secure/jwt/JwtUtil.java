@@ -21,9 +21,9 @@ import org.springframework.stereotype.Component;
 public class JwtUtil {
 
     @Value("${JWT_ACCESS_TOKEN_EXPIRE_TIME}")
-    public static long accessTokenExpirationTime; // 액세스 토큰 유효기간
+    public long accessTokenExpirationTime; // 액세스 토큰 유효기간
     @Value("${JWT_REFRESH_TOKEN_EXPIRE_TIME}")
-    public static long refreshTokenExpirationTime; // 리프레쉬 토큰 유효기간
+    public long refreshTokenExpirationTime; // 리프레쉬 토큰 유효기간
     @Value("${JWT_SECRET_KEY}")
     private String secretKey;
 
