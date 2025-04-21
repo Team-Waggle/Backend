@@ -1,5 +1,6 @@
 package com.waggle.config;
 
+import com.waggle.global.secure.filter.JwtAuthenticationFilter;
 import com.waggle.global.secure.oauth2.handler.OAuth2LoginFailureHandler;
 import com.waggle.global.secure.oauth2.handler.OAuth2LoginSuccessHandler;
 import java.util.Collections;
@@ -11,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -21,6 +23,7 @@ public class SecurityConfig {
 
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     CorsConfigurationSource corsConfigurationSource() {
         return request -> {
@@ -42,8 +45,11 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authorize ->
                 authorize
-                    .requestMatchers("/**").permitAll()
+                    .requestMatchers("/api/v1/auth/**").permitAll()
+                    .requestMatchers("/api/v1/users/**").authenticated()
+                    .anyRequest().permitAll()
             )
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .oauth2Login(oauth -> // OAuth2 로그인 기능에 대한 여러 설정의 진입점
                 oauth
                     .successHandler(oAuth2LoginSuccessHandler) // 로그인 성공 시 핸들러
