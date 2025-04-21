@@ -1,8 +1,6 @@
 package com.waggle.domain.auth.service;
 
 import com.waggle.domain.auth.dto.AccessTokenVo;
-import com.waggle.domain.user.entity.User;
-import com.waggle.domain.user.repository.UserRepository;
 import com.waggle.global.exception.JwtTokenException;
 import com.waggle.global.response.ApiStatus;
 import com.waggle.global.secure.jwt.JwtUtil;
@@ -12,8 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 @Service
 @Slf4j
@@ -24,45 +20,7 @@ public class AuthServiceImpl implements AuthService {
     private static final String TEMP_TOKEN_PREFIX = "TEMP_TOKEN:";
 
     private final JwtUtil jwtUtil;
-    private final UserRepository userRepository;
     private final RedisTemplate<String, String> redisTemplate;
-
-    @Override
-    public User getCurrentUser() {
-        try {
-            ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-            if (requestAttributes == null) {
-                throw new JwtTokenException(ApiStatus._INVALID_ACCESS_TOKEN);
-            }
-
-            String authorizationHeader = requestAttributes.getRequest().getHeader("Authorization");
-            if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-                log.warn("Authorization header not found");
-                throw new JwtTokenException(ApiStatus._INVALID_ACCESS_TOKEN);
-            }
-
-            String token = jwtUtil.getTokenFromHeader(authorizationHeader);
-            if (!jwtUtil.validateToken(token)) {
-                log.warn("토큰 검증 실패");
-                throw new JwtTokenException(ApiStatus._INVALID_ACCESS_TOKEN);
-            }
-
-            String userId = jwtUtil.getUserIdFromToken(token);
-            return userRepository.findById(UUID.fromString(userId))
-                .orElseThrow(() -> {
-                    log.error("User not found with id: {}", userId);
-                    return new JwtTokenException(ApiStatus._INVALID_ACCESS_TOKEN);
-                });
-        } catch (ExpiredJwtException e) {
-            log.warn("만료된 토큰: {}", e.getMessage());
-            throw new JwtTokenException(ApiStatus._EXPIRED_TOKEN);
-        } catch (JwtTokenException e) {
-            throw new JwtTokenException(ApiStatus._INVALID_TOKEN);
-        } catch (Exception e) {
-            log.error("Error while getting current user", e);
-            throw new JwtTokenException(ApiStatus._INVALID_TOKEN);
-        }
-    }
 
     @Override
     public AccessTokenVo reissueAccessToken(String refreshToken) {
