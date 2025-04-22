@@ -12,7 +12,7 @@ public interface UserService {
 
     UserInfo getUserInfoByUser(User user);
 
-    User updateCurrentUser(MultipartFile profileImage, UserInputDto userInputDto);
+    User updateUser(MultipartFile profileImage, UserInputDto userInputDto, User user);
 
-    void deleteCurrentUser();
+    void deleteUser(User user);
 }
