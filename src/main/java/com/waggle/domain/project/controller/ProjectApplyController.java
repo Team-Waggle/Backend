@@ -14,6 +14,7 @@ import com.waggle.global.response.ErrorResponse;
 import com.waggle.global.response.SuccessResponse;
 import com.waggle.global.response.swagger.ProjectSuccessResponse;
 import com.waggle.global.response.swagger.ProjectsSuccessResponse;
+import com.waggle.global.secure.oauth2.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -28,6 +29,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -117,11 +119,12 @@ public class ProjectApplyController extends ApiV1Controller {
     })
     public ResponseEntity<BaseResponse<Set<UserResponseDto>>> approveUser(
         @PathVariable UUID projectId,
-        @PathVariable UUID userId
+        @PathVariable UUID userId,
+        @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         return SuccessResponse.of(
             ApiStatus._OK,
-            projectService.approveAppliedUser(projectId, userId).stream()
+            projectService.approveAppliedUser(projectId, userId, userDetails.getUser()).stream()
                 .map(userService::getUserInfoByUser)
                 .map(UserResponseDto::from)
                 .collect(Collectors.toCollection(LinkedHashSet::new))
@@ -166,12 +169,12 @@ public class ProjectApplyController extends ApiV1Controller {
     })
     public ResponseEntity<BaseResponse<Set<UserResponseDto>>> rejectUser(
         @PathVariable UUID projectId,
-        @PathVariable UUID userId
+        @PathVariable UUID userId,
+        @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        Class<?> clazz = projectService.getClass();
         return SuccessResponse.of(
             ApiStatus._OK,
-            projectService.rejectAppliedUser(projectId, userId).stream()
+            projectService.rejectAppliedUser(projectId, userId, userDetails.getUser()).stream()
                 .map(userService::getUserInfoByUser)
                 .map(UserResponseDto::from)
                 .collect(Collectors.toCollection(LinkedHashSet::new))
@@ -200,10 +203,12 @@ public class ProjectApplyController extends ApiV1Controller {
             )
         )
     })
-    public ResponseEntity<BaseResponse<Set<ProjectResponseDto>>> getAppliedProjects() {
+    public ResponseEntity<BaseResponse<Set<ProjectResponseDto>>> getAppliedProjects(
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
         return SuccessResponse.of(
             ApiStatus._OK,
-            projectService.getAppliedProjects().stream()
+            projectService.getAppliedProjects(userDetails.getUser()).stream()
                 .map(projectService::getProjectInfoByProject)
                 .map(ProjectResponseDto::from)
                 .collect(Collectors.toCollection(LinkedHashSet::new))
@@ -241,9 +246,14 @@ public class ProjectApplyController extends ApiV1Controller {
     })
     public ResponseEntity<BaseResponse<ProjectResponseDto>> applyProject(
         @PathVariable UUID projectId,
-        @Valid @RequestBody ProjectApplicationDto projectApplicationDto
+        @Valid @RequestBody ProjectApplicationDto projectApplicationDto,
+        @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        Project project = projectService.applyProject(projectId, projectApplicationDto);
+        Project project = projectService.applyProject(
+            projectId,
+            projectApplicationDto,
+            userDetails.getUser()
+        );
         ProjectInfo projectInfo = projectService.getProjectInfoByProject(project);
         return SuccessResponse.of(ApiStatus._CREATED, ProjectResponseDto.from(projectInfo));
     }
@@ -275,8 +285,11 @@ public class ProjectApplyController extends ApiV1Controller {
             )
         )
     })
-    public ResponseEntity<BaseResponse<Object>> cancelApplyProject(@PathVariable UUID projectId) {
-        projectService.cancelProjectApplication(projectId);
+    public ResponseEntity<BaseResponse<Object>> cancelApplyProject(
+        @PathVariable UUID projectId,
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        projectService.cancelProjectApplication(projectId, userDetails.getUser());
         return SuccessResponse.of(ApiStatus._NO_CONTENT, null);
     }
 }

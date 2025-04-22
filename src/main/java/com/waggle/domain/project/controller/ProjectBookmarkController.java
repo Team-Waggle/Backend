@@ -8,6 +8,7 @@ import com.waggle.global.response.BaseResponse;
 import com.waggle.global.response.ErrorResponse;
 import com.waggle.global.response.SuccessResponse;
 import com.waggle.global.response.swagger.ProjectsSuccessResponse;
+import com.waggle.global.secure.oauth2.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -21,6 +22,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -70,11 +72,12 @@ public class ProjectBookmarkController extends ApiV1Controller {
         )
     })
     public ResponseEntity<BaseResponse<Boolean>> toggleMyBookmark(
-        @PathVariable UUID projectId
+        @PathVariable UUID projectId,
+        @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         return SuccessResponse.of(
             ApiStatus._OK,
-            projectService.toggleCurrentUserBookmark(projectId)
+            projectService.toggleCurrentUserBookmark(projectId, userDetails.getUser())
         );
     }
 
@@ -107,10 +110,12 @@ public class ProjectBookmarkController extends ApiV1Controller {
             )
         )
     })
-    public ResponseEntity<BaseResponse<Set<ProjectResponseDto>>> fetchMyBookmarkProjects() {
+    public ResponseEntity<BaseResponse<Set<ProjectResponseDto>>> fetchMyBookmarkProjects(
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
         return SuccessResponse.of(
             ApiStatus._OK,
-            projectService.getCurrentUserBookmarkProjects().stream()
+            projectService.getCurrentUserBookmarkProjects(userDetails.getUser()).stream()
                 .map(projectService::getProjectInfoByProject)
                 .map(ProjectResponseDto::from)
                 .collect(Collectors.toSet())

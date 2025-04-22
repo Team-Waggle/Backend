@@ -11,6 +11,7 @@ import com.waggle.global.response.ErrorResponse;
 import com.waggle.global.response.SuccessResponse;
 import com.waggle.global.response.swagger.ProjectSuccessResponse;
 import com.waggle.global.response.swagger.ProjectsSuccessResponse;
+import com.waggle.global.secure.oauth2.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -24,6 +25,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -119,11 +121,12 @@ public class ProjectMemberController extends ApiV1Controller {
     })
     public ResponseEntity<BaseResponse<Set<UserResponseDto>>> removeMember(
         @PathVariable UUID projectId,
-        @PathVariable UUID userId
+        @PathVariable UUID userId,
+        @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         return SuccessResponse.of(
             ApiStatus._OK,
-            projectService.removeMemberUser(projectId, userId).stream()
+            projectService.removeMemberUser(projectId, userId, userDetails.getUser()).stream()
                 .map(userService::getUserInfoByUser)
                 .map(UserResponseDto::from)
                 .collect(Collectors.toCollection(LinkedHashSet::new))
@@ -168,9 +171,10 @@ public class ProjectMemberController extends ApiV1Controller {
     })
     public ResponseEntity<BaseResponse<Set<UserResponseDto>>> delegateLeader(
         @PathVariable UUID projectId,
-        @PathVariable UUID userId
+        @PathVariable UUID userId,
+        @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        projectService.delegateLeader(projectId, userId);
+        projectService.delegateLeader(projectId, userId, userDetails.getUser());
         return SuccessResponse.of(ApiStatus._OK, null);
     }
 
@@ -203,8 +207,11 @@ public class ProjectMemberController extends ApiV1Controller {
             )
         )
     })
-    public ResponseEntity<BaseResponse<Object>> quitMyProject(@PathVariable UUID projectId) {
-        projectService.withdrawFromProject(projectId);
+    public ResponseEntity<BaseResponse<Object>> quitMyProject(
+        @PathVariable UUID projectId,
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        projectService.withdrawFromProject(projectId, userDetails.getUser());
         return SuccessResponse.of(ApiStatus._NO_CONTENT, null);
     }
 
@@ -230,10 +237,12 @@ public class ProjectMemberController extends ApiV1Controller {
             )
         )
     })
-    public ResponseEntity<BaseResponse<Set<ProjectResponseDto>>> fetchMyProjects() {
+    public ResponseEntity<BaseResponse<Set<ProjectResponseDto>>> fetchMyProjects(
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
         return SuccessResponse.of(
             ApiStatus._OK,
-            projectService.getCurrentUserProjects().stream()
+            projectService.getCurrentUserProjects(userDetails.getUser()).stream()
                 .map(projectService::getProjectInfoByProject)
                 .map(ProjectResponseDto::from)
                 .collect(Collectors.toCollection(LinkedHashSet::new))
