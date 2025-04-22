@@ -1,6 +1,5 @@
 package com.waggle.domain.project.controller;
 
-import com.waggle.domain.ApiV1Controller;
 import com.waggle.domain.project.ProjectInfo;
 import com.waggle.domain.project.dto.ProjectInputDto;
 import com.waggle.domain.project.dto.ProjectResponseDto;
@@ -37,9 +36,9 @@ import org.springframework.web.bind.annotation.RestController;
 //put은 전체 다 수정, patch는 일부만 수정
 @Tag(name = "프로젝트 모집 게시글", description = "프로젝트 모집 게시글 관련 API")
 @RestController
-@RequestMapping("/projects/post")
+@RequestMapping("/api/v1/projects/post")
 @RequiredArgsConstructor
-public class ProjectPostController extends ApiV1Controller {
+public class ProjectPostController {
 
     private final ProjectService projectService;
 

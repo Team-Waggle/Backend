@@ -1,6 +1,5 @@
 package com.waggle.domain.user.controller;
 
-import com.waggle.domain.ApiV1Controller;
 import com.waggle.domain.user.UserInfo;
 import com.waggle.domain.user.dto.UserInputDto;
 import com.waggle.domain.user.dto.UserResponseDto;
@@ -36,9 +35,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "사용자", description = "사용자 관련 API")
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
-public class UserController extends ApiV1Controller {
+public class UserController {
 
     private final UserService userService;
 
