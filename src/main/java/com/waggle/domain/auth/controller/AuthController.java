@@ -1,6 +1,5 @@
 package com.waggle.domain.auth.controller;
 
-import com.waggle.domain.ApiV1Controller;
 import com.waggle.domain.auth.dto.AccessTokenVo;
 import com.waggle.domain.auth.service.AuthService;
 import com.waggle.global.exception.JwtTokenException;
@@ -27,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
-public class AuthController extends ApiV1Controller {
+public class AuthController {
 
     private final AuthService authService;
 

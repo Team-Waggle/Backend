@@ -1,7 +1,5 @@
 package com.waggle.domain.user.controller;
 
-import com.waggle.domain.ApiV1Controller;
-import com.waggle.domain.auth.service.AuthService;
 import com.waggle.domain.user.UserInfo;
 import com.waggle.domain.user.dto.UserInputDto;
 import com.waggle.domain.user.dto.UserResponseDto;
@@ -12,6 +10,7 @@ import com.waggle.global.response.BaseResponse;
 import com.waggle.global.response.ErrorResponse;
 import com.waggle.global.response.SuccessResponse;
 import com.waggle.global.response.swagger.UserSuccessResponse;
+import com.waggle.global.secure.oauth2.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -24,6 +23,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,11 +35,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "사용자", description = "사용자 관련 API")
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
-public class UserController extends ApiV1Controller {
+public class UserController {
 
-    private final AuthService authService;
     private final UserService userService;
 
     @GetMapping("/me")
@@ -64,9 +63,10 @@ public class UserController extends ApiV1Controller {
             )
         )
     })
-    public ResponseEntity<BaseResponse<UserResponseDto>> fetchMe() {
-        User user = authService.getCurrentUser();
-        UserInfo userInfo = userService.getUserInfoByUser(user);
+    public ResponseEntity<BaseResponse<UserResponseDto>> fetchMe(
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        UserInfo userInfo = userService.getUserInfoByUser(userDetails.getUser());
         return SuccessResponse.of(ApiStatus._OK, UserResponseDto.from(userInfo));
     }
 
@@ -94,9 +94,10 @@ public class UserController extends ApiV1Controller {
     })
     public ResponseEntity<BaseResponse<UserResponseDto>> updateMe(
         @RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
-        @Valid @RequestPart(value = "updateUserDto") UserInputDto userInputDto
+        @Valid @RequestPart(value = "updateUserDto") UserInputDto userInputDto,
+        @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        User user = userService.updateCurrentUser(profileImage, userInputDto);
+        User user = userService.updateUser(profileImage, userInputDto, userDetails.getUser());
         UserInfo userInfo = userService.getUserInfoByUser(user);
         return SuccessResponse.of(ApiStatus._OK, UserResponseDto.from(userInfo));
     }
@@ -111,8 +112,10 @@ public class UserController extends ApiV1Controller {
         @ApiResponse(responseCode = "204", description = "사용자 삭제 성공", content = @Content()),
         @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<BaseResponse<Object>> deleteMe() {
-        userService.deleteCurrentUser();
+    public ResponseEntity<BaseResponse<Object>> deleteMe(
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        userService.deleteUser(userDetails.getUser());
         return SuccessResponse.of(ApiStatus._NO_CONTENT, null);
     }
 

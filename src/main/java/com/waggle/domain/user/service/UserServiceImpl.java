@@ -82,9 +82,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User updateCurrentUser(MultipartFile profileImage, UserInputDto userInputDto) {
-        User user = authService.getCurrentUser();
-
+    public User updateUser(MultipartFile profileImage, UserInputDto userInputDto, User user) {
         user.update(
             userInputDto.name(),
             getProfileImageUrl(profileImage, user),
@@ -106,8 +104,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void deleteCurrentUser() {
-        User user = authService.getCurrentUser();
+    public void deleteUser(User user) {
         s3Service.deleteFile(user.getProfileImageUrl());
         userRepository.delete(user);
         userJobRoleRepository.deleteByUserId(user.getId());
