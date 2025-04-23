@@ -1,6 +1,5 @@
 package com.waggle.domain.project.controller;
 
-import com.waggle.domain.ApiV1Controller;
 import com.waggle.domain.project.ProjectInfo;
 import com.waggle.domain.project.dto.ProjectInputDto;
 import com.waggle.domain.project.dto.ProjectResponseDto;
@@ -11,6 +10,7 @@ import com.waggle.global.response.BaseResponse;
 import com.waggle.global.response.ErrorResponse;
 import com.waggle.global.response.SuccessResponse;
 import com.waggle.global.response.swagger.ProjectSuccessResponse;
+import com.waggle.global.secure.oauth2.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,6 +22,7 @@ import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,9 +36,9 @@ import org.springframework.web.bind.annotation.RestController;
 //put은 전체 다 수정, patch는 일부만 수정
 @Tag(name = "프로젝트 모집 게시글", description = "프로젝트 모집 게시글 관련 API")
 @RestController
-@RequestMapping("/projects/post")
+@RequestMapping("/api/v1/projects/post")
 @RequiredArgsConstructor
-public class ProjectPostController extends ApiV1Controller {
+public class ProjectPostController {
 
     private final ProjectService projectService;
 
@@ -95,9 +96,10 @@ public class ProjectPostController extends ApiV1Controller {
         )
     })
     public ResponseEntity<BaseResponse<ProjectResponseDto>> createProject(
-        @Valid @RequestBody ProjectInputDto projectInputDto
+        @Valid @RequestBody ProjectInputDto projectInputDto,
+        @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        Project project = projectService.createProject(projectInputDto);
+        Project project = projectService.createProject(projectInputDto, userDetails.getUser());
         ProjectInfo projectInfo = projectService.getProjectInfoByProject(project);
         return SuccessResponse.of(ApiStatus._CREATED, ProjectResponseDto.from(projectInfo));
     }
@@ -140,9 +142,14 @@ public class ProjectPostController extends ApiV1Controller {
     })
     public ResponseEntity<BaseResponse<ProjectResponseDto>> updateProject(
         @PathVariable UUID projectId,
-        @Valid @RequestBody ProjectInputDto projectInputDto
+        @Valid @RequestBody ProjectInputDto projectInputDto,
+        @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        Project project = projectService.updateProject(projectId, projectInputDto);
+        Project project = projectService.updateProject(
+            projectId,
+            projectInputDto,
+            userDetails.getUser()
+        );
         ProjectInfo projectInfo = projectService.getProjectInfoByProject(project);
         return SuccessResponse.of(ApiStatus._OK, ProjectResponseDto.from(projectInfo));
     }
@@ -181,8 +188,11 @@ public class ProjectPostController extends ApiV1Controller {
             )
         )
     })
-    public ResponseEntity<BaseResponse<Object>> deleteProject(@PathVariable UUID projectId) {
-        projectService.deleteProject(projectId);
+    public ResponseEntity<BaseResponse<Object>> deleteProject(
+        @PathVariable UUID projectId,
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        projectService.deleteProject(projectId, userDetails.getUser());
         return SuccessResponse.of(ApiStatus._NO_CONTENT, null);
     }
 }

@@ -9,7 +9,6 @@ import static org.mockito.Mockito.anyList;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.waggle.domain.auth.service.AuthService;
 import com.waggle.domain.reference.enums.Industry;
 import com.waggle.domain.reference.enums.Skill;
 import com.waggle.domain.user.UserInfo;
@@ -51,9 +50,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
-
-    @Mock
-    private AuthService authService;
 
     @Mock
     private S3Service s3Service;
@@ -167,9 +163,8 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("현재 유저 정보 업데이트")
-    void updateCurrentUser_Success() {
+    void updateUser_Success() {
         // Given
-        when(authService.getCurrentUser()).thenReturn(testUser);
         when(userRepository.getReferenceById(userId)).thenReturn(testUser);
         when(userRepository.save(any(User.class))).thenReturn(testUser);
         when(s3Service.getUrlFromFileName(anyString())).thenReturn("oldImageUrl");
@@ -200,12 +195,11 @@ class UserServiceImplTest {
         );
 
         // When
-        User result = userService.updateCurrentUser(profileImage, inputDto);
+        User result = userService.updateUser(profileImage, inputDto, testUser);
 
         // Then
         assertNotNull(result);
         assertEquals(userId, result.getId());
-        verify(authService).getCurrentUser();
         verify(userRepository).save(testUser);
         verify(userJobRoleRepository).deleteByUserId(userId);
         verify(userIndustryRepository).deleteByUserId(userId);
@@ -222,20 +216,17 @@ class UserServiceImplTest {
 
     @Test
     @DisplayName("현재 유저 삭제")
-    void deleteCurrentUser_Success() throws Exception {
+    void deleteUser_Success() throws Exception {
         // Given
-        when(authService.getCurrentUser()).thenReturn(testUser);
-
         // 리플렉션을 사용해 private 필드 설정
         Field profileImageUrlField = User.class.getDeclaredField("profileImageUrl");
         profileImageUrlField.setAccessible(true);
         profileImageUrlField.set(testUser, "profileImageUrl");
 
         // When
-        userService.deleteCurrentUser();
+        userService.deleteUser(testUser);
 
         // Then
-        verify(authService).getCurrentUser();
         verify(s3Service).deleteFile("profileImageUrl");
         verify(userRepository).delete(testUser);
         verify(userJobRoleRepository).deleteByUserId(userId);

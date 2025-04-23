@@ -10,43 +10,43 @@ import java.util.UUID;
 
 public interface ProjectService {
 
-    Project createProject(ProjectInputDto projectInputDto);
+    Project createProject(ProjectInputDto projectInputDto, User user);
 
     Project getProjectById(UUID projectId);
 
     ProjectInfo getProjectInfoByProject(Project project);
 
-    Project updateProject(UUID projectId, ProjectInputDto projectInputDto);
+    Project updateProject(UUID projectId, ProjectInputDto projectInputDto, User user);
 
-    void deleteProject(UUID projectId);
+    void deleteProject(UUID projectId, User user);
 
     Set<User> getUsersByProjectId(UUID projectId);
 
     Set<User> getAppliedUsersByProjectId(UUID projectId);
 
-    Set<User> approveAppliedUser(UUID projectId, UUID userId);
+    Set<User> approveAppliedUser(UUID projectId, UUID userId, User user);
 
-    Set<User> rejectAppliedUser(UUID projectId, UUID userId);
+    Set<User> rejectAppliedUser(UUID projectId, UUID userId, User user);
 
-    Set<User> removeMemberUser(UUID projectId, UUID userId);
+    Set<User> removeMemberUser(UUID projectId, UUID userId, User user);
 
-    void delegateLeader(UUID projectId, UUID userId);
+    void delegateLeader(UUID projectId, UUID userId, User user);
 
     Set<Project> getUserProjects(UUID userId);
 
-    void withdrawFromProject(UUID projectId);
+    void withdrawFromProject(UUID projectId, User user);
 
     Set<Project> getUserBookmarkProjects(UUID userId);
 
-    Project applyProject(UUID projectId, ProjectApplicationDto projectApplicationDto);
+    Project applyProject(UUID projectId, ProjectApplicationDto projectApplicationDto, User user);
 
-    void cancelProjectApplication(UUID projectId);
+    void cancelProjectApplication(UUID projectId, User user);
 
-    Set<Project> getAppliedProjects();
+    Set<Project> getAppliedProjects(User user);
 
-    boolean toggleCurrentUserBookmark(UUID projectId);
+    boolean toggleCurrentUserBookmark(UUID projectId, User user);
 
-    Set<Project> getCurrentUserBookmarkProjects();
+    Set<Project> getCurrentUserBookmarkProjects(User user);
 
-    Set<Project> getCurrentUserProjects();
+    Set<Project> getCurrentUserProjects(User user);
 }

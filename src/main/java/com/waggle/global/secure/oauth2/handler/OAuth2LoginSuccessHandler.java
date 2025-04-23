@@ -76,27 +76,21 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         String email = oAuth2UserInfo.getEmail();
         String profileImage = oAuth2UserInfo.getProfileImage();
 
-        User existUser = userRepository.findByProviderId(providerId);
-        User user;
-        boolean isExistUser = existUser != null;
+        User user = userRepository.findByProviderId(providerId)
+            .orElseGet(() -> {
+                log.info("신규 유저입니다. 등록을 진행합니다.");
+                return userRepository.save(User.builder()
+                    .name(name)
+                    .email(email)
+                    .profileImageUrl(profileImage)
+                    .provider(provider)
+                    .providerId(providerId)
+                    .build());
+            });
 
-        if (existUser == null) {
-            // 신규 유저인 경우
-            log.info("신규 유저입니다. 등록을 진행합니다.");
-
-            user = User.builder()
-                .name(name)
-                .email(email)
-                .profileImageUrl(profileImage)
-                .provider(provider)
-                .providerId(providerId)
-                .build();
-            userRepository.save(user);
-        } else {
-            // 기존 유저인 경우
+        if (user.getId() != null) {
             log.info("기존 유저입니다.");
-            redisTemplate.delete("REFRESH_TOKEN:" + existUser.getId());
-            user = existUser;
+            redisTemplate.delete("REFRESH_TOKEN:" + user.getId());
         }
 
         log.info("유저 이름 : {}", name);
@@ -104,12 +98,12 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         log.info("PROVIDER : {}", provider);
         log.info("PROVIDER_ID : {}", providerId);
 
-        // 리프레쉬 토큰 발급 후 저장
+        String accessToken = jwtUtil.generateAccessToken(user.getId());
         String refreshToken = jwtUtil.generateRefreshToken(user.getId());
         redisTemplate.opsForValue().set(
             "REFRESH_TOKEN:" + user.getId(),
             refreshToken,
-            Duration.ofMillis(JwtUtil.refreshTokenExpirationTime)
+            Duration.ofMillis(jwtUtil.refreshTokenExpirationTime)
         );
 
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh_token", refreshToken)
@@ -117,7 +111,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             .secure(true)
             .sameSite("None")
             .path("/")
-            .maxAge(JwtUtil.refreshTokenExpirationTime)
+            .maxAge(jwtUtil.refreshTokenExpirationTime)
             .build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
@@ -130,7 +124,9 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         if (profile.equals("local")) {
             redirectUri = localUrl + localLoginProcessEndpoint;
         }
-        redirectUri = redirectUri + "?is_exist_user=" + isExistUser;
+        redirectUri = redirectUri +
+            "?is_exist_user=" + (user.getId() != null) +
+            "&access_token=" + accessToken;
         getRedirectStrategy().sendRedirect(request, response, redirectUri);
     }
 }
