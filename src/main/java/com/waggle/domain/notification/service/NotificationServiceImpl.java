@@ -1,5 +1,7 @@
 package com.waggle.domain.notification.service;
 
+import com.waggle.domain.notification.NotificationType;
+import com.waggle.domain.notification.dto.NotificationRequestDto;
 import com.waggle.domain.notification.entity.Notification;
 import com.waggle.domain.notification.repository.NotificationRepository;
 import com.waggle.domain.user.entity.User;
@@ -14,6 +16,22 @@ import org.springframework.transaction.annotation.Transactional;
 public class NotificationServiceImpl implements NotificationService {
 
     private final NotificationRepository notificationRepository;
+
+    @Override
+    @Transactional
+    public Notification createNotification(
+        NotificationRequestDto notificationRequestDto,
+        User recipient
+    ) {
+        NotificationType type = notificationRequestDto.type();
+        Notification notification = Notification.builder()
+            .title(type.getTitle())
+            .content(type.getContent(notificationRequestDto.type().getContent()))
+            .redirectUrl(notificationRequestDto.redirectUrl())
+            .user(recipient)
+            .build();
+        return notificationRepository.save(notification);
+    }
 
     @Override
     @Transactional(readOnly = true)
