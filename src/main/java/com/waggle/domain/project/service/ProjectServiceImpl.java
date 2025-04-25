@@ -1,5 +1,8 @@
 package com.waggle.domain.project.service;
 
+import com.waggle.domain.notification.NotificationType;
+import com.waggle.domain.notification.dto.NotificationRequestDto;
+import com.waggle.domain.notification.service.NotificationService;
 import com.waggle.domain.project.ProjectInfo;
 import com.waggle.domain.project.dto.ProjectApplicationDto;
 import com.waggle.domain.project.dto.ProjectInputDto;
@@ -20,6 +23,7 @@ import com.waggle.domain.reference.enums.ApplicationStatus;
 import com.waggle.domain.reference.enums.JobRole;
 import com.waggle.domain.reference.enums.Skill;
 import com.waggle.domain.user.entity.User;
+import com.waggle.domain.user.service.UserService;
 import com.waggle.global.exception.AccessDeniedException;
 import com.waggle.global.exception.ProjectException;
 import com.waggle.global.response.ApiStatus;
@@ -40,6 +44,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ProjectServiceImpl implements ProjectService {
 
+    private final NotificationService notificationService;
+    private final UserService userService;
     private final ProjectRepository projectRepository;
     private final ProjectApplicantRepository projectApplicantRepository;
     private final ProjectBookmarkRepository projectBookmarkRepository;
@@ -114,7 +120,7 @@ public class ProjectServiceImpl implements ProjectService {
             .orElseThrow(() -> new EntityNotFoundException(
                 "Project not found with id: " + projectId));
 
-        if (!getLeader(project).getId().equals(user.getId())) {
+        if (!getLeaderByProjectId(project.getId()).getId().equals(user.getId())) {
             throw new AccessDeniedException(ApiStatus._NOT_LEADER);
         }
 
@@ -150,7 +156,7 @@ public class ProjectServiceImpl implements ProjectService {
             .orElseThrow(() -> new EntityNotFoundException(
                 "Project not found with id: " + projectId));
 
-        if (!getLeader(project).getId().equals(user.getId())) {
+        if (!getLeaderByProjectId(project.getId()).getId().equals(user.getId())) {
             throw new AccessDeniedException(ApiStatus._NOT_LEADER);
         }
 
@@ -189,7 +195,7 @@ public class ProjectServiceImpl implements ProjectService {
             .orElseThrow(() -> new EntityNotFoundException(
                 "Project not found with id: " + projectId));
 
-        if (!getLeader(project).getId().equals(user.getId())) {
+        if (!getLeaderByProjectId(project.getId()).getId().equals(user.getId())) {
             throw new AccessDeniedException(ApiStatus._NOT_LEADER);
         }
 
@@ -214,6 +220,15 @@ public class ProjectServiceImpl implements ProjectService {
         );
         projectMemberRepository.save(member);
 
+        notificationService.createNotification(
+            NotificationRequestDto.of(
+                NotificationType.APPLICATION_ACCEPTED,
+                "/projects/" + projectId,
+                project.getTitle()
+            ),
+            userService.getUserById(userId)
+        );
+
         return getUsersByProjectId(projectId);
     }
 
@@ -224,7 +239,7 @@ public class ProjectServiceImpl implements ProjectService {
             .orElseThrow(() -> new EntityNotFoundException(
                 "Project not found with id: " + projectId));
 
-        if (!getLeader(project).getId().equals(user.getId())) {
+        if (!getLeaderByProjectId(project.getId()).getId().equals(user.getId())) {
             throw new AccessDeniedException(ApiStatus._NOT_LEADER);
         }
 
@@ -233,6 +248,15 @@ public class ProjectServiceImpl implements ProjectService {
             .orElseThrow(() -> new EntityNotFoundException(
                 "Applicant not found for project id: " + projectId + " and user id: " + userId));
         projectApplicant.updateStatus(ApplicationStatus.REJECTED);
+
+        notificationService.createNotification(
+            NotificationRequestDto.of(
+                NotificationType.APPLICATION_REJECTED,
+                "/projects/",
+                project.getTitle()
+            ),
+            userService.getUserById(userId)
+        );
 
         return getUsersByProjectId(projectId);
     }
@@ -244,7 +268,7 @@ public class ProjectServiceImpl implements ProjectService {
             .orElseThrow(() -> new EntityNotFoundException(
                 "Project not found with id: " + projectId));
 
-        if (!getLeader(project).getId().equals(user.getId())) {
+        if (!getLeaderByProjectId(project.getId()).getId().equals(user.getId())) {
             throw new AccessDeniedException(ApiStatus._NOT_LEADER);
         }
 
@@ -276,7 +300,7 @@ public class ProjectServiceImpl implements ProjectService {
             .orElseThrow(() -> new EntityNotFoundException(
                 "Project not found with id: " + projectId));
 
-        if (!getLeader(project).getId().equals(user.getId())) {
+        if (!getLeaderByProjectId(project.getId()).getId().equals(user.getId())) {
             throw new AccessDeniedException(ApiStatus._NOT_LEADER);
         }
 
@@ -377,6 +401,16 @@ public class ProjectServiceImpl implements ProjectService {
             .status(ApplicationStatus.PENDING)
             .build();
         projectApplicantRepository.save(applicant);
+
+        notificationService.createNotification(
+            NotificationRequestDto.of(
+                NotificationType.APPLICATION_RECEIVED,
+                "/projects/" + project.getId() + "/applications",
+                user.getName(),
+                project.getTitle()
+            ),
+            getLeaderByProjectId(projectId)
+        );
 
         return project;
     }
@@ -484,11 +518,10 @@ public class ProjectServiceImpl implements ProjectService {
             .collect(Collectors.toSet());
     }
 
-    private User getLeader(Project project) {
-        ProjectMember leader = projectMemberRepository.findByProjectIdAndIsLeaderTrue(
-                project.getId())
+    private User getLeaderByProjectId(UUID projectId) {
+        ProjectMember leader = projectMemberRepository.findByProjectIdAndIsLeaderTrue(projectId)
             .orElseThrow(() -> new EntityNotFoundException(
-                "Leader not found with project id: " + project.getId()));
+                "Leader not found with project id: " + projectId));
         return leader.getUser();
     }
 }
