@@ -16,6 +16,14 @@ public enum NotificationType {
     APPLICATION_REJECTED(
         "지원 거절",
         "'%s' 프로젝트 지원이 거절되었습니다. 다른 기회에 도전해보세요."
+    ),
+    DEADLINE_APPROACHING(
+        "마감 임박",
+        "'%s' 프로젝트 모집이 %s일 후에 마감됩니다. 서둘러 지원해보세요!"
+    ),
+    DEADLINE_CLOSED(
+        "모집 마감",
+        "'%s' 프로젝트 모집이 마감되었습니다."
     );
 
     @Getter
