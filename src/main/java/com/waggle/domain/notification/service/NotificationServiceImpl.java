@@ -26,7 +26,7 @@ public class NotificationServiceImpl implements NotificationService {
         NotificationType type = notificationRequestDto.type();
         Notification notification = Notification.builder()
             .title(type.getTitle())
-            .content(type.getContent(notificationRequestDto.type().getContent()))
+            .content(type.getContent(notificationRequestDto.contentArgs()))
             .redirectUrl(notificationRequestDto.redirectUrl())
             .user(recipient)
             .build();
