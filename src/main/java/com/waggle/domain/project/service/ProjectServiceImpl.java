@@ -1,7 +1,13 @@
 package com.waggle.domain.project.service;
 
 import com.waggle.domain.project.dto.ProjectInputDto;
-import com.waggle.domain.project.entity.*;
+import com.waggle.domain.project.entity.Project;
+import com.waggle.domain.project.entity.ProjectApplicant;
+import com.waggle.domain.project.entity.ProjectBookmark;
+import com.waggle.domain.project.entity.ProjectMember;
+import com.waggle.domain.project.entity.ProjectMemberJob;
+import com.waggle.domain.project.entity.ProjectRecruitmentJob;
+import com.waggle.domain.project.entity.ProjectSkill;
 import com.waggle.domain.project.repository.ProjectRepository;
 import com.waggle.domain.reference.service.ReferenceService;
 import com.waggle.domain.user.entity.User;
@@ -10,20 +16,25 @@ import com.waggle.domain.user.service.UserService;
 import com.waggle.global.exception.AccessDeniedException;
 import com.waggle.global.exception.ProjectException;
 import com.waggle.global.response.ApiStatus;
+import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ProjectServiceImpl implements ProjectService{
+public class ProjectServiceImpl implements ProjectService {
 
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
@@ -31,32 +42,40 @@ public class ProjectServiceImpl implements ProjectService{
     private final ReferenceService referenceService;
 
     @Override
+    @Transactional(readOnly = true)
+    public Page<Project> getProjects(Pageable pageable) {
+        return projectRepository.findAll(pageable);
+    }
+
+    @Override
     public Project getProjectByProjectId(UUID id) {
         return projectRepository.findById(id)
-                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+            .orElseThrow(() -> new EmptyResultDataAccessException(1));
     }
 
     @Override
     public Project createProject(ProjectInputDto projectInputDto) {
         Project newProject = Project.builder()
-                .title(projectInputDto.getTitle())
-                .industry(referenceService.getIndustryById(projectInputDto.getIndustryId()))
-                .waysOfWorking(referenceService.getWaysOfWorkingById(projectInputDto.getWayOfWorkingId()))
-                .recruitmentDate(projectInputDto.getRecruitmentDate())
-                .durationOfWorking(referenceService.getDurationOfWorkingById(projectInputDto.getDurationOfWorkingId()))
-                .detail(projectInputDto.getDetail())
-                .connectUrl(projectInputDto.getConnectUrl())
-                .referenceUrl(projectInputDto.getReferenceUrl())
-                .bookmarkCnt(0)
-                .build();
+            .title(projectInputDto.getTitle())
+            .industry(referenceService.getIndustryById(projectInputDto.getIndustryId()))
+            .waysOfWorking(
+                referenceService.getWaysOfWorkingById(projectInputDto.getWayOfWorkingId()))
+            .recruitmentDate(projectInputDto.getRecruitmentDate())
+            .durationOfWorking(
+                referenceService.getDurationOfWorkingById(projectInputDto.getDurationOfWorkingId()))
+            .detail(projectInputDto.getDetail())
+            .connectUrl(projectInputDto.getConnectUrl())
+            .referenceUrl(projectInputDto.getReferenceUrl())
+            .bookmarkCnt(0)
+            .build();
         newProject = projectRepository.save(newProject);
 
         Set<ProjectMember> projectMembers = new HashSet<>();
         projectMembers.add(ProjectMember.builder()
-                .project(newProject)
-                .user(userService.getCurrentUser())
-                .isLeader(true)
-                .build());
+            .project(newProject)
+            .user(userService.getCurrentUser())
+            .isLeader(true)
+            .build());
         newProject.setProjectMembers(projectMembers);
         newProject.setProjectApplicants(new HashSet<>());
         newProject.setRecruitmentJobs(getProjectRecruitmentJobs(projectInputDto, newProject));
@@ -70,7 +89,7 @@ public class ProjectServiceImpl implements ProjectService{
     @Override
     public Project updateProject(UUID id, ProjectInputDto projectInputDto) {
         Project project = projectRepository.findById(id)
-                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+            .orElseThrow(() -> new EmptyResultDataAccessException(1));
         User currentUser = userService.getCurrentUser();
 
         if (!getLeader(project).getId().equals(currentUser.getId())) {
@@ -79,9 +98,11 @@ public class ProjectServiceImpl implements ProjectService{
 
         project.setTitle(projectInputDto.getTitle());
         project.setIndustry(referenceService.getIndustryById(projectInputDto.getIndustryId()));
-        project.setWaysOfWorking(referenceService.getWaysOfWorkingById(projectInputDto.getWayOfWorkingId()));
+        project.setWaysOfWorking(
+            referenceService.getWaysOfWorkingById(projectInputDto.getWayOfWorkingId()));
         project.setRecruitmentDate(projectInputDto.getRecruitmentDate());
-        project.setDurationOfWorking(referenceService.getDurationOfWorkingById(projectInputDto.getDurationOfWorkingId()));
+        project.setDurationOfWorking(
+            referenceService.getDurationOfWorkingById(projectInputDto.getDurationOfWorkingId()));
         project.setRecruitmentJobs(getProjectRecruitmentJobs(projectInputDto, project));
         project.setMemberJobs(getProjectMemberJobs(projectInputDto, project));
         project.setProjectSkills(getProjectSkills(projectInputDto, project));
@@ -102,7 +123,7 @@ public class ProjectServiceImpl implements ProjectService{
 
         //id 기준
         Project project = projectRepository.findById(id)
-                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+            .orElseThrow(() -> new EmptyResultDataAccessException(1));
         User currentUser = userService.getCurrentUser();
 
         if (!getLeader(project).getId().equals(currentUser.getId())) {
@@ -115,40 +136,40 @@ public class ProjectServiceImpl implements ProjectService{
     @Override
     public Set<User> getUsersByProjectId(UUID id) {
         Project project = projectRepository.findById(id)
-                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+            .orElseThrow(() -> new EmptyResultDataAccessException(1));
 
         return project.getProjectMembers().stream()
-                .map(ProjectMember::getUser)
-                .sorted(Comparator
-                        .comparing((User user) -> user.getUserJobs().stream()
-                                .map(userJob -> userJob.getJob().getId())
-                                .min(Long::compareTo)
-                                .orElse(Long.MAX_VALUE)) // job_id 기준 정렬, 없으면 가장 큰 값으로
-                        .thenComparing(User::getName)) // job_id가 같으면 이름순 정렬
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+            .map(ProjectMember::getUser)
+            .sorted(Comparator
+                .comparing((User user) -> user.getUserJobs().stream()
+                    .map(userJob -> userJob.getJob().getId())
+                    .min(Long::compareTo)
+                    .orElse(Long.MAX_VALUE)) // job_id 기준 정렬, 없으면 가장 큰 값으로
+                .thenComparing(User::getName)) // job_id가 같으면 이름순 정렬
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Override
     public Set<User> getAppliedUsersByProjectId(UUID id) {
         Project project = projectRepository.findById(id)
-                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+            .orElseThrow(() -> new EmptyResultDataAccessException(1));
 
         return project.getProjectApplicants().stream()
-                .map(ProjectApplicant::getUser)
-                .sorted(Comparator
-                        .comparing((User user) -> user.getUserJobs().stream()
-                                .map(userJob -> userJob.getJob().getId())
-                                .min(Long::compareTo)
-                                .orElse(Long.MAX_VALUE)) // job_id 기준 정렬, 없으면 가장 큰 값으로
-                        .thenComparing(User::getName)) // job_id가 같으면 이름순 정렬
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+            .map(ProjectApplicant::getUser)
+            .sorted(Comparator
+                .comparing((User user) -> user.getUserJobs().stream()
+                    .map(userJob -> userJob.getJob().getId())
+                    .min(Long::compareTo)
+                    .orElse(Long.MAX_VALUE)) // job_id 기준 정렬, 없으면 가장 큰 값으로
+                .thenComparing(User::getName)) // job_id가 같으면 이름순 정렬
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Override
     @Transactional
     public Set<User> approveAppliedUser(UUID projectId, String userId) {
         Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+            .orElseThrow(() -> new EmptyResultDataAccessException(1));
         User currentUser = userService.getCurrentUser();
 
         if (!getLeader(project).getId().equals(currentUser.getId())) {
@@ -157,14 +178,16 @@ public class ProjectServiceImpl implements ProjectService{
 
         User user = userService.getUserByUserId(userId);
         ProjectMember projectMember = ProjectMember.builder()
-                .project(project)
-                .user(user)
-                .isLeader(false)
-                .joinedAt(LocalDateTime.now())
-                .build();
-        project.getProjectMembers().add(projectMember);;
+            .project(project)
+            .user(user)
+            .isLeader(false)
+            .joinedAt(LocalDateTime.now())
+            .build();
+        project.getProjectMembers().add(projectMember);
+        ;
 
-        project.getProjectApplicants().removeIf(member -> member.getUser().getId().equals(user.getId()));
+        project.getProjectApplicants()
+            .removeIf(member -> member.getUser().getId().equals(user.getId()));
         projectRepository.save(project);
 
         return getUsersByProjectId(projectId);
@@ -174,7 +197,7 @@ public class ProjectServiceImpl implements ProjectService{
     @Transactional
     public Set<User> rejectAppliedUser(UUID projectId, String userId) {
         Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+            .orElseThrow(() -> new EmptyResultDataAccessException(1));
         User currentUser = userService.getCurrentUser();
 
         if (!getLeader(project).getId().equals(currentUser.getId())) {
@@ -182,7 +205,8 @@ public class ProjectServiceImpl implements ProjectService{
         }
 
         User user = userService.getUserByUserId(userId);
-        project.getProjectApplicants().removeIf(member -> member.getUser().getId().equals(user.getId()));
+        project.getProjectApplicants()
+            .removeIf(member -> member.getUser().getId().equals(user.getId()));
         projectRepository.save(project);
 
         return getUsersByProjectId(projectId);
@@ -192,7 +216,7 @@ public class ProjectServiceImpl implements ProjectService{
     @Transactional
     public Set<User> rejectMemberUser(UUID projectId, String userId) {
         Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+            .orElseThrow(() -> new EmptyResultDataAccessException(1));
         User currentUser = userService.getCurrentUser();
 
         if (!getLeader(project).getId().equals(currentUser.getId())) {
@@ -200,7 +224,8 @@ public class ProjectServiceImpl implements ProjectService{
         }
 
         User user = userService.getUserByUserId(userId);
-        project.getProjectMembers().removeIf(member -> member.getUser().getId().equals(user.getId()));
+        project.getProjectMembers()
+            .removeIf(member -> member.getUser().getId().equals(user.getId()));
         projectRepository.save(project);
 
         return getUsersByProjectId(projectId);
@@ -209,7 +234,7 @@ public class ProjectServiceImpl implements ProjectService{
     @Override
     public void delegateLeader(UUID projectId, String userId) {
         Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+            .orElseThrow(() -> new EmptyResultDataAccessException(1));
         User currentUser = userService.getCurrentUser();
 
         if (!getLeader(project).getId().equals(currentUser.getId())) {
@@ -219,14 +244,14 @@ public class ProjectServiceImpl implements ProjectService{
         User user = userService.getUserByUserId(userId);
 
         project.getProjectMembers().stream()
-                .filter(member -> member.getUser().getId().equals(currentUser.getId()))
-                .findFirst()
-                .ifPresent(member -> member.setLeader(false));
+            .filter(member -> member.getUser().getId().equals(currentUser.getId()))
+            .findFirst()
+            .ifPresent(member -> member.setLeader(false));
 
         project.getProjectMembers().stream()
-                .filter(member -> member.getUser().getId().equals(user.getId()))
-                .findFirst()
-                .ifPresent(member -> member.setLeader(true));
+            .filter(member -> member.getUser().getId().equals(user.getId()))
+            .findFirst()
+            .ifPresent(member -> member.setLeader(true));
 
         projectRepository.save(project);
     }
@@ -235,9 +260,9 @@ public class ProjectServiceImpl implements ProjectService{
     public Set<Project> getUserProjects(String userId) {
         User user = userService.getUserByUserId(userId);
         return user.getProjectMembers().stream()
-                .map(ProjectMember::getProject)
-                .sorted(Comparator.comparing(Project::getCreatedAt).reversed())
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+            .map(ProjectMember::getProject)
+            .sorted(Comparator.comparing(Project::getCreatedAt).reversed())
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Override
@@ -245,13 +270,15 @@ public class ProjectServiceImpl implements ProjectService{
     public void deleteUserProject(String projectId) {
         User user = userService.getCurrentUser();
         Project project = projectRepository.findById(UUID.fromString(projectId))
-                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+            .orElseThrow(() -> new EmptyResultDataAccessException(1));
 
-        if (!project.getProjectMembers().stream().anyMatch(projectMember -> projectMember.getUser().getId().equals(user.getId()))) {
+        if (!project.getProjectMembers().stream()
+            .anyMatch(projectMember -> projectMember.getUser().getId().equals(user.getId()))) {
             throw new ProjectException(ApiStatus._NOT_JOINED_PROJECT);
         }
 
-        project.getProjectMembers().removeIf(projectMember -> projectMember.getUser().getId().equals(user.getId()));
+        project.getProjectMembers()
+            .removeIf(projectMember -> projectMember.getUser().getId().equals(user.getId()));
         projectRepository.save(project);
     }
 
@@ -259,29 +286,31 @@ public class ProjectServiceImpl implements ProjectService{
     public Set<Project> getUserBookmarkProjects(String userId) {
         User user = userService.getUserByUserId(userId);
         return user.getProjectBookmarks().stream()
-                .map(ProjectBookmark::getProject)
-                .sorted(Comparator.comparing(Project::getCreatedAt).reversed())
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+            .map(ProjectBookmark::getProject)
+            .sorted(Comparator.comparing(Project::getCreatedAt).reversed())
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Override
     public Project applyProject(String projectId) {
         User user = userService.getCurrentUser();
         Project project = projectRepository.findById(UUID.fromString(projectId))
-                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+            .orElseThrow(() -> new EmptyResultDataAccessException(1));
 
-        if (project.getProjectMembers().stream().anyMatch(projectMember -> projectMember.getUser().getId().equals(user.getId()))) {
+        if (project.getProjectMembers().stream()
+            .anyMatch(projectMember -> projectMember.getUser().getId().equals(user.getId()))) {
             throw new ProjectException(ApiStatus._ALREADY_JOINED_PROJECT);
         }
 
-        if (project.getProjectApplicants().stream().anyMatch(projectMember -> projectMember.getUser().getId().equals(user.getId()))) {
+        if (project.getProjectApplicants().stream()
+            .anyMatch(projectMember -> projectMember.getUser().getId().equals(user.getId()))) {
             throw new ProjectException(ApiStatus._ALREADY_APPLIED_PROJECT);
         }
 
         project.getProjectApplicants().add(ProjectApplicant.builder()
-                .project(project)
-                .user(user)
-                .build());
+            .project(project)
+            .user(user)
+            .build());
 
         projectRepository.save(project);
         return project;
@@ -292,9 +321,10 @@ public class ProjectServiceImpl implements ProjectService{
     public void cancelApplyProject(String projectId) {
         User user = userService.getCurrentUser();
         Project project = projectRepository.findById(UUID.fromString(projectId))
-                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+            .orElseThrow(() -> new EmptyResultDataAccessException(1));
 
-        project.getProjectApplicants().removeIf(projectApplicant -> projectApplicant.getUser().getId().equals(user.getId()));
+        project.getProjectApplicants()
+            .removeIf(projectApplicant -> projectApplicant.getUser().getId().equals(user.getId()));
         projectRepository.save(project);
     }
 
@@ -302,42 +332,44 @@ public class ProjectServiceImpl implements ProjectService{
     public Set<Project> getAppliedProjects() {
         User user = userService.getCurrentUser();
         return user.getProjectApplicants().stream()
-                .sorted(Comparator.comparing(ProjectApplicant::getAppliedAt).reversed())
-                .map(ProjectApplicant::getProject)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+            .sorted(Comparator.comparing(ProjectApplicant::getAppliedAt).reversed())
+            .map(ProjectApplicant::getProject)
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Override
     public Set<Project> getCurrentUserProjects() {
         User user = userService.getCurrentUser();
         return user.getProjectMembers().stream()
-                .map(ProjectMember::getProject)
-                .sorted(Comparator.comparing(Project::getCreatedAt).reversed())
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+            .map(ProjectMember::getProject)
+            .sorted(Comparator.comparing(Project::getCreatedAt).reversed())
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
-    private Set<ProjectRecruitmentJob> getProjectRecruitmentJobs(ProjectInputDto projectInputDto, Project project) {
+    private Set<ProjectRecruitmentJob> getProjectRecruitmentJobs(ProjectInputDto projectInputDto,
+        Project project) {
         Set<ProjectRecruitmentJob> projectRecruitmentJobs = new HashSet<>();
         projectInputDto.getRecruitmentJobs().forEach(jobDto -> {
             log.info("jobDto: {}", jobDto);
             ProjectRecruitmentJob projectRecruitmentJob = ProjectRecruitmentJob.builder()
-                    .project(project)
-                    .job(referenceService.getJobById(jobDto.getJobId()))
-                    .recruitmentCnt(jobDto.getCnt())
-                    .build();
+                .project(project)
+                .job(referenceService.getJobById(jobDto.getJobId()))
+                .recruitmentCnt(jobDto.getCnt())
+                .build();
             projectRecruitmentJobs.add(projectRecruitmentJob);
         });
         return projectRecruitmentJobs;
     }
 
-    private Set<ProjectMemberJob> getProjectMemberJobs(ProjectInputDto projectInputDto, Project project) {
+    private Set<ProjectMemberJob> getProjectMemberJobs(ProjectInputDto projectInputDto,
+        Project project) {
         Set<ProjectMemberJob> projectMemberJobs = new HashSet<>();
         projectInputDto.getMemberJobs().forEach(jobDto -> {
             ProjectMemberJob projectMemberJob = ProjectMemberJob.builder()
-                    .project(project)
-                    .job(referenceService.getJobById(jobDto.getJobId()))
-                    .memberCnt(jobDto.getCnt())
-                    .build();
+                .project(project)
+                .job(referenceService.getJobById(jobDto.getJobId()))
+                .memberCnt(jobDto.getCnt())
+                .build();
             projectMemberJobs.add(projectMemberJob);
         });
         return projectMemberJobs;
@@ -347,9 +379,9 @@ public class ProjectServiceImpl implements ProjectService{
         Set<ProjectSkill> projectSkills = new HashSet<>();
         projectInputDto.getSkillIds().forEach(skillId -> {
             ProjectSkill projectSkill = ProjectSkill.builder()
-                    .project(project)
-                    .skill(referenceService.getSkillById(skillId))
-                    .build();
+                .project(project)
+                .skill(referenceService.getSkillById(skillId))
+                .build();
             projectSkills.add(projectSkill);
         });
         return projectSkills;
@@ -357,28 +389,30 @@ public class ProjectServiceImpl implements ProjectService{
 
     private User getLeader(Project project) {
         return project.getProjectMembers().stream()
-                .filter(ProjectMember::isLeader)
-                .map(ProjectMember::getUser)
-                .findFirst()
-                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+            .filter(ProjectMember::isLeader)
+            .map(ProjectMember::getUser)
+            .findFirst()
+            .orElseThrow(() -> new EmptyResultDataAccessException(1));
     }
 
     @Override
     public boolean toggleCurrentUserBookmark(String projectId) {
         User user = userService.getCurrentUser();
         Project project = projectRepository.findById(UUID.fromString(projectId))
-                .orElseThrow(() -> new EmptyResultDataAccessException(1));
+            .orElseThrow(() -> new EmptyResultDataAccessException(1));
         boolean isBookmarked;
 
-        if (user.getProjectBookmarks().stream().anyMatch(projectBookmark -> projectBookmark.getProject().getId().equals(project.getId()))) {
-            user.getProjectBookmarks().removeIf(projectBookmark -> projectBookmark.getProject().getId().equals(project.getId()));
+        if (user.getProjectBookmarks().stream().anyMatch(
+            projectBookmark -> projectBookmark.getProject().getId().equals(project.getId()))) {
+            user.getProjectBookmarks().removeIf(
+                projectBookmark -> projectBookmark.getProject().getId().equals(project.getId()));
             project.setBookmarkCnt(project.getBookmarkCnt() - 1);
             isBookmarked = false;
         } else {
             user.getProjectBookmarks().add(ProjectBookmark.builder()
-                    .project(project)
-                    .user(user)
-                    .build());
+                .project(project)
+                .user(user)
+                .build());
             project.setBookmarkCnt(project.getBookmarkCnt() + 1);
             isBookmarked = true;
         }
@@ -393,8 +427,8 @@ public class ProjectServiceImpl implements ProjectService{
     public Set<Project> getCurrentUserBookmarkProjects() {
         User user = userService.getCurrentUser();
         return user.getProjectBookmarks().stream()
-                .map(ProjectBookmark::getProject)
-                .sorted(Comparator.comparing(Project::getCreatedAt).reversed())
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+            .map(ProjectBookmark::getProject)
+            .sorted(Comparator.comparing(Project::getCreatedAt).reversed())
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }
