@@ -9,6 +9,8 @@ public interface ProjectBookmarkRepository extends JpaRepository<ProjectBookmark
 
     List<ProjectBookmark> findByUserId(UUID userId);
 
+    List<ProjectBookmark> findByProjectId(UUID projectId);
+
     void deleteByProjectId(UUID projectId);
 
     void deleteByProjectIdAndUserId(UUID projectId, UUID userId);
