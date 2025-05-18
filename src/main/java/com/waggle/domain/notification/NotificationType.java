@@ -23,7 +23,7 @@ public enum NotificationType {
     ),
     DEADLINE_CLOSED(
         "모집 마감",
-        "'%s' 프로젝트 모집이 마감되었습니다."
+        "오늘 '%s' 프로젝트 모집이 마감됩니다."
     );
 
     @Getter
