@@ -70,8 +70,11 @@ jobs:
             ps aux | grep java | grep -v grep || echo "실행 중인 Java 프로세스 없음"
 
             echo "Java 프로세스 종료 시도..."
-            if pgrep -f 'java.*jar' > /dev/null; then
-              pkill -f 'java.*jar'
+            # pgrep도 안전하게 처리
+            JAVA_PIDS=$(pgrep -f 'java.*jar' 2>/dev/null || echo "")
+            if [ -n "$JAVA_PIDS" ]; then
+              echo "Java 프로세스 발견: $JAVA_PIDS"
+              kill $JAVA_PIDS || echo "종료 신호 전송 완료"
               echo "프로세스 종료됨"
             else
               echo "종료할 프로세스 없음"
