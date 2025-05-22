@@ -4,11 +4,6 @@ import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.ManyToOne;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -16,6 +11,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +31,9 @@ public class CsvService {
     public void insertCsvDataToDb(String filePath, Class<?> entityClass) {
         try {
             List<String[]> csvData = readCsv(filePath);
-            if (csvData.isEmpty()) return;
+            if (csvData.isEmpty()) {
+                return;
+            }
 
             String[] headers = csvData.get(0); // CSV 헤더 가져오기
             List<Object> entities = new ArrayList<>();
@@ -96,7 +96,7 @@ public class CsvService {
         StringBuilder camelCase = new StringBuilder(parts[0]); // 첫 단어는 그대로 사용
         for (int i = 1; i < parts.length; i++) {
             camelCase.append(Character.toUpperCase(parts[i].charAt(0)))
-                    .append(parts[i].substring(1));
+                .append(parts[i].substring(1));
         }
         return camelCase.toString();
     }

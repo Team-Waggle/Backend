@@ -1,52 +1,53 @@
 package com.waggle.domain.project.service;
 
+import java.util.Set;
+import java.util.UUID;
+
+import com.waggle.domain.project.ProjectInfo;
+import com.waggle.domain.project.dto.ProjectApplicationDto;
 import com.waggle.domain.project.dto.ProjectInputDto;
 import com.waggle.domain.project.entity.Project;
 import com.waggle.domain.user.entity.User;
-import java.util.Set;
-import java.util.UUID;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 public interface ProjectService {
 
-    Project getProjectByProjectId(UUID id);
+    Project createProject(ProjectInputDto projectInputDto, User user);
 
-    Page<Project> getProjects(Pageable pageable);
+    Project getProjectById(UUID projectId);
 
-    Project createProject(ProjectInputDto projectInputDto);
+    ProjectInfo getProjectInfoByProject(Project project);
 
-    Project updateProject(UUID id, ProjectInputDto projectInputDto);
+    Project updateProject(UUID projectId, ProjectInputDto projectInputDto, User user);
 
-    void deleteProject(UUID id);
+    void deleteProject(UUID projectId, User user);
 
-    Set<User> getUsersByProjectId(UUID id);
+    Set<User> getUsersByProjectId(UUID projectId);
 
-    Set<User> getAppliedUsersByProjectId(UUID id);
+    Set<User> getAppliedUsersByProjectId(UUID projectId);
 
-    Set<User> approveAppliedUser(UUID projectId, String userId);
+    Set<User> approveAppliedUser(UUID projectId, UUID userId, User user);
 
-    Set<User> rejectAppliedUser(UUID projectId, String userId);
+    Set<User> rejectAppliedUser(UUID projectId, UUID userId, User user);
 
-    Set<User> rejectMemberUser(UUID projectId, String userId);
+    Set<User> removeMemberUser(UUID projectId, UUID userId, User user);
 
-    void delegateLeader(UUID projectId, String userId);
+    void delegateLeader(UUID projectId, UUID userId, User user);
 
-    Set<Project> getUserProjects(String userId);
+    Set<Project> getUserProjects(UUID userId);
 
-    void deleteUserProject(String projectId);
+    void withdrawFromProject(UUID projectId, User user);
 
-    Set<Project> getUserBookmarkProjects(String userId);
+    Set<Project> getUserBookmarkProjects(UUID userId);
 
-    Project applyProject(String projectId);
+    Project applyProject(UUID projectId, ProjectApplicationDto projectApplicationDto, User user);
 
-    void cancelApplyProject(String projectId);
+    void cancelProjectApplication(UUID projectId, User user);
 
-    Set<Project> getAppliedProjects();
+    Set<Project> getAppliedProjects(User user);
 
-    boolean toggleCurrentUserBookmark(String projectId);
+    boolean toggleCurrentUserBookmark(UUID projectId, User user);
 
-    Set<Project> getCurrentUserBookmarkProjects();
+    Set<Project> getCurrentUserBookmarkProjects(User user);
 
-    Set<Project> getCurrentUserProjects();
+    Set<Project> getCurrentUserProjects(User user);
 }

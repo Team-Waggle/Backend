@@ -1,58 +1,72 @@
 package com.waggle.domain.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.waggle.domain.reference.enums.Industry;
+import com.waggle.domain.reference.enums.Sido;
+import com.waggle.domain.reference.enums.Skill;
+import com.waggle.domain.reference.enums.WorkTime;
+import com.waggle.domain.reference.enums.WorkWay;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Builder;
-import lombok.Getter;
-
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import java.time.DayOfWeek;
 import java.util.Set;
+import lombok.Builder;
 
-@Getter
 @Builder
 @Schema(description = "사용자 정보 수정 DTO")
-public class UserInputDto {
-
+public record UserInputDto(
+    @NotBlank(message = "이름은 필수 항목입니다")
+    @Size(min = 2, max = 50, message = "이름은 2자 이상 50자 이하여야 합니다")
     @JsonProperty("name")
     @Schema(description = "사용자 이름", example = "홍길동")
-    private String name;
+    String name,
 
-    @JsonProperty("jobs")
+    @Valid
+    @JsonProperty("job_roles")
     @Schema(description = "직무 및 경력 목록")
-    private Set<UserJobDto> jobs;
+    Set<UserJobRoleDto> jobRoles,
 
-    @JsonProperty("industry_ids")
-    @Schema(description = "관심 산업 분야 고유키 목록", example = "[1, 3, 5]")
-    private Set<Long> industries;
+    @Size(max = 5, message = "관심 산업 분야는 최대 5개까지 선택 가능합니다")
+    @JsonProperty("industries")
+    @Schema(description = "관심 산업 분야 목록", example = "[\"FINANCE\", \"MEDICAL_HEALTHCARE\", \"ECOMMERCE\"]")
+    Set<Industry> industries,
 
-    @JsonProperty("skill_ids")
-    @Schema(description = "보유 기술 고유키 목록", example = "[2, 4, 7]")
-    private Set<Long> skills;
+    @JsonProperty("skills")
+    @Schema(description = "보유 기술 목록", example = "[\"JAVA\", \"TYPESCRIPT\", \"NEXT_JS\"]")
+    Set<Skill> skills,
 
-    @JsonProperty("prefer_week_days_ids")
-    @Schema(description = "선호 요일 고유키 목록", example = "[1, 2, 3]")
-    private Set<Long> preferWeekDays;
+    @JsonProperty("preferred_days_of_week")
+    @Schema(description = "선호 요일 목록", example = "[\"MONDAY\", \"TUESDAY\", \"WEDNESDAY\"]")
+    Set<DayOfWeek> daysOfWeek,
 
-    @JsonProperty("prefer_tow_id")
-    @Schema(description = "선호 시간대 고유키", example = "1")
-    private Long preferTowId;
+    @JsonProperty("preferred_work_time")
+    @Schema(description = "선호 시간대", example = "EVENING")
+    WorkTime workTime,
 
-    @JsonProperty("prefer_wow_id")
-    @Schema(description = "선호 진행 방식 고유키", example = "2")
-    private Long preferWowId;
+    @JsonProperty("preferred_work_way")
+    @Schema(description = "선호 진행 방식", example = "OFFLINE")
+    WorkWay workWay,
 
-    @JsonProperty("prefer_sido_code")
-    @Schema(description = "선호 지역 고유키", example = "11")
-    private String preferSidoId;
+    @JsonProperty("preferred_sido")
+    @Schema(description = "선호 지역", example = "SEOUL")
+    Sido sido,
 
-    @JsonProperty("introduce_ids")
-    @Schema(description = "자기소개 키워드", example = "[3,13,26,31,45]")
-    private Set<Long> introduces;
+    @Valid
+    @JsonProperty("introduction")
+    @Schema(description = "사용자 소개")
+    UserIntroductionDto introduction,
 
+    @Size(max = 1000, message = "자기소개는 1000자 이하로 작성해주세요")
     @JsonProperty("detail")
     @Schema(description = "자기소개 텍스트", example = "안녕하세요.")
-    private String detail;
+    String detail,
 
+    @Valid
     @JsonProperty("portfolio_urls")
-    @Schema(description = "포트폴리오 링크")
-    private Set<UserPortfolioUrlDto> portfolioUrls;
+    @Schema(description = "포트폴리오 목록")
+    Set<UserPortfolioDto> portfolios
+) {
+
 }

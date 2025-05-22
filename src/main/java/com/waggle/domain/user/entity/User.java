@@ -1,22 +1,26 @@
 package com.waggle.domain.user.entity;
 
-import com.waggle.domain.project.entity.ProjectApplicant;
-import com.waggle.domain.project.entity.ProjectBookmark;
-import com.waggle.domain.project.entity.ProjectMember;
-import com.waggle.domain.reference.entity.Sido;
-import com.waggle.domain.reference.entity.TimeOfWorking;
-import com.waggle.domain.reference.entity.WaysOfWorking;
-import jakarta.persistence.*;
-import lombok.*;
+import com.waggle.domain.reference.enums.Sido;
+import com.waggle.domain.reference.enums.WorkTime;
+import com.waggle.domain.reference.enums.WorkWay;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import java.time.LocalDateTime;
+import java.util.UUID;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDateTime;
-import java.util.*;
-
 @Entity
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
@@ -43,65 +47,48 @@ public class User {
     @Column(name = "email", nullable = false)
     private String email;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    private Set<UserJob> userJobs = new HashSet<>();
+    @Column(name = "preferred_work_time")
+    private WorkTime workTime;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    private Set<UserIndustry> userIndustries = new HashSet<>();
+    @Column(name = "preferred_work_way")
+    private WorkWay workWay;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    private Set<UserSkill> userSkills = new HashSet<>();
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    private Set<UserWeekDays> userWeekDays = new HashSet<>();
-
-    @ManyToOne
-    @JoinColumn(name = "prefer_tow_id")
-    private TimeOfWorking preferTow;
-
-    @ManyToOne
-    @JoinColumn(name = "prefer_wow_id")
-    private WaysOfWorking preferWow;
-
-    @ManyToOne
-    @JoinColumn(name = "prefer_sido_id")
-    private Sido preferSido;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    private Set<UserIntroduce> userIntroduces = new HashSet<>();
+    @Column(name = "preferred_sido")
+    private Sido sido;
 
     @Column(name = "detail")
     private String detail;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    private Set<UserPortfolioUrl> userPortfolioUrls = new HashSet<>();
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    private Set<ProjectMember> projectMembers = new HashSet<>();
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    private Set<ProjectApplicant> projectApplicants = new HashSet<>();
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    private Set<ProjectBookmark> projectBookmarks = new HashSet<>();
+//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+//    private Set<ProjectMember> projectMembers = new HashSet<>();
+//
+//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+//    private Set<ProjectApplicant> projectApplicants = new HashSet<>();
+//
+//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+//    private Set<ProjectBookmark> projectBookmarks = new HashSet<>();
 
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    @Column(name = "updated_at")
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    public static class UserBuilder {
-        private Set<UserJob> userJobs = new HashSet<>();
-        private Set<UserIndustry> userIndustries = new HashSet<>();
-        private Set<UserSkill> userSkills = new HashSet<>();
-        private Set<UserWeekDays> userWeekDays = new HashSet<>();
-        private Set<UserIntroduce> userIntroduces = new HashSet<>();
-        private Set<UserPortfolioUrl> userPortfolioUrls = new HashSet<>();
-        private Set<ProjectMember> projectMembers = new HashSet<>();
-        private Set<ProjectApplicant> projectApplicants = new HashSet<>();
-        private Set<ProjectBookmark> projectBookmarks = new HashSet<>();
+    public void update(
+        String name,
+        String profileImageUrl,
+        WorkTime workTime,
+        WorkWay workWay,
+        Sido sido,
+        String detail
+    ) {
+        this.name = name;
+        this.profileImageUrl = profileImageUrl;
+        this.workTime = workTime;
+        this.workWay = workWay;
+        this.sido = sido;
+        this.detail = detail;
     }
 }

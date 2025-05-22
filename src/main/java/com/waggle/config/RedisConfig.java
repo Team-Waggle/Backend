@@ -1,5 +1,7 @@
 package com.waggle.config;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -7,17 +9,21 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import lombok.extern.slf4j.Slf4j;
-
 @Configuration
 @Slf4j
 public class RedisConfig {
-    
+
+    @Value("${spring.data.redis.host}")
+    private String host;
+
+    @Value("${spring.data.redis.port}")
+    private int port;
+
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         log.info("Redis 연결중...");
         try {
-            LettuceConnectionFactory factory = new LettuceConnectionFactory("redis", 6379);
+            LettuceConnectionFactory factory = new LettuceConnectionFactory(host, port);
             factory.afterPropertiesSet();  // 연결 초기화
             log.info("Redis 연결 성공");
             return factory;

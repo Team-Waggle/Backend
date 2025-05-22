@@ -1,15 +1,15 @@
 package com.waggle.global.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import lombok.Getter;
 
 @Getter
 @Schema(description = "기본 응답 엔티티")
 public abstract class BaseResponse<T> {
+
     @Schema(description = "성공 여부")
     protected final boolean isSuccess;
 
@@ -30,6 +30,7 @@ public abstract class BaseResponse<T> {
         this.code = code;
         this.message = message;
         this.payload = payload;
-        this.timestamp = DateTimeFormatter.ISO_INSTANT.format(Instant.now().atZone(ZoneId.of("Asia/Seoul")));
+        this.timestamp = DateTimeFormatter.ISO_INSTANT
+            .format(Instant.now().atZone(ZoneId.of("Asia/Seoul")));
     }
 }

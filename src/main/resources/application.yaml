@@ -112,6 +112,10 @@ springdoc:
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
 
+logging:
+  level:
+    org.springframework.web: DEBUG
+
 cloud:
   aws:
     credentials:

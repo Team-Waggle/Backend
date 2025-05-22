@@ -1,29 +1,12 @@
 package com.waggle.domain.project.controller;
 
-import static org.springframework.data.domain.Sort.Direction.DESC;
-
-import com.waggle.domain.project.dto.ProjectInputDto;
-import com.waggle.domain.project.dto.ProjectResponseDto;
-import com.waggle.domain.project.entity.Project;
-import com.waggle.domain.project.service.ProjectService;
-import com.waggle.global.response.ApiStatus;
-import com.waggle.global.response.BaseResponse;
-import com.waggle.global.response.ErrorResponse;
-import com.waggle.global.response.SuccessResponse;
-import com.waggle.global.response.swagger.ProjectSuccessResponse;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.UUID;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,11 +16,33 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.waggle.domain.project.ProjectInfo;
+import com.waggle.domain.project.dto.ProjectInputDto;
+import com.waggle.domain.project.dto.ProjectResponseDto;
+import com.waggle.domain.project.entity.Project;
+import com.waggle.domain.project.service.ProjectService;
+import com.waggle.global.response.ApiStatus;
+import com.waggle.global.response.BaseResponse;
+import com.waggle.global.response.ErrorResponse;
+import com.waggle.global.response.SuccessResponse;
+import com.waggle.global.response.swagger.ProjectSuccessResponse;
+import com.waggle.global.secure.oauth2.CustomUserDetails;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+
 //get: 조회, post: 생성, put: 수정, delete: 삭제
 //put은 전체 다 수정, patch는 일부만 수정
 @Tag(name = "프로젝트 모집 게시글", description = "프로젝트 모집 게시글 관련 API")
 @RestController
-@RequestMapping("/project/post")
+@RequestMapping("/api/v1/projects/post")
 @RequiredArgsConstructor
 public class ProjectPostController {
 
@@ -96,9 +101,11 @@ public class ProjectPostController {
         )
     })
     public ResponseEntity<BaseResponse<ProjectResponseDto>> fetchProject(
-        @PathVariable String projectId) {
-        Project fetchProject = projectService.getProjectByProjectId(UUID.fromString(projectId));
-        return SuccessResponse.of(ApiStatus._OK, ProjectResponseDto.from(fetchProject));
+        @PathVariable UUID projectId
+    ) {
+        Project project = projectService.getProjectById(projectId);
+        ProjectInfo projectInfo = projectService.getProjectInfoByProject(project);
+        return SuccessResponse.of(ApiStatus._OK, ProjectResponseDto.from(projectInfo));
     }
 
     @PostMapping("") //경로에 있는 post는 post 방식이 아니라 게시글을 영어로 한거임
@@ -125,9 +132,12 @@ public class ProjectPostController {
         )
     })
     public ResponseEntity<BaseResponse<ProjectResponseDto>> createProject(
-        @RequestBody ProjectInputDto projectInputDto) {
-        Project newProject = projectService.createProject(projectInputDto);
-        return SuccessResponse.of(ApiStatus._CREATED, ProjectResponseDto.from(newProject));
+        @Valid @RequestBody ProjectInputDto projectInputDto,
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        Project project = projectService.createProject(projectInputDto, userDetails.getUser());
+        ProjectInfo projectInfo = projectService.getProjectInfoByProject(project);
+        return SuccessResponse.of(ApiStatus._CREATED, ProjectResponseDto.from(projectInfo));
     }
 
     @PutMapping("/{projectId}")
@@ -167,10 +177,17 @@ public class ProjectPostController {
         )
     })
     public ResponseEntity<BaseResponse<ProjectResponseDto>> updateProject(
-        @PathVariable String projectId, @RequestBody ProjectInputDto projectInputDto) {
-        Project updateProject = projectService.updateProject(UUID.fromString(projectId),
-            projectInputDto);
-        return SuccessResponse.of(ApiStatus._OK, ProjectResponseDto.from(updateProject));
+        @PathVariable UUID projectId,
+        @Valid @RequestBody ProjectInputDto projectInputDto,
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        Project project = projectService.updateProject(
+            projectId,
+            projectInputDto,
+            userDetails.getUser()
+        );
+        ProjectInfo projectInfo = projectService.getProjectInfoByProject(project);
+        return SuccessResponse.of(ApiStatus._OK, ProjectResponseDto.from(projectInfo));
     }
 
     @DeleteMapping("/{projectId}")
@@ -207,8 +224,11 @@ public class ProjectPostController {
             )
         )
     })
-    public ResponseEntity<BaseResponse<Object>> deleteProject(@PathVariable String projectId) {
-        projectService.deleteProject(UUID.fromString(projectId));
+    public ResponseEntity<BaseResponse<Object>> deleteProject(
+        @PathVariable UUID projectId,
+        @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        projectService.deleteProject(projectId, userDetails.getUser());
         return SuccessResponse.of(ApiStatus._NO_CONTENT, null);
     }
 }
