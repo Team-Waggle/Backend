@@ -26,9 +26,7 @@ repositories {
 
 checkstyle {
     toolVersion = '10.12.4'
-    configFile = resources.text.fromUri(
-        'https://raw.githubusercontent.com/checkstyle/checkstyle/master/src/main/resources/google_checks.xml'
-    ).asFile()
+    configFile = file("intellij-java-google-style.xml")
     maxWarnings = 50
     maxErrors = 10
 }
