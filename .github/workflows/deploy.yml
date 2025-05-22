@@ -70,7 +70,12 @@ jobs:
             ps aux | grep java | grep -v grep || echo "실행 중인 Java 프로세스 없음"
 
             echo "Java 프로세스 종료 시도..."
-            pkill -f 'java.*jar' || echo "종료할 Java 프로세스 없음"
+            if pgrep -f 'java.*jar' > /dev/null; then
+              pkill -f 'java.*jar'
+              echo "프로세스 종료됨"
+            else
+              echo "종료할 프로세스 없음"
+            fi
 
             echo "3초 대기..."
             sleep 3
