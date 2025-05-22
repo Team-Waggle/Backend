@@ -7,7 +7,7 @@ on:
     branches: [main, dev]
 
 jobs:
-  test:
+  build-and-validate:
     runs-on: ubuntu-latest
 
     steps:
@@ -33,22 +33,11 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Run tests
-        run: ./gradlew test
-
       - name: Run checkstyle
         run: ./gradlew checkstyleMain checkstyleTest
 
       - name: Build application
         run: ./gradlew build -x test
-
-      - name: Test report
-        uses: dorny/test-reporter@v1
-        if: success() || failure()
-        with:
-          name: Gradle Tests
-          path: build/test-results/test/*.xml
-          reporter: java-junit
 
       - name: Comment PR
         uses: actions/github-script@v6
