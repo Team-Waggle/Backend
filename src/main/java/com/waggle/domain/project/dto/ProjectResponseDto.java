@@ -10,10 +10,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Schema(description = "프로젝트 응답 dto")
 public record ProjectResponseDto(
@@ -43,11 +41,11 @@ public record ProjectResponseDto(
 
     @Schema(description = "직무 및 인원")
     @JsonProperty("recruitments")
-    Set<ProjectRecruitmentDto> projectRecruitmentDtos,
+    List<ProjectRecruitmentDto> projectRecruitmentDtos,
 
     @Schema(description = "사용 스킬 목록")
     @JsonProperty("skills")
-    Set<ProjectSkill> projectSkills,
+    List<ProjectSkill> projectSkills,
 
     @Schema(description = "소개")
     @JsonProperty("detail")
@@ -84,11 +82,11 @@ public record ProjectResponseDto(
             projectInfo.project().getWorkPeriod(),
             projectInfo.projectRecruitments().stream()
                 .map(ProjectRecruitmentDto::from)
-                .sorted(Comparator.comparing(prj -> prj.jobRole().name()))
-                .collect(Collectors.toCollection(LinkedHashSet::new)),
+                .sorted(Comparator.comparing(project -> project.jobRole().name()))
+                .toList(),
             projectInfo.projectSkills().stream()
-                .sorted(Comparator.comparing(prj -> prj.getSkill().name()))
-                .collect(Collectors.toCollection(LinkedHashSet::new)),
+                .sorted(Comparator.comparing(project -> project.getSkill().name()))
+                .toList(),
             projectInfo.project().getDetail(),
             projectInfo.project().getContactUrl(),
             projectInfo.project().getReferenceUrl(),

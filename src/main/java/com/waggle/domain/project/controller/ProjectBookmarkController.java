@@ -15,10 +15,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -109,7 +107,7 @@ public class ProjectBookmarkController {
             )
         )
     })
-    public ResponseEntity<BaseResponse<Set<ProjectResponseDto>>> fetchMyBookmarkProjects(
+    public ResponseEntity<BaseResponse<List<ProjectResponseDto>>> fetchMyBookmarkProjects(
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         return SuccessResponse.of(
@@ -117,7 +115,7 @@ public class ProjectBookmarkController {
             projectService.getCurrentUserBookmarkProjects(userDetails.getUser()).stream()
                 .map(projectService::getProjectInfoByProject)
                 .map(ProjectResponseDto::from)
-                .collect(Collectors.toSet())
+                .toList()
         );
     }
 
@@ -149,7 +147,7 @@ public class ProjectBookmarkController {
             )
         )
     })
-    public ResponseEntity<BaseResponse<Set<ProjectResponseDto>>> fetchUserBookmarkProjects(
+    public ResponseEntity<BaseResponse<List<ProjectResponseDto>>> fetchUserBookmarkProjects(
         @PathVariable UUID userId
     ) {
         return SuccessResponse.of(
@@ -157,7 +155,7 @@ public class ProjectBookmarkController {
             projectService.getUserBookmarkProjects(userId).stream()
                 .map(projectService::getProjectInfoByProject)
                 .map(ProjectResponseDto::from)
-                .collect(Collectors.toCollection(LinkedHashSet::new))
+                .toList()
         );
     }
 }

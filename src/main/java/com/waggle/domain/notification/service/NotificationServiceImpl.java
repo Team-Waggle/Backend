@@ -5,8 +5,7 @@ import com.waggle.domain.notification.dto.NotificationRequestDto;
 import com.waggle.domain.notification.entity.Notification;
 import com.waggle.domain.notification.repository.NotificationRepository;
 import com.waggle.domain.user.entity.User;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,8 +34,8 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     @Transactional(readOnly = true)
-    public Set<Notification> getNotifications(User user) {
-        return new HashSet<>(notificationRepository.findByUserIdOrderByCreatedAtDesc(user.getId()));
+    public List<Notification> getNotifications(User user) {
+        return notificationRepository.findByUserIdOrderByCreatedAtDesc(user.getId());
     }
 
     @Override

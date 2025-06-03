@@ -28,12 +28,8 @@ import com.waggle.global.exception.AccessDeniedException;
 import com.waggle.global.exception.ProjectException;
 import com.waggle.global.response.ApiStatus;
 import jakarta.persistence.EntityNotFoundException;
-import java.util.Comparator;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -74,10 +70,10 @@ public class ProjectServiceImpl implements ProjectService {
         ProjectMember projectMember = createProjectMember(project, user, JobRole.PLANNER, true);
         projectMemberRepository.save(projectMember);
 
-        Set<ProjectSkill> projectSkills = createProjectSkills(project, projectInputDto.skills());
+        List<ProjectSkill> projectSkills = createProjectSkills(project, projectInputDto.skills());
         projectSkillRepository.saveAll(projectSkills);
 
-        Set<ProjectRecruitment> projectRecruitments = createProjectRecruitments(
+        List<ProjectRecruitment> projectRecruitments = createProjectRecruitments(
             project,
             projectInputDto.projectRecruitmentDtos()
         );
@@ -106,9 +102,9 @@ public class ProjectServiceImpl implements ProjectService {
     public ProjectInfo getProjectInfoByProject(Project project) {
         List<ProjectSkill> projectSkills = projectSkillRepository.findByProjectId(project.getId());
         List<ProjectMember> projectMembers =
-            projectMemberRepository.findByProjectId(project.getId());
+            projectMemberRepository.findByProjectIdOrderByJoinedAtDesc(project.getId());
         List<ProjectApplicant> projectApplicants =
-            projectApplicantRepository.findByProjectId(project.getId());
+            projectApplicantRepository.findByProjectIdOrderByAppliedAtDesc(project.getId());
         List<ProjectRecruitment> projectRecruitments =
             projectRecruitmentRepository.findByProjectId(project.getId());
 
@@ -144,11 +140,11 @@ public class ProjectServiceImpl implements ProjectService {
         );
 
         projectSkillRepository.deleteByProjectId(projectId);
-        Set<ProjectSkill> projectSkills = createProjectSkills(project, projectInputDto.skills());
+        List<ProjectSkill> projectSkills = createProjectSkills(project, projectInputDto.skills());
         projectSkillRepository.saveAll(projectSkills);
 
         projectRecruitmentRepository.deleteByProjectId(projectId);
-        Set<ProjectRecruitment> projectRecruitments = createProjectRecruitments(
+        List<ProjectRecruitment> projectRecruitments = createProjectRecruitments(
             project,
             projectInputDto.projectRecruitmentDtos()
         );
@@ -178,27 +174,28 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional(readOnly = true)
-    public Set<User> getUsersByProjectId(UUID projectId) {
-        List<ProjectMember> projectMembers = projectMemberRepository.findByProjectId(projectId);
+    public List<User> getUsersByProjectId(UUID projectId) {
+        List<ProjectMember> projectMembers = projectMemberRepository.findByProjectIdOrderByJoinedAtDesc(
+            projectId);
 
         return projectMembers.stream()
             .map(ProjectMember::getUser)
-            .collect(Collectors.toCollection(LinkedHashSet::new));
+            .toList();
     }
 
     @Override
-    public Set<User> getAppliedUsersByProjectId(UUID projectId) {
+    public List<User> getAppliedUsersByProjectId(UUID projectId) {
         List<ProjectApplicant> projectApplicants =
-            projectApplicantRepository.findByProjectId(projectId);
+            projectApplicantRepository.findByProjectIdOrderByAppliedAtDesc(projectId);
 
         return projectApplicants.stream()
             .map(ProjectApplicant::getUser)
-            .collect(Collectors.toCollection(LinkedHashSet::new));
+            .toList();
     }
 
     @Override
     @Transactional
-    public Set<User> approveAppliedUser(UUID projectId, UUID userId, User user) {
+    public List<User> approveAppliedUser(UUID projectId, UUID userId, User user) {
         Project project = projectRepository.findById(projectId)
             .orElseThrow(() -> new EntityNotFoundException(
                 "Project not found with id: " + projectId));
@@ -242,7 +239,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional
-    public Set<User> rejectAppliedUser(UUID projectId, UUID userId, User user) {
+    public List<User> rejectAppliedUser(UUID projectId, UUID userId, User user) {
         Project project = projectRepository.findById(projectId)
             .orElseThrow(() -> new EntityNotFoundException(
                 "Project not found with id: " + projectId));
@@ -271,7 +268,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional
-    public Set<User> removeMemberUser(UUID projectId, UUID userId, User user) {
+    public List<User> removeMemberUser(UUID projectId, UUID userId, User user) {
         Project project = projectRepository.findById(projectId)
             .orElseThrow(() -> new EntityNotFoundException(
                 "Project not found with id: " + projectId));
@@ -328,11 +325,10 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional(readOnly = true)
-    public Set<Project> getUserProjects(UUID userId) {
-        return projectMemberRepository.findByUserId(userId).stream()
+    public List<Project> getUserProjects(UUID userId) {
+        return projectMemberRepository.findByUserIdOrderByProject_CreatedAtDesc(userId).stream()
             .map(ProjectMember::getProject)
-            .sorted(Comparator.comparing(Project::getCreatedAt).reversed())
-            .collect(Collectors.toCollection(LinkedHashSet::new));
+            .toList();
     }
 
     @Override
@@ -360,11 +356,10 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional(readOnly = true)
-    public Set<Project> getUserBookmarkProjects(UUID userId) {
-        return projectBookmarkRepository.findByUserId(userId).stream()
+    public List<Project> getUserBookmarkProjects(UUID userId) {
+        return projectBookmarkRepository.findByUserIdOrderByProject_CreatedAtDesc(userId).stream()
             .map(ProjectBookmark::getProject)
-            .sorted(Comparator.comparing(Project::getCreatedAt).reversed())
-            .collect(Collectors.toCollection(LinkedHashSet::new));
+            .toList();
     }
 
     @Override
@@ -436,22 +431,24 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional(readOnly = true)
-    public Set<Project> getAppliedProjects(User user) {
-        return projectApplicantRepository.findByUserId(user.getId()).stream()
-            .sorted(Comparator.comparing(ProjectApplicant::getAppliedAt).reversed())
+    public List<Project> getAppliedProjects(User user) {
+        List<ProjectApplicant> projectApplicants = projectApplicantRepository.findByUserIdOrderByAppliedAtDesc(
+            user.getId());
+
+        return projectApplicants.stream()
             .map(ProjectApplicant::getProject)
-            .collect(Collectors.toCollection(LinkedHashSet::new));
+            .toList();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Set<Project> getCurrentUserProjects(User user) {
-        List<ProjectMember> projectMembers = projectMemberRepository.findByUserId(user.getId());
+    public List<Project> getCurrentUserProjects(User user) {
+        List<ProjectMember> projectMembers = projectMemberRepository.findByUserIdOrderByProject_CreatedAtDesc(
+            user.getId());
 
         return projectMembers.stream()
             .map(ProjectMember::getProject)
-            .sorted(Comparator.comparing(Project::getCreatedAt).reversed())
-            .collect(Collectors.toCollection(LinkedHashSet::new));
+            .toList();
     }
 
     // TODO: 동시성 처리 필요
@@ -478,11 +475,11 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Set<Project> getCurrentUserBookmarkProjects(User user) {
-        return projectBookmarkRepository.findByUserId(user.getId()).stream()
+    public List<Project> getCurrentUserBookmarkProjects(User user) {
+        return projectBookmarkRepository.findByUserIdOrderByProject_CreatedAtDesc(user.getId())
+            .stream()
             .map(ProjectBookmark::getProject)
-            .sorted(Comparator.comparing(Project::getCreatedAt).reversed())
-            .collect(Collectors.toCollection(LinkedHashSet::new));
+            .toList();
     }
 
     private ProjectMember createProjectMember(
@@ -499,9 +496,9 @@ public class ProjectServiceImpl implements ProjectService {
             .build();
     }
 
-    private Set<ProjectRecruitment> createProjectRecruitments(
+    private List<ProjectRecruitment> createProjectRecruitments(
         Project project,
-        Set<ProjectRecruitmentDto> projectRecruitmentDtos
+        List<ProjectRecruitmentDto> projectRecruitmentDtos
     ) {
         return projectRecruitmentDtos.stream()
             .map(dto ->
@@ -510,20 +507,22 @@ public class ProjectServiceImpl implements ProjectService {
                     .jobRole(dto.jobRole())
                     .remainingCount(dto.remainingCount())
                     .currentCount(dto.currentCount())
-                    .build())
-            .collect(Collectors.toSet());
+                    .build()
+            )
+            .toList();
     }
 
-    private Set<ProjectSkill> createProjectSkills(
+    private List<ProjectSkill> createProjectSkills(
         Project project,
-        Set<Skill> skills
+        List<Skill> skills
     ) {
         return skills.stream()
             .map(skill -> ProjectSkill.builder()
                 .project(project)
                 .skill(skill)
-                .build())
-            .collect(Collectors.toSet());
+                .build()
+            )
+            .toList();
     }
 
     private User getLeaderByProjectId(UUID projectId) {

@@ -28,7 +28,6 @@ import jakarta.persistence.EntityNotFoundException;
 import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -115,7 +114,7 @@ public class UserServiceImpl implements UserService {
         userPortfolioRepository.deleteByUserId(user.getId());
     }
 
-    private void updateUserJobRoles(UUID userId, Set<UserJobRoleDto> userJobRoles) {
+    private void updateUserJobRoles(UUID userId, List<UserJobRoleDto> userJobRoles) {
         if (userJobRoles == null) {
             return;
         }
@@ -134,7 +133,7 @@ public class UserServiceImpl implements UserService {
         userJobRoleRepository.saveAll(entities);
     }
 
-    private void updateUserIndustries(UUID userId, Set<Industry> industries) {
+    private void updateUserIndustries(UUID userId, List<Industry> industries) {
         if (industries == null) {
             return;
         }
@@ -152,7 +151,7 @@ public class UserServiceImpl implements UserService {
         userIndustryRepository.saveAll(entities);
     }
 
-    private void updateUserSkills(UUID userId, Set<Skill> skills) {
+    private void updateUserSkills(UUID userId, List<Skill> skills) {
         if (skills == null) {
             return;
         }
@@ -170,7 +169,7 @@ public class UserServiceImpl implements UserService {
         userSkillRepository.saveAll(entities);
     }
 
-    private void updateUserDaysOfWeek(UUID userId, Set<DayOfWeek> dayOfWeeks) {
+    private void updateUserDaysOfWeek(UUID userId, List<DayOfWeek> dayOfWeeks) {
         if (dayOfWeeks == null) {
             return;
         }
@@ -253,7 +252,7 @@ public class UserServiceImpl implements UserService {
         userIntroductionRepository.saveAll(entities);
     }
 
-    private void updateUserPortfolios(UUID userId, Set<UserPortfolioDto> portfolios) {
+    private void updateUserPortfolios(UUID userId, List<UserPortfolioDto> portfolios) {
         if (portfolios == null) {
             return;
         }

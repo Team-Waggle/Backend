@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProjectBookmarkRepository extends JpaRepository<ProjectBookmark, UUID> {
 
-    List<ProjectBookmark> findByUserId(UUID userId);
+    List<ProjectBookmark> findByUserIdOrderByProject_CreatedAtDesc(UUID userId);
 
     List<ProjectBookmark> findByProjectId(UUID projectId);
 
