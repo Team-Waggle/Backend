@@ -9,7 +9,7 @@ public interface NotificationService {
 
     Notification createNotification(NotificationRequestDto notificationRequestDto, User recipient);
 
-    List<Notification> getNotifications(User user);
+    List<Notification> getNotifications(User user, Long cursor, int size);
 
     int getUnreadNotificationCount(User user);
 
