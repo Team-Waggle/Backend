@@ -1,6 +1,8 @@
 package com.waggle.domain.notification.controller;
 
 import com.waggle.domain.notification.dto.NotificationResponseDto;
+import com.waggle.domain.notification.dto.NotificationsResponseDto;
+import com.waggle.domain.notification.entity.Notification;
 import com.waggle.domain.notification.service.NotificationService;
 import com.waggle.global.response.ApiStatus;
 import com.waggle.global.response.BaseResponse;
@@ -24,6 +26,7 @@ import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "인앱 알림", description = "인앱 알림 관련 API")
@@ -56,14 +59,32 @@ public class NotificationController {
             )
         )
     })
-    public ResponseEntity<BaseResponse<List<NotificationResponseDto>>> getMyNotifications(
-        @AuthenticationPrincipal CustomUserDetails userDetails
+    public ResponseEntity<BaseResponse<NotificationsResponseDto>> getMyNotifications(
+        @AuthenticationPrincipal CustomUserDetails userDetails,
+        @RequestParam(required = false) Long cursor,
+        @RequestParam(defaultValue = "5") int size
     ) {
+        List<Notification> notifications = notificationService.getNotifications(
+            userDetails.getUser(), cursor, size
+        );
+
+        boolean hasNext = notifications.size() > size;
+        if (hasNext) {
+            notifications = notifications.subList(0, size);
+        }
+
+        Long nextCursor = hasNext && !notifications.isEmpty() ?
+            notifications.get(notifications.size() - 1).getId() : null;
+
         return SuccessResponse.of(
             ApiStatus._OK,
-            notificationService.getNotifications(userDetails.getUser()).stream()
-                .map(NotificationResponseDto::from)
-                .toList()
+            NotificationsResponseDto.of(
+                notifications.stream()
+                    .map(NotificationResponseDto::from)
+                    .toList(),
+                hasNext,
+                nextCursor
+            )
         );
     }
 
