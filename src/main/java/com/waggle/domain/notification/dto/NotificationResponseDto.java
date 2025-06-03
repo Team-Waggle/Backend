@@ -2,10 +2,9 @@ package com.waggle.domain.notification.dto;
 
 import com.waggle.domain.notification.entity.Notification;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 public record NotificationResponseDto(
-    UUID id,
+    Long id,
     String title,
     String content,
     String redirectUrl,
