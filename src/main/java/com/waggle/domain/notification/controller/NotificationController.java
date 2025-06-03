@@ -16,9 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -58,14 +56,14 @@ public class NotificationController {
             )
         )
     })
-    public ResponseEntity<BaseResponse<Set<NotificationResponseDto>>> getMyNotifications(
+    public ResponseEntity<BaseResponse<List<NotificationResponseDto>>> getMyNotifications(
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         return SuccessResponse.of(
             ApiStatus._OK,
             notificationService.getNotifications(userDetails.getUser()).stream()
                 .map(NotificationResponseDto::from)
-                .collect(Collectors.toCollection(LinkedHashSet::new))
+                .toList()
         );
     }
 
