@@ -2,7 +2,7 @@ name: Deploy to EC2
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
 
 jobs:
   deploy:
@@ -70,18 +70,32 @@ jobs:
             ps aux | grep java | grep -v grep || echo "실행 중인 Java 프로세스 없음"
 
             echo "Java 프로세스 종료 시도..."
-            # pgrep도 안전하게 처리
-            JAVA_PIDS=$(pgrep -f 'java.*jar' 2>/dev/null || echo "")
-            if [ -n "$JAVA_PIDS" ]; then
-              echo "Java 프로세스 발견: $JAVA_PIDS"
-              kill $JAVA_PIDS || echo "종료 신호 전송 완료"
-              echo "프로세스 종료됨"
+            set +e  # 오류 무시 모드
+            
+            # Java 프로세스가 있는지 확인
+            if pgrep -f 'java.*jar' >/dev/null 2>&1; then
+              echo "Java 프로세스 발견됨"
+            
+              # 모든 Java 프로세스 종료
+              for pid in $(pgrep -f 'java.*jar' 2>/dev/null); do
+                echo "프로세스 $pid 종료 중..."
+                kill "$pid" 2>/dev/null
+              done
+            
+              echo "5초 대기 (프로세스 종료 시간)..."
+              sleep 5
+            
+              # 강제 종료가 필요한지 확인
+              for pid in $(pgrep -f 'java.*jar' 2>/dev/null); do
+                echo "프로세스 $pid 강제 종료..."
+                kill -9 "$pid" 2>/dev/null
+              done
+            
             else
-              echo "종료할 프로세스 없음"
+              echo "종료할 Java 프로세스 없음"
             fi
 
-            echo "3초 대기..."
-            sleep 3
+            set -e  # 오류 감지 모드 복원
 
             echo "종료 후 프로세스 확인:"
             ps aux | grep java | grep -v grep || echo "Java 프로세스 모두 종료됨"
