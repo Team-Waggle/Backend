@@ -97,7 +97,7 @@ public class SwaggerConfig {
     }
 
     @Bean
-    public OpenApiCustomizer sortPathsAlphabetically() {
+    public OpenApiCustomizer configureTags() {
         return openApi -> {
             openApi.setTags(List.of(
                 new io.swagger.v3.oas.models.tags.Tag().name("인증"),
@@ -106,7 +106,8 @@ public class SwaggerConfig {
                 new io.swagger.v3.oas.models.tags.Tag().name("프로젝트 지원"),
                 new io.swagger.v3.oas.models.tags.Tag().name("프로젝트 멤버"),
                 new io.swagger.v3.oas.models.tags.Tag().name("프로젝트 북마크"),
-                new io.swagger.v3.oas.models.tags.Tag().name("참조 데이터")
+                new io.swagger.v3.oas.models.tags.Tag().name("참조 데이터"),
+                new io.swagger.v3.oas.models.tags.Tag().name("인앱 알림")
             ));
         };
     }

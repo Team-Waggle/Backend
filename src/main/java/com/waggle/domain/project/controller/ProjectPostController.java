@@ -1,5 +1,7 @@
 package com.waggle.domain.project.controller;
 
+import static org.springframework.data.domain.Sort.Direction.DESC;
+
 import com.waggle.domain.project.ProjectInfo;
 import com.waggle.domain.project.dto.ProjectInputDto;
 import com.waggle.domain.project.dto.ProjectResponseDto;
@@ -23,7 +25,6 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -68,14 +69,13 @@ public class ProjectPostController {
         )
     })
     public ResponseEntity<BaseResponse<Page<ProjectResponseDto>>> fetchProjects(
-        @PageableDefault(size = 10, sort = "createdAt", direction = Direction.DESC) Pageable pageable
+        @PageableDefault(size = 10, sort = "createdAt", direction = DESC) Pageable pageable
     ) {
         return SuccessResponse.of(
             ApiStatus._OK,
-            projectService.getProjects(pageable).map(project -> {
-                ProjectInfo projectInfo = projectService.getProjectInfoByProject(project);
-                return ProjectResponseDto.from(projectInfo);
-            })
+            projectService.getProjects(pageable).map(project ->
+                ProjectResponseDto.from(projectService.getProjectInfoByProject(project))
+            )
         );
     }
 
