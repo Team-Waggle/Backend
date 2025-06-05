@@ -28,11 +28,13 @@ import com.waggle.global.exception.AccessDeniedException;
 import com.waggle.global.exception.ProjectException;
 import com.waggle.global.response.ApiStatus;
 import jakarta.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -90,7 +92,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional(readOnly = true)
-    public Project getProjectById(UUID projectId) {
+    public Project getProjectById(Long projectId) {
         return projectRepository.findById(projectId)
             .orElseThrow(() -> new EntityNotFoundException(
                 "Project not found with id: " + projectId));
@@ -119,7 +121,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional
-    public Project updateProject(UUID projectId, ProjectInputDto projectInputDto, User user) {
+    public Project updateProject(Long projectId, ProjectInputDto projectInputDto, User user) {
         Project project = projectRepository.findById(projectId)
             .orElseThrow(() -> new EntityNotFoundException(
                 "Project not found with id: " + projectId));
@@ -155,7 +157,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional
-    public void deleteProject(UUID projectId, User user) {
+    public void deleteProject(Long projectId, User user) {
         Project project = projectRepository.findById(projectId)
             .orElseThrow(() -> new EntityNotFoundException(
                 "Project not found with id: " + projectId));
@@ -174,7 +176,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<User> getUsersByProjectId(UUID projectId) {
+    public List<User> getUsersByProjectId(Long projectId) {
         List<ProjectMember> projectMembers = projectMemberRepository.findByProjectIdOrderByJoinedAtDesc(
             projectId);
 
@@ -184,7 +186,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public List<User> getAppliedUsersByProjectId(UUID projectId) {
+    public List<User> getAppliedUsersByProjectId(Long projectId) {
         List<ProjectApplicant> projectApplicants =
             projectApplicantRepository.findByProjectIdOrderByAppliedAtDesc(projectId);
 
@@ -195,7 +197,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional
-    public List<User> approveAppliedUser(UUID projectId, UUID userId, User user) {
+    public List<User> approveAppliedUser(Long projectId, UUID userId, User user) {
         Project project = projectRepository.findById(projectId)
             .orElseThrow(() -> new EntityNotFoundException(
                 "Project not found with id: " + projectId));
@@ -239,7 +241,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional
-    public List<User> rejectAppliedUser(UUID projectId, UUID userId, User user) {
+    public List<User> rejectAppliedUser(Long projectId, UUID userId, User user) {
         Project project = projectRepository.findById(projectId)
             .orElseThrow(() -> new EntityNotFoundException(
                 "Project not found with id: " + projectId));
@@ -268,7 +270,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional
-    public List<User> removeMemberUser(UUID projectId, UUID userId, User user) {
+    public List<User> removeMemberUser(Long projectId, UUID userId, User user) {
         Project project = projectRepository.findById(projectId)
             .orElseThrow(() -> new EntityNotFoundException(
                 "Project not found with id: " + projectId));
@@ -300,7 +302,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional
-    public void delegateLeader(UUID projectId, UUID userId, User user) {
+    public void delegateLeader(Long projectId, UUID userId, User user) {
         Project project = projectRepository.findById(projectId)
             .orElseThrow(() -> new EntityNotFoundException(
                 "Project not found with id: " + projectId));
@@ -333,7 +335,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional
-    public void withdrawFromProject(UUID projectId, User user) {
+    public void withdrawFromProject(Long projectId, User user) {
         ProjectMember member = projectMemberRepository
             .findByProjectIdAndUserId(projectId, user.getId())
             .orElseThrow(() -> new EntityNotFoundException(
@@ -355,17 +357,9 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List<Project> getUserBookmarkProjects(UUID userId) {
-        return projectBookmarkRepository.findByUserIdOrderByProject_CreatedAtDesc(userId).stream()
-            .map(ProjectBookmark::getProject)
-            .toList();
-    }
-
-    @Override
     @Transactional
     public Project applyProject(
-        UUID projectId,
+        Long projectId,
         ProjectApplicationDto projectApplicationDto,
         User user
     ) {
@@ -420,7 +414,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional
-    public void cancelProjectApplication(UUID projectId, User user) {
+    public void cancelProjectApplication(Long projectId, User user) {
         ProjectApplicant applicant = projectApplicantRepository
             .findByProjectIdAndUserId(projectId, user.getId())
             .orElseThrow(() -> new EntityNotFoundException(
@@ -454,7 +448,7 @@ public class ProjectServiceImpl implements ProjectService {
     // TODO: 동시성 처리 필요
     @Override
     @Transactional
-    public boolean toggleCurrentUserBookmark(UUID projectId, User user) {
+    public boolean toggleCurrentUserBookmark(Long projectId, User user) {
         Project project = projectRepository.findById(projectId)
             .orElseThrow(() -> new EntityNotFoundException(
                 "Project not found with id: " + projectId));
@@ -475,8 +469,21 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public List<Project> getCurrentUserBookmarkProjects(User user) {
-        return projectBookmarkRepository.findByUserIdOrderByProject_CreatedAtDesc(user.getId())
+    public List<Project> getUserBookmarkProjects(UUID userId, Long cursor, int size) {
+        LocalDateTime cursorCreatedAt = null;
+
+        if (cursor != null) {
+            cursorCreatedAt = projectRepository.findCreatedAtById(cursor).orElse(null);
+        }
+
+        Pageable pageable = PageRequest.of(0, size + 1);
+
+        return projectBookmarkRepository.findByUserIdWithCursor(
+                userId,
+                cursor,
+                cursorCreatedAt,
+                pageable
+            )
             .stream()
             .map(ProjectBookmark::getProject)
             .toList();
@@ -525,7 +532,7 @@ public class ProjectServiceImpl implements ProjectService {
             .toList();
     }
 
-    private User getLeaderByProjectId(UUID projectId) {
+    private User getLeaderByProjectId(Long projectId) {
         ProjectMember leader = projectMemberRepository.findByProjectIdAndIsLeaderTrue(projectId)
             .orElseThrow(() -> new EntityNotFoundException(
                 "Leader not found with project id: " + projectId));

@@ -1,9 +1,12 @@
 package com.waggle.domain.project.controller;
 
+import com.waggle.domain.project.ProjectInfo;
 import com.waggle.domain.project.dto.ProjectResponseDto;
+import com.waggle.domain.project.entity.Project;
 import com.waggle.domain.project.service.ProjectService;
 import com.waggle.global.response.ApiStatus;
 import com.waggle.global.response.BaseResponse;
+import com.waggle.global.response.CursorResponse;
 import com.waggle.global.response.ErrorResponse;
 import com.waggle.global.response.SuccessResponse;
 import com.waggle.global.response.swagger.ProjectsSuccessResponse;
@@ -24,6 +27,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "프로젝트 북마크", description = "프로젝트 북마크 관련 API")
@@ -69,7 +73,7 @@ public class ProjectBookmarkController {
         )
     })
     public ResponseEntity<BaseResponse<Boolean>> toggleMyBookmark(
-        @PathVariable UUID projectId,
+        @PathVariable Long projectId,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         return SuccessResponse.of(
@@ -87,7 +91,7 @@ public class ProjectBookmarkController {
     @ApiResponses({
         @ApiResponse(
             responseCode = "200",
-            description = "사용자 정보 수정 성공",
+            description = "북마크 목록 조회 성공",
             content = @Content(
                 schema = @Schema(implementation = ProjectsSuccessResponse.class)
             )
@@ -98,24 +102,27 @@ public class ProjectBookmarkController {
             content = @Content(
                 schema = @Schema(implementation = ErrorResponse.class)
             )
-        ),
-        @ApiResponse(
-            responseCode = "404",
-            description = "프로젝트를 찾을 수 없음",
-            content = @Content(
-                schema = @Schema(implementation = ErrorResponse.class)
-            )
         )
     })
-    public ResponseEntity<BaseResponse<List<ProjectResponseDto>>> fetchMyBookmarkProjects(
-        @AuthenticationPrincipal CustomUserDetails userDetails
+    public ResponseEntity<BaseResponse<CursorResponse<ProjectResponseDto>>> fetchMyBookmarkProjects(
+        @AuthenticationPrincipal CustomUserDetails userDetails,
+        @RequestParam(required = false) Long cursor,
+        @RequestParam(defaultValue = "10") int size
     ) {
+        List<Project> projects = projectService.getUserBookmarkProjects(
+            userDetails.getUser().getId(), cursor, size);
+
         return SuccessResponse.of(
             ApiStatus._OK,
-            projectService.getCurrentUserBookmarkProjects(userDetails.getUser()).stream()
-                .map(projectService::getProjectInfoByProject)
-                .map(ProjectResponseDto::from)
-                .toList()
+            CursorResponse.of(
+                projects,
+                size,
+                project -> {
+                    ProjectInfo projectInfo = projectService.getProjectInfoByProject(project);
+                    return ProjectResponseDto.from(projectInfo);
+                },
+                Project::getId
+            )
         );
     }
 
@@ -127,7 +134,7 @@ public class ProjectBookmarkController {
     @ApiResponses({
         @ApiResponse(
             responseCode = "200",
-            description = "사용자 조회 성공",
+            description = "북마크 목록 조회 성공",
             content = @Content(
                 schema = @Schema(implementation = ProjectsSuccessResponse.class)
             )
@@ -147,15 +154,24 @@ public class ProjectBookmarkController {
             )
         )
     })
-    public ResponseEntity<BaseResponse<List<ProjectResponseDto>>> fetchUserBookmarkProjects(
-        @PathVariable UUID userId
+    public ResponseEntity<BaseResponse<CursorResponse<ProjectResponseDto>>> fetchUserBookmarkProjects(
+        @PathVariable UUID userId,
+        @RequestParam(required = false) Long cursor,
+        @RequestParam(defaultValue = "10") int size
     ) {
+        List<Project> projects = projectService.getUserBookmarkProjects(userId, cursor, size);
+
         return SuccessResponse.of(
             ApiStatus._OK,
-            projectService.getUserBookmarkProjects(userId).stream()
-                .map(projectService::getProjectInfoByProject)
-                .map(ProjectResponseDto::from)
-                .toList()
+            CursorResponse.of(
+                projects,
+                size,
+                project -> {
+                    ProjectInfo projectInfo = projectService.getProjectInfoByProject(project);
+                    return ProjectResponseDto.from(projectInfo);
+                },
+                Project::getId
+            )
         );
     }
 }
