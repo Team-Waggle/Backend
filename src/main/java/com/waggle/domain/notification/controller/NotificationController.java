@@ -1,11 +1,11 @@
 package com.waggle.domain.notification.controller;
 
 import com.waggle.domain.notification.dto.NotificationResponseDto;
-import com.waggle.domain.notification.dto.NotificationsResponseDto;
 import com.waggle.domain.notification.entity.Notification;
 import com.waggle.domain.notification.service.NotificationService;
 import com.waggle.global.response.ApiStatus;
 import com.waggle.global.response.BaseResponse;
+import com.waggle.global.response.CursorResponse;
 import com.waggle.global.response.SuccessResponse;
 import com.waggle.global.response.swagger.EmptySuccessResponse;
 import com.waggle.global.response.swagger.NotificationsSuccessResponse;
@@ -59,7 +59,7 @@ public class NotificationController {
             )
         )
     })
-    public ResponseEntity<BaseResponse<NotificationsResponseDto>> getMyNotifications(
+    public ResponseEntity<BaseResponse<CursorResponse<NotificationResponseDto>>> getMyNotifications(
         @AuthenticationPrincipal CustomUserDetails userDetails,
         @RequestParam(required = false) Long cursor,
         @RequestParam(defaultValue = "5") int size
@@ -68,22 +68,13 @@ public class NotificationController {
             userDetails.getUser(), cursor, size
         );
 
-        boolean hasNext = notifications.size() > size;
-        if (hasNext) {
-            notifications = notifications.subList(0, size);
-        }
-
-        Long nextCursor = hasNext && !notifications.isEmpty() ?
-            notifications.get(notifications.size() - 1).getId() : null;
-
         return SuccessResponse.of(
             ApiStatus._OK,
-            NotificationsResponseDto.of(
-                notifications.stream()
-                    .map(NotificationResponseDto::from)
-                    .toList(),
-                hasNext,
-                nextCursor
+            CursorResponse.of(
+                notifications,
+                size,
+                NotificationResponseDto::from,
+                Notification::getId
             )
         );
     }
