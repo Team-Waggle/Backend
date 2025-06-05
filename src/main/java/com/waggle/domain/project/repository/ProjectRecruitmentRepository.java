@@ -9,9 +9,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProjectRecruitmentRepository extends JpaRepository<ProjectRecruitment, UUID> {
 
-    Optional<ProjectRecruitment> findByProjectIdAndJobRole(UUID projectId, JobRole jobRole);
+    Optional<ProjectRecruitment> findByProjectIdAndJobRole(Long projectId, JobRole jobRole);
 
-    List<ProjectRecruitment> findByProjectId(UUID projectId);
+    List<ProjectRecruitment> findByProjectId(Long projectId);
 
-    void deleteByProjectId(UUID projectId);
+    void deleteByProjectId(Long projectId);
 }

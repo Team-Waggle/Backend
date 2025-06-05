@@ -9,16 +9,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProjectApplicantRepository extends JpaRepository<ProjectApplicant, UUID> {
 
-    Optional<ProjectApplicant> findByProjectIdAndUserId(UUID projectId, UUID userId);
+    Optional<ProjectApplicant> findByProjectIdAndUserId(Long projectId, UUID userId);
 
-    List<ProjectApplicant> findByProjectIdOrderByAppliedAtDesc(UUID projectId);
+    List<ProjectApplicant> findByProjectIdOrderByAppliedAtDesc(Long projectId);
 
     List<ProjectApplicant> findByUserIdOrderByAppliedAtDesc(UUID userId);
 
-    void deleteByProjectId(UUID projectId);
+    void deleteByProjectId(Long projectId);
 
     boolean existsByProjectIdAndUserIdAndStatusNot(
-        UUID projectId,
+        Long projectId,
         UUID userId,
         ApplicationStatus status
     );

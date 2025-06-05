@@ -21,7 +21,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -102,7 +101,7 @@ public class ProjectPostController {
         )
     })
     public ResponseEntity<BaseResponse<ProjectResponseDto>> fetchProject(
-        @PathVariable UUID projectId
+        @PathVariable Long projectId
     ) {
         Project project = projectService.getProjectById(projectId);
         ProjectInfo projectInfo = projectService.getProjectInfoByProject(project);
@@ -178,7 +177,7 @@ public class ProjectPostController {
         )
     })
     public ResponseEntity<BaseResponse<ProjectResponseDto>> updateProject(
-        @PathVariable UUID projectId,
+        @PathVariable Long projectId,
         @Valid @RequestBody ProjectInputDto projectInputDto,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
@@ -226,7 +225,7 @@ public class ProjectPostController {
         )
     })
     public ResponseEntity<BaseResponse<Object>> deleteProject(
-        @PathVariable UUID projectId,
+        @PathVariable Long projectId,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         projectService.deleteProject(projectId, userDetails.getUser());
