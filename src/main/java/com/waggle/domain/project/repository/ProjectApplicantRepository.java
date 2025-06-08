@@ -1,7 +1,7 @@
 package com.waggle.domain.project.repository;
 
+import com.waggle.domain.application.ApplicationStatus;
 import com.waggle.domain.project.entity.ProjectApplicant;
-import com.waggle.domain.reference.enums.ApplicationStatus;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;

@@ -1,6 +1,6 @@
 package com.waggle.domain.project.entity;
 
-import com.waggle.domain.reference.enums.ApplicationStatus;
+import com.waggle.domain.application.ApplicationStatus;
 import com.waggle.domain.reference.enums.JobRole;
 import com.waggle.domain.user.entity.User;
 import jakarta.persistence.Column;

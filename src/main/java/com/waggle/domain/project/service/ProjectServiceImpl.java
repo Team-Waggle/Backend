@@ -1,5 +1,6 @@
 package com.waggle.domain.project.service;
 
+import com.waggle.domain.application.ApplicationStatus;
 import com.waggle.domain.notification.NotificationType;
 import com.waggle.domain.notification.dto.NotificationRequestDto;
 import com.waggle.domain.notification.service.NotificationService;
@@ -19,7 +20,6 @@ import com.waggle.domain.project.repository.ProjectMemberRepository;
 import com.waggle.domain.project.repository.ProjectRecruitmentRepository;
 import com.waggle.domain.project.repository.ProjectRepository;
 import com.waggle.domain.project.repository.ProjectSkillRepository;
-import com.waggle.domain.reference.enums.ApplicationStatus;
 import com.waggle.domain.reference.enums.JobRole;
 import com.waggle.domain.reference.enums.Skill;
 import com.waggle.domain.user.entity.User;

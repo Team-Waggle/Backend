@@ -1,4 +1,4 @@
-package com.waggle.domain.reference.enums;
+package com.waggle.domain.application;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
