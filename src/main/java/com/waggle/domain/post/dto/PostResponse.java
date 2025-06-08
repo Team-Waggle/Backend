@@ -4,6 +4,7 @@ import com.waggle.domain.post.Post;
 import com.waggle.domain.project.dto.ProjectResponseDto;
 import com.waggle.domain.user.dto.UserResponseDto;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.time.Instant;
 
 @Schema(description = "게시글 응답 DTO")
 public record PostResponse(
@@ -20,7 +21,13 @@ public record PostResponse(
     UserResponseDto user,
 
     @Schema(description = "연결된 프로젝트 정보 (선택사항)", nullable = true)
-    ProjectResponseDto project
+    ProjectResponseDto project,
+
+    @Schema(description = "게시글 생성 시간", example = "2025-06-08T10:30:00Z")
+    Instant createdAt,
+
+    @Schema(description = "게시글 수정 시간", example = "2025-06-08T10:35:00Z", nullable = true)
+    Instant updatedAt
 ) {
 
     public static PostResponse from(Post post) {
@@ -29,9 +36,11 @@ public record PostResponse(
             post.getTitle(),
             post.getContent(),
             null,
-            null
+            null,
 //            UserResponseDto.from(post.getUser()),
 //            post.getProject() != null ? ProjectResponseDto.from(post.getProject()) : null
+            post.getCreatedAt(),
+            post.getUpdatedAt()
         );
     }
 }
