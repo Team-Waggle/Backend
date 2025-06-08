@@ -12,14 +12,13 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Schema(description = "프로젝트 응답 dto")
 public record ProjectResponseDto(
-    @Schema(description = "고유값", example = "550e8400-e29b-41d4-a716-446655440000")
+    @Schema(description = "고유값", example = "42")
     @JsonProperty("id")
-    UUID id,
+    Long id,
 
     @Schema(description = "제목", example = "Waggle 백엔드 모집합니다.")
     @JsonProperty("title")
