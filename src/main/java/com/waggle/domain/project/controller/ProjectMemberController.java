@@ -63,7 +63,7 @@ public class ProjectMemberController {
         )
     })
     public ResponseEntity<BaseResponse<Set<UserResponseDto>>> fetchUsers(
-        @PathVariable UUID projectId
+        @PathVariable Long projectId
     ) {
         // TODO: 정렬 기준 재고
         return SuccessResponse.of(
@@ -119,7 +119,7 @@ public class ProjectMemberController {
         )
     })
     public ResponseEntity<BaseResponse<Set<UserResponseDto>>> removeMember(
-        @PathVariable UUID projectId,
+        @PathVariable Long projectId,
         @PathVariable UUID userId,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
@@ -169,7 +169,7 @@ public class ProjectMemberController {
         )
     })
     public ResponseEntity<BaseResponse<Set<UserResponseDto>>> delegateLeader(
-        @PathVariable UUID projectId,
+        @PathVariable Long projectId,
         @PathVariable UUID userId,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
@@ -207,7 +207,7 @@ public class ProjectMemberController {
         )
     })
     public ResponseEntity<BaseResponse<Object>> quitMyProject(
-        @PathVariable UUID projectId,
+        @PathVariable Long projectId,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         projectService.withdrawFromProject(projectId, userDetails.getUser());

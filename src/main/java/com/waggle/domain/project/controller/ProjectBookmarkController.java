@@ -71,7 +71,7 @@ public class ProjectBookmarkController {
         )
     })
     public ResponseEntity<BaseResponse<Boolean>> toggleMyBookmark(
-        @PathVariable UUID projectId,
+        @PathVariable Long projectId,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         return SuccessResponse.of(

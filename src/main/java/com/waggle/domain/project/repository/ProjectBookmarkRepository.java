@@ -9,11 +9,11 @@ public interface ProjectBookmarkRepository extends JpaRepository<ProjectBookmark
 
     List<ProjectBookmark> findByUserId(UUID userId);
 
-    List<ProjectBookmark> findByProjectId(UUID projectId);
+    List<ProjectBookmark> findByProjectId(Long projectId);
 
-    void deleteByProjectId(UUID projectId);
+    void deleteByProjectId(Long projectId);
 
-    void deleteByProjectIdAndUserId(UUID projectId, UUID userId);
+    void deleteByProjectIdAndUserId(Long projectId, UUID userId);
 
-    boolean existsByProjectIdAndUserId(UUID projectId, UUID userId);
+    boolean existsByProjectIdAndUserId(Long projectId, UUID userId);
 }

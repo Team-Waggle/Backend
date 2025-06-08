@@ -69,7 +69,7 @@ public class ProjectApplicationController {
         )
     })
     public ResponseEntity<BaseResponse<Set<UserResponseDto>>> fetchAppliedUsers(
-        @PathVariable UUID projectId
+        @PathVariable Long projectId
     ) {
         return SuccessResponse.of(
             ApiStatus._OK,
@@ -117,7 +117,7 @@ public class ProjectApplicationController {
         )
     })
     public ResponseEntity<BaseResponse<Set<UserResponseDto>>> approveUser(
-        @PathVariable UUID projectId,
+        @PathVariable Long projectId,
         @PathVariable UUID userId,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
@@ -167,7 +167,7 @@ public class ProjectApplicationController {
         )
     })
     public ResponseEntity<BaseResponse<Set<UserResponseDto>>> rejectUser(
-        @PathVariable UUID projectId,
+        @PathVariable Long projectId,
         @PathVariable UUID userId,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
@@ -244,7 +244,7 @@ public class ProjectApplicationController {
         )
     })
     public ResponseEntity<BaseResponse<ProjectResponseDto>> applyProject(
-        @PathVariable UUID projectId,
+        @PathVariable Long projectId,
         @Valid @RequestBody ProjectApplicationDto projectApplicationDto,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
@@ -285,7 +285,7 @@ public class ProjectApplicationController {
         )
     })
     public ResponseEntity<BaseResponse<Object>> cancelApplyProject(
-        @PathVariable UUID projectId,
+        @PathVariable Long projectId,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         projectService.cancelProjectApplication(projectId, userDetails.getUser());
