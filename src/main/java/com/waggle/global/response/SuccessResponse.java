@@ -3,7 +3,7 @@ package com.waggle.global.response;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.http.ResponseEntity;
 
-@Schema(description = "성공 응답 엔티티")
+@Schema(description = "성공 응답 DTO")
 public class SuccessResponse<T> extends BaseResponse<T> {
 
     public SuccessResponse(int code, String message, T payload) {

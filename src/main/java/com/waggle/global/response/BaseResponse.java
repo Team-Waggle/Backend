@@ -5,7 +5,7 @@ import java.time.Instant;
 import lombok.Getter;
 
 @Getter
-@Schema(description = "기본 응답 엔티티")
+@Schema(description = "기본 응답 DTO")
 public abstract class BaseResponse<T> {
 
     @Schema(description = "성공 여부")

@@ -3,7 +3,7 @@ package com.waggle.global.response;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.http.ResponseEntity;
 
-@Schema(description = "에러 응답 엔티티")
+@Schema(description = "에러 응답 DTO")
 public class ErrorResponse extends BaseResponse<Void> {
 
     public ErrorResponse(int code, String message) {
