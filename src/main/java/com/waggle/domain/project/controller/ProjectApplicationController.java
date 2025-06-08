@@ -42,7 +42,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/projects")
 @RequiredArgsConstructor
-public class ProjectApplyController {
+public class ProjectApplicationController {
 
     private final ProjectService projectService;
     private final UserService userService;
