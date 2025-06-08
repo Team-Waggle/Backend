@@ -26,7 +26,7 @@ public record PostResponse(
     @Schema(description = "게시글 생성 시간", example = "2025-06-08T10:30:00Z")
     Instant createdAt,
 
-    @Schema(description = "게시글 수정 시간", example = "2025-06-08T10:35:00Z", nullable = true)
+    @Schema(description = "게시글 수정 시간", example = "2025-06-08T10:35:00Z")
     Instant updatedAt
 ) {
 
