@@ -29,6 +29,8 @@ public class PostService {
             )
             .orElse(null);
 
+        // TODO: 프로젝트 멤버 검증
+
         Post post = Post.builder()
             .title(upsertPostDto.title())
             .content(upsertPostDto.content())
@@ -54,7 +56,7 @@ public class PostService {
         Post post = getPost(postId);
 
         if (!post.getUser().getId().equals(user.getId())) {
-            throw new AccessDeniedException("Access denied to resource");
+            throw new AccessDeniedException("Access denied to post with id: " + postId);
         }
 
         Project project = Optional.ofNullable(upsertPostDto.projectId())
@@ -62,6 +64,8 @@ public class PostService {
                 .orElseThrow(() -> new EntityNotFoundException("Project not found with id: " + id))
             )
             .orElse(null);
+
+        // TODO: 프로젝트 멤버 검증
 
         post.update(upsertPostDto.title(), upsertPostDto.content(), project);
 
@@ -73,7 +77,7 @@ public class PostService {
         Post post = getPost(postId);
 
         if (!post.getUser().getId().equals(user.getId())) {
-            throw new AccessDeniedException("Access denied to resource");
+            throw new AccessDeniedException("Access denied to post with id: " + postId);
         }
 
         postRepository.delete(post);
