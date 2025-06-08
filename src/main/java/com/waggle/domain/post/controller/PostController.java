@@ -47,22 +47,34 @@ public class PostController {
         @ApiResponse(
             responseCode = "201",
             description = "게시글 생성 성공",
-            content = @Content(schema = @Schema(implementation = PostSuccessResponse.class))
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = PostSuccessResponse.class)
+            )
         ),
         @ApiResponse(
             responseCode = "400",
             description = "잘못된 요청 데이터",
-            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ErrorResponse.class)
+            )
         ),
         @ApiResponse(
             responseCode = "401",
             description = "인증되지 않은 사용자",
-            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ErrorResponse.class)
+            )
         ),
         @ApiResponse(
             responseCode = "404",
             description = "존재하지 않는 프로젝트",
-            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ErrorResponse.class)
+            )
         )
     })
     @PostMapping
@@ -86,7 +98,10 @@ public class PostController {
         @ApiResponse(
             responseCode = "200",
             description = "게시글 목록 조회 성공",
-            content = @Content(schema = @Schema(implementation = PostsSuccessResponse.class))
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = PostsSuccessResponse.class)
+            )
         )
     })
     @GetMapping
@@ -107,12 +122,18 @@ public class PostController {
         @ApiResponse(
             responseCode = "200",
             description = "게시글 조회 성공",
-            content = @Content(schema = @Schema(implementation = PostSuccessResponse.class))
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = PostSuccessResponse.class)
+            )
         ),
         @ApiResponse(
             responseCode = "404",
             description = "존재하지 않는 게시글",
-            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ErrorResponse.class)
+            )
         )
     })
     @GetMapping("/{postId}")
@@ -133,22 +154,32 @@ public class PostController {
         @ApiResponse(
             responseCode = "200",
             description = "게시글 수정 성공",
-            content = @Content(schema = @Schema(implementation = PostSuccessResponse.class))
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = PostSuccessResponse.class)
+            )
         ),
         @ApiResponse(
             responseCode = "400",
             description = "잘못된 요청 데이터",
-            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ErrorResponse.class)
+            )
         ),
         @ApiResponse(
             responseCode = "401",
             description = "인증되지 않은 사용자",
-            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ErrorResponse.class)
+            )
         ),
         @ApiResponse(
             responseCode = "404",
             description = "존재하지 않는 리소스",
             content = @Content(
+                mediaType = "application/json",
                 schema = @Schema(implementation = ErrorResponse.class),
                 examples = {
                     @ExampleObject(
@@ -203,17 +234,26 @@ public class PostController {
         @ApiResponse(
             responseCode = "204",
             description = "게시글 삭제 성공",
-            content = @Content(schema = @Schema(implementation = EmptySuccessResponse.class))
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = EmptySuccessResponse.class)
+            )
         ),
         @ApiResponse(
             responseCode = "401",
             description = "인증되지 않은 사용자",
-            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ErrorResponse.class)
+            )
         ),
         @ApiResponse(
             responseCode = "404",
             description = "존재하지 않는 게시글",
-            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ErrorResponse.class)
+            )
         )
     })
     @DeleteMapping("/{postId}")
