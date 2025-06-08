@@ -2,8 +2,6 @@ package com.waggle.global.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import lombok.Getter;
 
 @Getter
@@ -23,14 +21,13 @@ public abstract class BaseResponse<T> {
     protected final T payload;
 
     @Schema(description = "응답 시간", example = "2021-08-01T00:00:00Z")
-    protected final String timestamp;
+    protected final Instant timestamp;
 
     protected BaseResponse(boolean isSuccess, int code, String message, T payload) {
         this.isSuccess = isSuccess;
         this.code = code;
         this.message = message;
         this.payload = payload;
-        this.timestamp = DateTimeFormatter.ISO_INSTANT
-            .format(Instant.now().atZone(ZoneId.of("Asia/Seoul")));
+        this.timestamp = Instant.now();
     }
 }
