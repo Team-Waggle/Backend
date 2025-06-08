@@ -32,6 +32,8 @@ public class MemberService {
             throw new AccessDeniedException("Access denied to member with id: " + memberId);
         }
 
+        // TODO: 해당 직무 공석 여부 확인
+
         member.updatePosition(updatePositionDto.position());
 
         return member;
@@ -49,6 +51,7 @@ public class MemberService {
         if (!(isOwner || isLeader)) {
             throw new AccessDeniedException("Access denied to member with id: " + memberId);
         }
+        // TODO: isOwner && isLeader -> 리더 위임
 
         member.delete();
     }
