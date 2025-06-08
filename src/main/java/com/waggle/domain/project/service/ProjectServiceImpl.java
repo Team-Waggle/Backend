@@ -20,7 +20,7 @@ import com.waggle.domain.project.repository.ProjectMemberRepository;
 import com.waggle.domain.project.repository.ProjectRecruitmentRepository;
 import com.waggle.domain.project.repository.ProjectRepository;
 import com.waggle.domain.project.repository.ProjectSkillRepository;
-import com.waggle.domain.reference.enums.JobRole;
+import com.waggle.domain.reference.enums.Position;
 import com.waggle.domain.reference.enums.Skill;
 import com.waggle.domain.user.entity.User;
 import com.waggle.domain.user.service.UserService;
@@ -69,7 +69,7 @@ public class ProjectServiceImpl implements ProjectService {
             .build();
         project = projectRepository.save(project);
 
-        ProjectMember projectMember = createProjectMember(project, user, JobRole.PLANNER, true);
+        ProjectMember projectMember = createProjectMember(project, user, Position.PLANNER, true);
         projectMemberRepository.save(projectMember);
 
         Set<ProjectSkill> projectSkills = createProjectSkills(project, projectInputDto.skills());
@@ -205,17 +205,18 @@ public class ProjectServiceImpl implements ProjectService {
                 "Applicant not found for project id: " + projectId + " and user id: " + userId));
         projectApplicant.updateStatus(ApplicationStatus.APPROVED);
 
-        JobRole jobRole = projectApplicant.getJobRole();
+        Position position = projectApplicant.getPosition();
         ProjectRecruitment recruitment = projectRecruitmentRepository
-            .findByProjectIdAndJobRole(projectId, jobRole)
+            .findByProjectIdAndPosition(projectId, position)
             .orElseThrow(() -> new EntityNotFoundException(
-                "Recruitment not found for project id: " + projectId + "and job role: " + jobRole));
+                "Recruitment not found for project id: " + projectId + "and job role: "
+                    + position));
         recruitment.addMember();
 
         ProjectMember member = createProjectMember(
             project,
             projectApplicant.getUser(),
-            jobRole,
+            position,
             false
         );
         projectMemberRepository.save(member);
@@ -281,11 +282,12 @@ public class ProjectServiceImpl implements ProjectService {
             throw new IllegalStateException("Cannot remove the project leader");
         }
 
-        JobRole jobRole = projectMember.getJobRole();
+        Position position = projectMember.getPosition();
         ProjectRecruitment recruitment = projectRecruitmentRepository
-            .findByProjectIdAndJobRole(projectId, jobRole)
+            .findByProjectIdAndPosition(projectId, position)
             .orElseThrow(() -> new EntityNotFoundException(
-                "Recruitment not found for project id: " + projectId + "and job role: " + jobRole));
+                "Recruitment not found for project id: " + projectId + "and job role: "
+                    + position));
         recruitment.removeMember();
 
         projectMemberRepository.delete(projectMember);
@@ -342,11 +344,12 @@ public class ProjectServiceImpl implements ProjectService {
 
         projectMemberRepository.delete(member);
 
-        JobRole jobRole = member.getJobRole();
+        Position position = member.getPosition();
         ProjectRecruitment recruitment = projectRecruitmentRepository
-            .findByProjectIdAndJobRole(projectId, jobRole)
+            .findByProjectIdAndPosition(projectId, position)
             .orElseThrow(() -> new EntityNotFoundException(
-                "Recruitment not found for project id: " + projectId + "and job role: " + jobRole));
+                "Recruitment not found for project id: " + projectId + "and job role: "
+                    + position));
         recruitment.removeMember();
     }
 
@@ -366,15 +369,16 @@ public class ProjectServiceImpl implements ProjectService {
         ProjectApplicationDto projectApplicationDto,
         User user
     ) {
-        JobRole jobRole = projectApplicationDto.jobRole();
+        Position position = projectApplicationDto.position();
         ProjectRecruitment recruitment = projectRecruitmentRepository
-            .findByProjectIdAndJobRole(projectId, jobRole)
+            .findByProjectIdAndPosition(projectId, position)
             .orElseThrow(() -> new EntityNotFoundException(
-                "Recruitment not found for project id: " + projectId + "and job role: " + jobRole));
+                "Recruitment not found for project id: " + projectId + "and job role: "
+                    + position));
 
         if (!recruitment.isRecruitable()) {
             throw new IllegalStateException(
-                "Not allowed to apply the project for job role: " + jobRole);
+                "Not allowed to apply the project for job role: " + position);
         }
 
         if (projectMemberRepository.existsByProjectIdAndUserId(projectId, user.getId())) {
@@ -397,7 +401,7 @@ public class ProjectServiceImpl implements ProjectService {
         ProjectApplicant applicant = ProjectApplicant.builder()
             .project(project)
             .user(user)
-            .jobRole(jobRole)
+            .position(position)
             .status(ApplicationStatus.PENDING)
             .build();
         projectApplicantRepository.save(applicant);
@@ -480,13 +484,13 @@ public class ProjectServiceImpl implements ProjectService {
     private ProjectMember createProjectMember(
         Project project,
         User user,
-        JobRole jobRole,
+        Position position,
         boolean isLeader
     ) {
         return ProjectMember.builder()
             .project(project)
             .user(user)
-            .jobRole(jobRole)
+            .position(position)
             .isLeader(isLeader)
             .build();
     }
@@ -499,7 +503,7 @@ public class ProjectServiceImpl implements ProjectService {
             .map(dto ->
                 ProjectRecruitment.builder()
                     .project(project)
-                    .jobRole(dto.jobRole())
+                    .position(dto.position())
                     .remainingCount(dto.remainingCount())
                     .currentCount(dto.currentCount())
                     .build())

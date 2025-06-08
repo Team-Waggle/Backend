@@ -1,6 +1,6 @@
 package com.waggle.domain.project.entity;
 
-import com.waggle.domain.reference.enums.JobRole;
+import com.waggle.domain.reference.enums.Position;
 import com.waggle.domain.user.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
@@ -46,7 +46,7 @@ public class ProjectMember {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "job_role", nullable = false)
-    private JobRole jobRole;
+    private Position position;
 
     @Column(name = "is_leader", nullable = false, columnDefinition = "boolean default false")
     @Schema(description = "프로젝트 리더 여부", example = "true")

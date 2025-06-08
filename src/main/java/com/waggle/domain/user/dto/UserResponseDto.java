@@ -47,7 +47,7 @@ public record UserResponseDto(
 
     @Schema(description = "사용자 직무 정보")
     @JsonProperty("job_roles")
-    Set<UserJobRoleDto> userJobRoleDtos,
+    Set<UserPositionDto> userPositionDtos,
 
     @Schema(description = "사용자 관심 산업 정보")
     @JsonProperty("industries")
@@ -102,9 +102,9 @@ public record UserResponseDto(
             userInfo.user().getProfileImageUrl(),
             userInfo.user().getName(),
             userInfo.user().getEmail(),
-            userInfo.userJobRoles().stream()
-                .map(UserJobRoleDto::from)
-                .sorted(Comparator.comparing(UserJobRoleDto::jobRole))
+            userInfo.userPositions().stream()
+                .map(UserPositionDto::from)
+                .sorted(Comparator.comparing(UserPositionDto::position))
                 .collect(Collectors.toCollection(LinkedHashSet::new)),
             userInfo.userIndustries().stream()
                 .map(UserIndustry::getIndustry)

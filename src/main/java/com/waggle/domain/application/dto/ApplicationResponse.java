@@ -3,7 +3,7 @@ package com.waggle.domain.application.dto;
 import com.waggle.domain.application.Application;
 import com.waggle.domain.application.ApplicationStatus;
 import com.waggle.domain.project.dto.ProjectResponseDto;
-import com.waggle.domain.reference.enums.JobRole;
+import com.waggle.domain.reference.enums.Position;
 import com.waggle.domain.user.dto.UserResponseDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.Instant;
@@ -14,7 +14,7 @@ public record ApplicationResponse(
     Long id,
 
     @Schema(description = "지원 직무", example = "BACKEND")
-    JobRole jobRole,
+    Position position,
 
     @Schema(description = "지원 상태", example = "PENDING")
     ApplicationStatus status,
@@ -35,7 +35,7 @@ public record ApplicationResponse(
     public static ApplicationResponse from(Application application) {
         return new ApplicationResponse(
             application.getId(),
-            application.getJobRole(),
+            application.getPosition(),
             application.getStatus(),
             null,
             null,

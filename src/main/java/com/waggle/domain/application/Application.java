@@ -1,7 +1,7 @@
 package com.waggle.domain.application;
 
 import com.waggle.domain.projectV2.ProjectV2;
-import com.waggle.domain.reference.enums.JobRole;
+import com.waggle.domain.reference.enums.Position;
 import com.waggle.domain.user.entity.User;
 import com.waggle.global.entity.BaseEntity;
 import jakarta.persistence.Column;
@@ -29,7 +29,7 @@ public class Application extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, updatable = false)
-    private JobRole jobRole;
+    private Position position;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

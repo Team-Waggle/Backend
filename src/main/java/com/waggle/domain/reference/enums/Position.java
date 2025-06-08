@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum JobRole {
+public enum Position {
     FRONTEND("프론트엔드"),
     BACKEND("백엔드"),
     DESIGNER("디자이너"),

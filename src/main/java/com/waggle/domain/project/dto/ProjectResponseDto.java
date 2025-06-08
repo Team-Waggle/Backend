@@ -83,7 +83,7 @@ public record ProjectResponseDto(
             projectInfo.project().getWorkPeriod(),
             projectInfo.projectRecruitments().stream()
                 .map(ProjectRecruitmentDto::from)
-                .sorted(Comparator.comparing(prj -> prj.jobRole().name()))
+                .sorted(Comparator.comparing(prj -> prj.position().name()))
                 .collect(Collectors.toCollection(LinkedHashSet::new)),
             projectInfo.projectSkills().stream()
                 .sorted(Comparator.comparing(prj -> prj.getSkill().name()))

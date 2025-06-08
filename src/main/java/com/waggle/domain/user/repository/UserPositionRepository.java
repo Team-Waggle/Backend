@@ -1,13 +1,13 @@
 package com.waggle.domain.user.repository;
 
-import com.waggle.domain.user.entity.UserJobRole;
+import com.waggle.domain.user.entity.UserPosition;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserJobRoleRepository extends JpaRepository<UserJobRole, UUID> {
+public interface UserPositionRepository extends JpaRepository<UserPosition, UUID> {
 
-    List<UserJobRole> findByUserId(UUID userId);
+    List<UserPosition> findByUserId(UUID userId);
 
     void deleteByUserId(UUID userId);
 }

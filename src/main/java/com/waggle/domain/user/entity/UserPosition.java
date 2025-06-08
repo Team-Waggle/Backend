@@ -1,6 +1,6 @@
 package com.waggle.domain.user.entity;
 
-import com.waggle.domain.reference.enums.JobRole;
+import com.waggle.domain.reference.enums.Position;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserJobRole {
+public class UserPosition {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -35,7 +35,7 @@ public class UserJobRole {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "job_role", nullable = false)
-    private JobRole jobRole;
+    private Position position;
 
     @Column(name = "year_count", nullable = false)
     private int yearCount;

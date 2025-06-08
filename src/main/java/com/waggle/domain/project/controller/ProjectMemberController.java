@@ -73,9 +73,9 @@ public class ProjectMemberController {
                 .map(UserResponseDto::from)
 //                .sorted(Comparator
 //                    .comparing((UserResponseDto dto) -> {
-//                        // JobRole 이름으로 먼저 정렬 (첫 번째 JobRole 기준 - 없으면 빈 문자열)
-//                        Set<UserJobRoleDto> jobRoles = dto.userJobRoleDtos();
-//                        return jobRoles != null && !jobRoles.isEmpty() ? jobRoles.get(0) : "";
+//                        // Position 이름으로 먼저 정렬 (첫 번째 Position 기준 - 없으면 빈 문자열)
+//                        Set<UserPositionDto> positions = dto.userPositionDtos();
+//                        return positions != null && !positions.isEmpty() ? positions.get(0) : "";
 //                    })
 //                    .thenComparing(UserResponseDto::name))
                 .collect(Collectors.toCollection(LinkedHashSet::new))
