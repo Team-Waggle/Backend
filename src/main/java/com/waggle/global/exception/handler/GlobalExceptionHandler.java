@@ -7,6 +7,7 @@ import com.waggle.global.exception.S3Exception;
 import com.waggle.global.response.ApiStatus;
 import com.waggle.global.response.BaseResponse;
 import com.waggle.global.response.ErrorResponse;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -31,6 +32,13 @@ public class GlobalExceptionHandler {
         AccessDeniedException ex
     ) {
         return ErrorResponse.of(ex.getStatus());
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<BaseResponse<Void>> handleEntityNotFoundException(
+        EntityNotFoundException ex
+    ) {
+        return ErrorResponse.of(ApiStatus._NOT_FOUND, ex.getMessage());
     }
 
     @ExceptionHandler(ProjectException.class)
