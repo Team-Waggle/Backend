@@ -5,6 +5,8 @@ import com.waggle.domain.member.dto.UpdatePositionDto;
 import com.waggle.domain.member.repository.MemberRepository;
 import com.waggle.domain.user.entity.User;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+
+    @Transactional(readOnly = true)
+    public List<Member> getProjectMembers(UUID projectId) {
+        return memberRepository.findByProjectIdWithRelations(projectId);
+    }
 
     @Transactional
     public Member updateMemberPosition(
