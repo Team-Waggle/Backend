@@ -16,7 +16,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
         FROM Application a
         JOIN FETCH a.user
         JOIN FETCH a.project
-        WHERE a.id = :id
+        WHERE a.id = :id AND a.deletedAt IS NULL
         """)
     Optional<Application> findByIdWithRelations(@Param("id") Long id);
 
@@ -25,7 +25,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
         FROM Application a
         JOIN FETCH a.user
         JOIN FETCH a.project
-        WHERE a.user.id = :userId
+        WHERE a.user.id = :userId AND a.deletedAt IS NULL
         ORDER BY a.createdAt DESC, a.id DESC
         """)
     List<Application> findByUserIdWithRelations(@Param("userId") UUID userId);
@@ -35,7 +35,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
         FROM Application a
         JOIN FETCH a.user
         JOIN FETCH a.project
-        WHERE a.status = :status AND a.user.id = :userId
+        WHERE a.status = :status AND a.user.id = :userId AND a.deletedAt IS NULL
         ORDER BY a.createdAt DESC, a.id DESC
         """)
     List<Application> findByStatusAndUserIdWithRelations(
