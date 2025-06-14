@@ -11,6 +11,8 @@ import org.springframework.data.repository.query.Param;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
+    boolean existsByUserIdAndProjectId(UUID userId, UUID projectId);
+
     @Query("""
         SELECT m
         FROM Member m
