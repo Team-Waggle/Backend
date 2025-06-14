@@ -35,11 +35,34 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
         FROM Application a
         JOIN FETCH a.user
         JOIN FETCH a.project
+        WHERE a.project.id = :projectId AND a.deletedAt IS NULL
+        ORDER BY a.createdAt DESC, a.id DESC
+        """)
+    List<Application> findByProjectIdWithRelations(@Param("projectId") UUID projectId);
+
+    @Query("""
+        SELECT a
+        FROM Application a
+        JOIN FETCH a.user
+        JOIN FETCH a.project
         WHERE a.status = :status AND a.user.id = :userId AND a.deletedAt IS NULL
         ORDER BY a.createdAt DESC, a.id DESC
         """)
     List<Application> findByStatusAndUserIdWithRelations(
         @Param("status") ApplicationStatus status,
         @Param("userId") UUID userId
+    );
+
+    @Query("""
+        SELECT a
+        FROM Application a
+        JOIN FETCH a.user
+        JOIN FETCH a.project
+        WHERE a.status = :status AND a.project.id = :projectId AND a.deletedAt IS NULL
+        ORDER BY a.createdAt DESC, a.id DESC
+        """)
+    List<Application> findByStatusAndProjectIdWithRelations(
+        @Param("status") ApplicationStatus status,
+        @Param("projectId") UUID projectId
     );
 }
