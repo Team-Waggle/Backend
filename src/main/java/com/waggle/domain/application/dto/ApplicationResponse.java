@@ -2,7 +2,7 @@ package com.waggle.domain.application.dto;
 
 import com.waggle.domain.application.Application;
 import com.waggle.domain.application.ApplicationStatus;
-import com.waggle.domain.project.dto.ProjectResponseDto;
+import com.waggle.domain.projectV2.dto.ProjectResponse;
 import com.waggle.domain.reference.enums.Position;
 import com.waggle.domain.user.dto.UserResponseDto;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -23,7 +23,7 @@ public record ApplicationResponse(
     UserResponseDto user,
 
     @Schema(description = "지원 프로젝트")
-    ProjectResponseDto project,
+    ProjectResponse project,
 
     @Schema(description = "지원 시간", example = "2025-06-08T10:30:00Z")
     Instant createdAt,
@@ -38,7 +38,7 @@ public record ApplicationResponse(
             application.getPosition(),
             application.getStatus(),
             null,
-            null,
+            ProjectResponse.from(application.getProject()),
             application.getCreatedAt(),
             application.getUpdatedAt()
         );
