@@ -3,8 +3,8 @@ package com.waggle.global.security.oauth2.service;
 import com.waggle.domain.user.entity.User;
 import com.waggle.domain.user.repository.UserRepository;
 import com.waggle.global.security.oauth2.CustomUserDetails;
-import com.waggle.global.security.oauth2.adapter.GoogleUserInfoAdapter;
-import com.waggle.global.security.oauth2.adapter.KakaoUserInfoAdapter;
+import com.waggle.global.security.oauth2.adapter.GoogleUserInfo;
+import com.waggle.global.security.oauth2.adapter.KakaoUserInfo;
 import com.waggle.global.security.oauth2.adapter.OAuth2UserInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -27,8 +27,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         String registrationId = oAuth2UserRequest.getClientRegistration().getRegistrationId();
         OAuth2UserInfo userInfo = switch (registrationId) {
-            case "google" -> new GoogleUserInfoAdapter(oauth2User.getAttributes());
-            case "kakao" -> new KakaoUserInfoAdapter(oauth2User.getAttributes());
+            case "google" -> new GoogleUserInfo(oauth2User.getAttributes());
+            case "kakao" -> new KakaoUserInfo(oauth2User.getAttributes());
             default ->
                 throw new OAuth2AuthenticationException("Unsupported provider: " + registrationId);
         };

@@ -3,8 +3,8 @@ package com.waggle.global.security.oauth2.handler;
 import com.waggle.domain.user.entity.User;
 import com.waggle.domain.user.repository.UserRepository;
 import com.waggle.global.security.jwt.JwtUtil;
-import com.waggle.global.security.oauth2.adapter.GoogleUserInfoAdapter;
-import com.waggle.global.security.oauth2.adapter.KakaoUserInfoAdapter;
+import com.waggle.global.security.oauth2.adapter.GoogleUserInfo;
+import com.waggle.global.security.oauth2.adapter.KakaoUserInfo;
 import com.waggle.global.security.oauth2.adapter.OAuth2UserInfo;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -56,11 +56,11 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         switch (provider) {
             case "google" -> {
                 log.info("구글 로그인 요청");
-                oAuth2UserInfo = new GoogleUserInfoAdapter(token.getPrincipal().getAttributes());
+                oAuth2UserInfo = new GoogleUserInfo(token.getPrincipal().getAttributes());
             }
             case "kakao" -> {
                 log.info("카카오 로그인 요청");
-                oAuth2UserInfo = new KakaoUserInfoAdapter(token.getPrincipal().getAttributes());
+                oAuth2UserInfo = new KakaoUserInfo(token.getPrincipal().getAttributes());
             }
             default -> throw new OAuth2AuthenticationException("Unsupported provider: " + provider);
         }
