@@ -11,8 +11,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.time.Instant;
 import java.util.UUID;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -28,7 +30,10 @@ public class ProjectV2 extends BaseEntity {
     @Column(unique = true)
     private String name;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
+    private String tagline;
+
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
 
     @Column(unique = true, nullable = false, updatable = false)
@@ -37,4 +42,31 @@ public class ProjectV2 extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "leader_id", nullable = false)
     private User leader;
+
+    private Instant deletedAt;
+
+    @Builder
+    private ProjectV2(
+        String name,
+        String tagline,
+        String description,
+        Long sequenceId,
+        User leader
+    ) {
+        this.name = name;
+        this.tagline = tagline;
+        this.description = description;
+        this.sequenceId = sequenceId;
+        this.leader = leader;
+    }
+
+    public void update(String name, String tagline, String description) {
+        this.name = name;
+        this.tagline = tagline;
+        this.description = description;
+    }
+
+    public void delete() {
+        this.deletedAt = Instant.now();
+    }
 }
