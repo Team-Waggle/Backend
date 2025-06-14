@@ -37,6 +37,7 @@ public class PostService {
             .user(user)
             .project(project)
             .build();
+
         return postRepository.save(post);
     }
 
@@ -80,6 +81,6 @@ public class PostService {
             throw new AccessDeniedException("Access denied to post with id: " + postId);
         }
 
-        postRepository.delete(post);
+        post.delete();
     }
 }

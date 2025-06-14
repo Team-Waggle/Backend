@@ -11,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.time.Instant;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -39,6 +40,8 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "project_id")
     private Project project;
 
+    private Instant deletedAt;
+
     @Builder
     public Post(String title, String content, User user, Project project) {
         this.title = title;
@@ -51,5 +54,9 @@ public class Post extends BaseEntity {
         this.title = title;
         this.content = content;
         this.project = project;
+    }
+
+    public void delete() {
+        this.deletedAt = Instant.now();
     }
 }

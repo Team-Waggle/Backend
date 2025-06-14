@@ -14,16 +14,16 @@ public interface PostRepository extends JpaRepository<Post, Long> {
         FROM Post p
         JOIN FETCH p.user
         LEFT JOIN FETCH p.project
-        WHERE p.id = :id
-        ORDER BY p.createdAt DESC, p.id DESC
+        WHERE p.id = :id AND p.deletedAt IS NULL
         """)
-    Optional<Post> findByIdWithRelations(@Param("id") Long postId);
+    Optional<Post> findByIdWithRelations(@Param("id") Long id);
 
     @Query("""
         SELECT p
         FROM Post p
         JOIN FETCH p.user
         LEFT JOIN FETCH p.project
+        WHERE p.deletedAt IS NULL
         ORDER BY p.createdAt DESC, p.id DESC
         """)
     List<Post> findAllWithRelations();
