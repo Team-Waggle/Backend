@@ -16,6 +16,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.time.Instant;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -45,6 +46,14 @@ public class Application extends BaseEntity {
     private ProjectV2 project;
 
     private Instant deletedAt;
+
+    @Builder
+    private Application(Position position, User user, ProjectV2 project) {
+        this.position = position;
+        this.status = ApplicationStatus.PENDING;
+        this.user = user;
+        this.project = project;
+    }
 
     public void approve() {
         if (status != ApplicationStatus.PENDING) {
