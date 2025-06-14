@@ -73,18 +73,7 @@ springdoc:
     operationsSorter: alpha
     disable-swagger-default-url: true
     display-request-duration: true
-    oauth:
-      client-id: ${NAVER_CLIENT_ID}
-      client-secret: ${NAVER_CLIENT_SECRET}
-      scopes:
-        - name
-        - email
-        - profile_image
-        - birthyear
-        - birthday
-        - mobile
-        - nickname
-        - gender
+
   api-docs:
     path: /api-docs
   show-actuator: true
