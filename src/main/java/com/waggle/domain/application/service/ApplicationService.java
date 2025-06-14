@@ -2,12 +2,16 @@ package com.waggle.domain.application.service;
 
 import com.waggle.domain.application.Application;
 import com.waggle.domain.application.ApplicationStatus;
+import com.waggle.domain.application.dto.CreateApplicationDto;
 import com.waggle.domain.application.dto.UpdateStatusDto;
 import com.waggle.domain.application.repository.ApplicationRepository;
+import com.waggle.domain.member.repository.MemberRepository;
 import com.waggle.domain.projectV2.ProjectV2;
+import com.waggle.domain.projectV2.repository.ProjectV2Repository;
 import com.waggle.domain.user.entity.User;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -18,6 +22,46 @@ import org.springframework.transaction.annotation.Transactional;
 public class ApplicationService {
 
     private final ApplicationRepository applicationRepository;
+    private final MemberRepository memberRepository;
+    private final ProjectV2Repository projectRepository;
+
+    @Transactional
+    public Application createApplication(
+        UUID projectId,
+        CreateApplicationDto createApplicationDto,
+        User user
+    ) {
+        ProjectV2 project = projectRepository.findByIdWithRelations(projectId).orElseThrow(
+            () -> new EntityNotFoundException("Project not found with id " + projectId)
+        );
+
+        Application application = Application.builder()
+            .position(createApplicationDto.position())
+            .user(user)
+            .project(project)
+            .build();
+
+        return applicationRepository.save(application);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Application> getProjectApplications(
+        UUID projectId,
+        ApplicationStatus status,
+        User user
+    ) {
+        if (!memberRepository.existsByUserIdAndProjectId(user.getId(), projectId)) {
+            throw new AccessDeniedException(
+                "Access denied to applications with projectId: " + projectId
+            );
+        }
+
+        if (status == null) {
+            return applicationRepository.findByProjectIdWithRelations(projectId);
+        }
+
+        return applicationRepository.findByStatusAndProjectIdWithRelations(status, projectId);
+    }
 
     @Transactional(readOnly = true)
     public List<Application> getMyApplications(
