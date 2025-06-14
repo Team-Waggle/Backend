@@ -2,7 +2,7 @@ package com.waggle.domain.reference.controller;
 
 import com.waggle.domain.reference.enums.Industry;
 import com.waggle.domain.reference.enums.IntroductionType;
-import com.waggle.domain.reference.enums.JobRole;
+import com.waggle.domain.reference.enums.Position;
 import com.waggle.domain.reference.enums.PortfolioType;
 import com.waggle.domain.reference.enums.Sido;
 import com.waggle.domain.reference.enums.Skill;
@@ -16,7 +16,7 @@ import com.waggle.global.response.SuccessResponse;
 import com.waggle.global.response.swagger.DaysOfWeekSuccessResponse;
 import com.waggle.global.response.swagger.IndustriesSuccessResponse;
 import com.waggle.global.response.swagger.IntroductionsTypesSuccessResponse;
-import com.waggle.global.response.swagger.JobRolesSuccessResponse;
+import com.waggle.global.response.swagger.PositionsSuccessResponse;
 import com.waggle.global.response.swagger.PortfolioTypesSuccessResponse;
 import com.waggle.global.response.swagger.SidosSuccessResponse;
 import com.waggle.global.response.swagger.SkillsSuccessResponse;
@@ -64,11 +64,11 @@ public class ReferenceController {
     @GetMapping("/job-roles")
     @Operation(summary = "직무 조회", description = "직무를 전부 조회합니다.")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "직무 조회 성공", content = @Content(schema = @Schema(implementation = JobRolesSuccessResponse.class))),
+        @ApiResponse(responseCode = "200", description = "직무 조회 성공", content = @Content(schema = @Schema(implementation = PositionsSuccessResponse.class))),
         @ApiResponse(responseCode = "404", description = "직무가 존재하지 않음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<BaseResponse<Object>> fetchJobRoles() {
-        return SuccessResponse.of(ApiStatus._OK, List.of(JobRole.values()));
+    public ResponseEntity<BaseResponse<Object>> fetchPositions() {
+        return SuccessResponse.of(ApiStatus._OK, List.of(Position.values()));
     }
 
     @GetMapping("/days-of-week")

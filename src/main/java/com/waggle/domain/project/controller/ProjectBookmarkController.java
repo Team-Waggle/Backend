@@ -7,7 +7,7 @@ import com.waggle.global.response.BaseResponse;
 import com.waggle.global.response.ErrorResponse;
 import com.waggle.global.response.SuccessResponse;
 import com.waggle.global.response.swagger.ProjectsSuccessResponse;
-import com.waggle.global.secure.oauth2.CustomUserDetails;
+import com.waggle.global.security.oauth2.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -71,7 +71,7 @@ public class ProjectBookmarkController {
         )
     })
     public ResponseEntity<BaseResponse<Boolean>> toggleMyBookmark(
-        @PathVariable UUID projectId,
+        @PathVariable Long projectId,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         return SuccessResponse.of(

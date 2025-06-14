@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProjectSkillRepository extends JpaRepository<ProjectSkill, UUID> {
 
-    List<ProjectSkill> findByProjectId(UUID projectId);
+    List<ProjectSkill> findByProjectId(Long projectId);
 
-    void deleteByProjectId(UUID projectId);
+    void deleteByProjectId(Long projectId);
 }

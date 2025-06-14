@@ -1,5 +1,6 @@
 package com.waggle.domain.project.service;
 
+import com.waggle.domain.application.ApplicationStatus;
 import com.waggle.domain.notification.NotificationType;
 import com.waggle.domain.notification.dto.NotificationRequestDto;
 import com.waggle.domain.notification.service.NotificationService;
@@ -19,8 +20,7 @@ import com.waggle.domain.project.repository.ProjectMemberRepository;
 import com.waggle.domain.project.repository.ProjectRecruitmentRepository;
 import com.waggle.domain.project.repository.ProjectRepository;
 import com.waggle.domain.project.repository.ProjectSkillRepository;
-import com.waggle.domain.reference.enums.ApplicationStatus;
-import com.waggle.domain.reference.enums.JobRole;
+import com.waggle.domain.reference.enums.Position;
 import com.waggle.domain.reference.enums.Skill;
 import com.waggle.domain.user.entity.User;
 import com.waggle.domain.user.service.UserService;
@@ -69,7 +69,7 @@ public class ProjectServiceImpl implements ProjectService {
             .build();
         project = projectRepository.save(project);
 
-        ProjectMember projectMember = createProjectMember(project, user, JobRole.PLANNER, true);
+        ProjectMember projectMember = createProjectMember(project, user, Position.PLANNER, true);
         projectMemberRepository.save(projectMember);
 
         Set<ProjectSkill> projectSkills = createProjectSkills(project, projectInputDto.skills());
@@ -86,7 +86,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional(readOnly = true)
-    public Project getProjectById(UUID projectId) {
+    public Project getProjectById(Long projectId) {
         return projectRepository.findById(projectId)
             .orElseThrow(() -> new EntityNotFoundException(
                 "Project not found with id: " + projectId));
@@ -115,7 +115,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional
-    public Project updateProject(UUID projectId, ProjectInputDto projectInputDto, User user) {
+    public Project updateProject(Long projectId, ProjectInputDto projectInputDto, User user) {
         Project project = projectRepository.findById(projectId)
             .orElseThrow(() -> new EntityNotFoundException(
                 "Project not found with id: " + projectId));
@@ -151,7 +151,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional
-    public void deleteProject(UUID projectId, User user) {
+    public void deleteProject(Long projectId, User user) {
         Project project = projectRepository.findById(projectId)
             .orElseThrow(() -> new EntityNotFoundException(
                 "Project not found with id: " + projectId));
@@ -170,7 +170,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional(readOnly = true)
-    public Set<User> getUsersByProjectId(UUID projectId) {
+    public Set<User> getUsersByProjectId(Long projectId) {
         List<ProjectMember> projectMembers = projectMemberRepository.findByProjectId(projectId);
 
         return projectMembers.stream()
@@ -179,7 +179,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Set<User> getAppliedUsersByProjectId(UUID projectId) {
+    public Set<User> getAppliedUsersByProjectId(Long projectId) {
         List<ProjectApplicant> projectApplicants =
             projectApplicantRepository.findByProjectId(projectId);
 
@@ -190,7 +190,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional
-    public Set<User> approveAppliedUser(UUID projectId, UUID userId, User user) {
+    public Set<User> approveAppliedUser(Long projectId, UUID userId, User user) {
         Project project = projectRepository.findById(projectId)
             .orElseThrow(() -> new EntityNotFoundException(
                 "Project not found with id: " + projectId));
@@ -205,17 +205,18 @@ public class ProjectServiceImpl implements ProjectService {
                 "Applicant not found for project id: " + projectId + " and user id: " + userId));
         projectApplicant.updateStatus(ApplicationStatus.APPROVED);
 
-        JobRole jobRole = projectApplicant.getJobRole();
+        Position position = projectApplicant.getPosition();
         ProjectRecruitment recruitment = projectRecruitmentRepository
-            .findByProjectIdAndJobRole(projectId, jobRole)
+            .findByProjectIdAndPosition(projectId, position)
             .orElseThrow(() -> new EntityNotFoundException(
-                "Recruitment not found for project id: " + projectId + "and job role: " + jobRole));
+                "Recruitment not found for project id: " + projectId + "and job role: "
+                    + position));
         recruitment.addMember();
 
         ProjectMember member = createProjectMember(
             project,
             projectApplicant.getUser(),
-            jobRole,
+            position,
             false
         );
         projectMemberRepository.save(member);
@@ -234,7 +235,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional
-    public Set<User> rejectAppliedUser(UUID projectId, UUID userId, User user) {
+    public Set<User> rejectAppliedUser(Long projectId, UUID userId, User user) {
         Project project = projectRepository.findById(projectId)
             .orElseThrow(() -> new EntityNotFoundException(
                 "Project not found with id: " + projectId));
@@ -263,7 +264,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional
-    public Set<User> removeMemberUser(UUID projectId, UUID userId, User user) {
+    public Set<User> removeMemberUser(Long projectId, UUID userId, User user) {
         Project project = projectRepository.findById(projectId)
             .orElseThrow(() -> new EntityNotFoundException(
                 "Project not found with id: " + projectId));
@@ -281,11 +282,12 @@ public class ProjectServiceImpl implements ProjectService {
             throw new IllegalStateException("Cannot remove the project leader");
         }
 
-        JobRole jobRole = projectMember.getJobRole();
+        Position position = projectMember.getPosition();
         ProjectRecruitment recruitment = projectRecruitmentRepository
-            .findByProjectIdAndJobRole(projectId, jobRole)
+            .findByProjectIdAndPosition(projectId, position)
             .orElseThrow(() -> new EntityNotFoundException(
-                "Recruitment not found for project id: " + projectId + "and job role: " + jobRole));
+                "Recruitment not found for project id: " + projectId + "and job role: "
+                    + position));
         recruitment.removeMember();
 
         projectMemberRepository.delete(projectMember);
@@ -295,7 +297,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional
-    public void delegateLeader(UUID projectId, UUID userId, User user) {
+    public void delegateLeader(Long projectId, UUID userId, User user) {
         Project project = projectRepository.findById(projectId)
             .orElseThrow(() -> new EntityNotFoundException(
                 "Project not found with id: " + projectId));
@@ -329,7 +331,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional
-    public void withdrawFromProject(UUID projectId, User user) {
+    public void withdrawFromProject(Long projectId, User user) {
         ProjectMember member = projectMemberRepository
             .findByProjectIdAndUserId(projectId, user.getId())
             .orElseThrow(() -> new EntityNotFoundException(
@@ -342,11 +344,12 @@ public class ProjectServiceImpl implements ProjectService {
 
         projectMemberRepository.delete(member);
 
-        JobRole jobRole = member.getJobRole();
+        Position position = member.getPosition();
         ProjectRecruitment recruitment = projectRecruitmentRepository
-            .findByProjectIdAndJobRole(projectId, jobRole)
+            .findByProjectIdAndPosition(projectId, position)
             .orElseThrow(() -> new EntityNotFoundException(
-                "Recruitment not found for project id: " + projectId + "and job role: " + jobRole));
+                "Recruitment not found for project id: " + projectId + "and job role: "
+                    + position));
         recruitment.removeMember();
     }
 
@@ -362,19 +365,20 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     @Transactional
     public Project applyProject(
-        UUID projectId,
+        Long projectId,
         ProjectApplicationDto projectApplicationDto,
         User user
     ) {
-        JobRole jobRole = projectApplicationDto.jobRole();
+        Position position = projectApplicationDto.position();
         ProjectRecruitment recruitment = projectRecruitmentRepository
-            .findByProjectIdAndJobRole(projectId, jobRole)
+            .findByProjectIdAndPosition(projectId, position)
             .orElseThrow(() -> new EntityNotFoundException(
-                "Recruitment not found for project id: " + projectId + "and job role: " + jobRole));
+                "Recruitment not found for project id: " + projectId + "and job role: "
+                    + position));
 
         if (!recruitment.isRecruitable()) {
             throw new IllegalStateException(
-                "Not allowed to apply the project for job role: " + jobRole);
+                "Not allowed to apply the project for job role: " + position);
         }
 
         if (projectMemberRepository.existsByProjectIdAndUserId(projectId, user.getId())) {
@@ -397,7 +401,7 @@ public class ProjectServiceImpl implements ProjectService {
         ProjectApplicant applicant = ProjectApplicant.builder()
             .project(project)
             .user(user)
-            .jobRole(jobRole)
+            .position(position)
             .status(ApplicationStatus.PENDING)
             .build();
         projectApplicantRepository.save(applicant);
@@ -417,7 +421,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional
-    public void cancelProjectApplication(UUID projectId, User user) {
+    public void cancelProjectApplication(Long projectId, User user) {
         ProjectApplicant applicant = projectApplicantRepository
             .findByProjectIdAndUserId(projectId, user.getId())
             .orElseThrow(() -> new EntityNotFoundException(
@@ -449,7 +453,7 @@ public class ProjectServiceImpl implements ProjectService {
     // TODO: 동시성 처리 필요
     @Override
     @Transactional
-    public boolean toggleCurrentUserBookmark(UUID projectId, User user) {
+    public boolean toggleCurrentUserBookmark(Long projectId, User user) {
         Project project = projectRepository.findById(projectId)
             .orElseThrow(() -> new EntityNotFoundException(
                 "Project not found with id: " + projectId));
@@ -480,13 +484,13 @@ public class ProjectServiceImpl implements ProjectService {
     private ProjectMember createProjectMember(
         Project project,
         User user,
-        JobRole jobRole,
+        Position position,
         boolean isLeader
     ) {
         return ProjectMember.builder()
             .project(project)
             .user(user)
-            .jobRole(jobRole)
+            .position(position)
             .isLeader(isLeader)
             .build();
     }
@@ -499,7 +503,7 @@ public class ProjectServiceImpl implements ProjectService {
             .map(dto ->
                 ProjectRecruitment.builder()
                     .project(project)
-                    .jobRole(dto.jobRole())
+                    .position(dto.position())
                     .remainingCount(dto.remainingCount())
                     .currentCount(dto.currentCount())
                     .build())
@@ -518,7 +522,7 @@ public class ProjectServiceImpl implements ProjectService {
             .collect(Collectors.toSet());
     }
 
-    private User getLeaderByProjectId(UUID projectId) {
+    private User getLeaderByProjectId(Long projectId) {
         ProjectMember leader = projectMemberRepository.findByProjectIdAndIsLeaderTrue(projectId)
             .orElseThrow(() -> new EntityNotFoundException(
                 "Leader not found with project id: " + projectId));

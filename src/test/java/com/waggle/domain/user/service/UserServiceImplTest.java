@@ -14,19 +14,19 @@ import com.waggle.domain.reference.enums.Skill;
 import com.waggle.domain.user.UserInfo;
 import com.waggle.domain.user.dto.UserInputDto;
 import com.waggle.domain.user.dto.UserIntroductionDto;
-import com.waggle.domain.user.dto.UserJobRoleDto;
+import com.waggle.domain.user.dto.UserPositionDto;
 import com.waggle.domain.user.dto.UserPortfolioDto;
 import com.waggle.domain.user.entity.User;
 import com.waggle.domain.user.entity.UserDayOfWeek;
 import com.waggle.domain.user.entity.UserIndustry;
 import com.waggle.domain.user.entity.UserIntroduction;
-import com.waggle.domain.user.entity.UserJobRole;
+import com.waggle.domain.user.entity.UserPosition;
 import com.waggle.domain.user.entity.UserPortfolio;
 import com.waggle.domain.user.entity.UserSkill;
 import com.waggle.domain.user.repository.UserDayOfWeekRepository;
 import com.waggle.domain.user.repository.UserIndustryRepository;
 import com.waggle.domain.user.repository.UserIntroductionRepository;
-import com.waggle.domain.user.repository.UserJobRoleRepository;
+import com.waggle.domain.user.repository.UserPositionRepository;
 import com.waggle.domain.user.repository.UserPortfolioRepository;
 import com.waggle.domain.user.repository.UserRepository;
 import com.waggle.domain.user.repository.UserSkillRepository;
@@ -67,7 +67,7 @@ class UserServiceImplTest {
     private UserIntroductionRepository userIntroductionRepository;
 
     @Mock
-    private UserJobRoleRepository userJobRoleRepository;
+    private UserPositionRepository userPositionRepository;
 
     @Mock
     private UserPortfolioRepository userPortfolioRepository;
@@ -126,14 +126,14 @@ class UserServiceImplTest {
     @DisplayName("유저 정보 조회")
     void getUserInfoByUser_Success() {
         // Given
-        List<UserJobRole> jobRoles = new ArrayList<>();
+        List<UserPosition> positions = new ArrayList<>();
         List<UserIndustry> industries = new ArrayList<>();
         List<UserSkill> skills = new ArrayList<>();
         List<UserDayOfWeek> daysOfWeek = new ArrayList<>();
         List<UserIntroduction> introductions = new ArrayList<>();
         List<UserPortfolio> portfolios = new ArrayList<>();
 
-        when(userJobRoleRepository.findByUserId(userId)).thenReturn(jobRoles);
+        when(userPositionRepository.findByUserId(userId)).thenReturn(positions);
         when(userIndustryRepository.findByUserId(userId)).thenReturn(industries);
         when(userSkillRepository.findByUserId(userId)).thenReturn(skills);
         when(userDayOfWeekRepository.findByUserId(userId)).thenReturn(daysOfWeek);
@@ -146,14 +146,14 @@ class UserServiceImplTest {
         // Then
         assertNotNull(result);
         assertEquals(testUser, result.user());
-        assertEquals(jobRoles, result.userJobRoles());
+        assertEquals(positions, result.userPositions());
         assertEquals(industries, result.userIndustries());
         assertEquals(skills, result.userSkills());
         assertEquals(daysOfWeek, result.userDaysOfWeek());
         assertEquals(introductions, result.userIntroductions());
         assertEquals(portfolios, result.userPortfolios());
 
-        verify(userJobRoleRepository).findByUserId(userId);
+        verify(userPositionRepository).findByUserId(userId);
         verify(userIndustryRepository).findByUserId(userId);
         verify(userSkillRepository).findByUserId(userId);
         verify(userDayOfWeekRepository).findByUserId(userId);
@@ -172,7 +172,7 @@ class UserServiceImplTest {
         when(profileImage.isEmpty()).thenReturn(false);
         when(s3Service.uploadFile(any(MultipartFile.class), anyString())).thenReturn("newImageUrl");
 
-        Set<UserJobRoleDto> jobRoles = Set.of(new UserJobRoleDto(null, 5));
+        Set<UserPositionDto> positions = Set.of(new UserPositionDto(null, 5));
         Set<Industry> industries = Set.of(Industry.FINANCE);
         Set<Skill> skills = Set.of(Skill.JAVA);
         Set<DayOfWeek> daysOfWeek = Set.of(DayOfWeek.MONDAY);
@@ -182,7 +182,7 @@ class UserServiceImplTest {
 
         UserInputDto inputDto = new UserInputDto(
             "Updated Name",
-            jobRoles,
+            positions,
             industries,
             skills,
             daysOfWeek,
@@ -201,13 +201,13 @@ class UserServiceImplTest {
         assertNotNull(result);
         assertEquals(userId, result.getId());
         verify(userRepository).save(testUser);
-        verify(userJobRoleRepository).deleteByUserId(userId);
+        verify(userPositionRepository).deleteByUserId(userId);
         verify(userIndustryRepository).deleteByUserId(userId);
         verify(userSkillRepository).deleteByUserId(userId);
         verify(userDayOfWeekRepository).deleteByUserId(userId);
         verify(userIntroductionRepository).deleteByUserId(userId);
         verify(userPortfolioRepository).deleteByUserId(userId);
-        verify(userJobRoleRepository).saveAll(anyList());
+        verify(userPositionRepository).saveAll(anyList());
         verify(userIndustryRepository).saveAll(anyList());
         verify(userSkillRepository).saveAll(anyList());
         verify(userDayOfWeekRepository).saveAll(anyList());
@@ -229,7 +229,7 @@ class UserServiceImplTest {
         // Then
         verify(s3Service).deleteFile("profileImageUrl");
         verify(userRepository).delete(testUser);
-        verify(userJobRoleRepository).deleteByUserId(userId);
+        verify(userPositionRepository).deleteByUserId(userId);
         verify(userIndustryRepository).deleteByUserId(userId);
         verify(userSkillRepository).deleteByUserId(userId);
         verify(userDayOfWeekRepository).deleteByUserId(userId);

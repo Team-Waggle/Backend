@@ -26,7 +26,7 @@ public record UserInputDto(
     @Valid
     @JsonProperty("job_roles")
     @Schema(description = "직무 및 경력 목록")
-    Set<UserJobRoleDto> jobRoles,
+    Set<UserPositionDto> positions,
 
     @Size(max = 5, message = "관심 산업 분야는 최대 5개까지 선택 가능합니다")
     @JsonProperty("industries")

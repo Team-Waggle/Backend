@@ -10,7 +10,7 @@ import com.waggle.global.response.ErrorResponse;
 import com.waggle.global.response.SuccessResponse;
 import com.waggle.global.response.swagger.ProjectSuccessResponse;
 import com.waggle.global.response.swagger.ProjectsSuccessResponse;
-import com.waggle.global.secure.oauth2.CustomUserDetails;
+import com.waggle.global.security.oauth2.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -63,7 +63,7 @@ public class ProjectMemberController {
         )
     })
     public ResponseEntity<BaseResponse<Set<UserResponseDto>>> fetchUsers(
-        @PathVariable UUID projectId
+        @PathVariable Long projectId
     ) {
         // TODO: 정렬 기준 재고
         return SuccessResponse.of(
@@ -73,9 +73,9 @@ public class ProjectMemberController {
                 .map(UserResponseDto::from)
 //                .sorted(Comparator
 //                    .comparing((UserResponseDto dto) -> {
-//                        // JobRole 이름으로 먼저 정렬 (첫 번째 JobRole 기준 - 없으면 빈 문자열)
-//                        Set<UserJobRoleDto> jobRoles = dto.userJobRoleDtos();
-//                        return jobRoles != null && !jobRoles.isEmpty() ? jobRoles.get(0) : "";
+//                        // Position 이름으로 먼저 정렬 (첫 번째 Position 기준 - 없으면 빈 문자열)
+//                        Set<UserPositionDto> positions = dto.userPositionDtos();
+//                        return positions != null && !positions.isEmpty() ? positions.get(0) : "";
 //                    })
 //                    .thenComparing(UserResponseDto::name))
                 .collect(Collectors.toCollection(LinkedHashSet::new))
@@ -119,7 +119,7 @@ public class ProjectMemberController {
         )
     })
     public ResponseEntity<BaseResponse<Set<UserResponseDto>>> removeMember(
-        @PathVariable UUID projectId,
+        @PathVariable Long projectId,
         @PathVariable UUID userId,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
@@ -169,7 +169,7 @@ public class ProjectMemberController {
         )
     })
     public ResponseEntity<BaseResponse<Set<UserResponseDto>>> delegateLeader(
-        @PathVariable UUID projectId,
+        @PathVariable Long projectId,
         @PathVariable UUID userId,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
@@ -207,7 +207,7 @@ public class ProjectMemberController {
         )
     })
     public ResponseEntity<BaseResponse<Object>> quitMyProject(
-        @PathVariable UUID projectId,
+        @PathVariable Long projectId,
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         projectService.withdrawFromProject(projectId, userDetails.getUser());

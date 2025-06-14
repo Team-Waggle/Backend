@@ -7,19 +7,19 @@ import com.waggle.domain.reference.enums.Skill;
 import com.waggle.domain.user.UserInfo;
 import com.waggle.domain.user.dto.UserInputDto;
 import com.waggle.domain.user.dto.UserIntroductionDto;
-import com.waggle.domain.user.dto.UserJobRoleDto;
+import com.waggle.domain.user.dto.UserPositionDto;
 import com.waggle.domain.user.dto.UserPortfolioDto;
 import com.waggle.domain.user.entity.User;
 import com.waggle.domain.user.entity.UserDayOfWeek;
 import com.waggle.domain.user.entity.UserIndustry;
 import com.waggle.domain.user.entity.UserIntroduction;
-import com.waggle.domain.user.entity.UserJobRole;
+import com.waggle.domain.user.entity.UserPosition;
 import com.waggle.domain.user.entity.UserPortfolio;
 import com.waggle.domain.user.entity.UserSkill;
 import com.waggle.domain.user.repository.UserDayOfWeekRepository;
 import com.waggle.domain.user.repository.UserIndustryRepository;
 import com.waggle.domain.user.repository.UserIntroductionRepository;
-import com.waggle.domain.user.repository.UserJobRoleRepository;
+import com.waggle.domain.user.repository.UserPositionRepository;
 import com.waggle.domain.user.repository.UserPortfolioRepository;
 import com.waggle.domain.user.repository.UserRepository;
 import com.waggle.domain.user.repository.UserSkillRepository;
@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
     private final UserDayOfWeekRepository userDayOfWeekRepository;
     private final UserIndustryRepository userIndustryRepository;
     private final UserIntroductionRepository userIntroductionRepository;
-    private final UserJobRoleRepository userJobRoleRepository;
+    private final UserPositionRepository userPositionRepository;
     private final UserPortfolioRepository userPortfolioRepository;
     private final UserSkillRepository userSkillRepository;
 
@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public UserInfo getUserInfoByUser(User user) {
-        List<UserJobRole> userJobRoles = userJobRoleRepository.findByUserId(user.getId());
+        List<UserPosition> userPositions = userPositionRepository.findByUserId(user.getId());
         List<UserIndustry> userIndustries = userIndustryRepository.findByUserId(user.getId());
         List<UserSkill> userSkills = userSkillRepository.findByUserId(user.getId());
         List<UserDayOfWeek> userDaysOfWeek = userDayOfWeekRepository.findByUserId(user.getId());
@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
 
         return UserInfo.of(
             user,
-            userJobRoles,
+            userPositions,
             userIndustries,
             userSkills,
             userDaysOfWeek,
@@ -92,7 +92,7 @@ public class UserServiceImpl implements UserService {
             userInputDto.detail()
         );
 
-        updateUserJobRoles(user.getId(), userInputDto.jobRoles());
+        updateUserPositions(user.getId(), userInputDto.positions());
         updateUserIndustries(user.getId(), userInputDto.industries());
         updateUserSkills(user.getId(), userInputDto.skills());
         updateUserDaysOfWeek(user.getId(), userInputDto.daysOfWeek());
@@ -107,7 +107,7 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(User user) {
         s3Service.deleteFile(user.getProfileImageUrl());
         userRepository.delete(user);
-        userJobRoleRepository.deleteByUserId(user.getId());
+        userPositionRepository.deleteByUserId(user.getId());
         userIndustryRepository.deleteByUserId(user.getId());
         userSkillRepository.deleteByUserId(user.getId());
         userDayOfWeekRepository.deleteByUserId(user.getId());
@@ -115,23 +115,23 @@ public class UserServiceImpl implements UserService {
         userPortfolioRepository.deleteByUserId(user.getId());
     }
 
-    private void updateUserJobRoles(UUID userId, Set<UserJobRoleDto> userJobRoles) {
-        if (userJobRoles == null) {
+    private void updateUserPositions(UUID userId, Set<UserPositionDto> userPositions) {
+        if (userPositions == null) {
             return;
         }
 
-        userJobRoleRepository.deleteByUserId(userId);
+        userPositionRepository.deleteByUserId(userId);
 
         User user = userRepository.getReferenceById(userId);
-        List<UserJobRole> entities = userJobRoles.stream()
-            .map(dto -> UserJobRole.builder()
+        List<UserPosition> entities = userPositions.stream()
+            .map(dto -> UserPosition.builder()
                 .user(user)
-                .jobRole(dto.jobRole())
+                .position(dto.position())
                 .yearCount(dto.yearCount())
                 .build())
             .toList();
 
-        userJobRoleRepository.saveAll(entities);
+        userPositionRepository.saveAll(entities);
     }
 
     private void updateUserIndustries(UUID userId, Set<Industry> industries) {

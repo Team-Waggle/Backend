@@ -8,7 +8,7 @@ import com.waggle.global.response.SuccessResponse;
 import com.waggle.global.response.swagger.EmptySuccessResponse;
 import com.waggle.global.response.swagger.NotificationsSuccessResponse;
 import com.waggle.global.response.swagger.UnreadCountSuccessResponse;
-import com.waggle.global.secure.oauth2.CustomUserDetails;
+import com.waggle.global.security.oauth2.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

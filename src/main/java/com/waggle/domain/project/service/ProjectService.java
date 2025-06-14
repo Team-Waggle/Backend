@@ -12,39 +12,39 @@ public interface ProjectService {
 
     Project createProject(ProjectInputDto projectInputDto, User user);
 
-    Project getProjectById(UUID projectId);
+    Project getProjectById(Long projectId);
 
     ProjectInfo getProjectInfoByProject(Project project);
 
-    Project updateProject(UUID projectId, ProjectInputDto projectInputDto, User user);
+    Project updateProject(Long projectId, ProjectInputDto projectInputDto, User user);
 
-    void deleteProject(UUID projectId, User user);
+    void deleteProject(Long projectId, User user);
 
-    Set<User> getUsersByProjectId(UUID projectId);
+    Set<User> getUsersByProjectId(Long projectId);
 
-    Set<User> getAppliedUsersByProjectId(UUID projectId);
+    Set<User> getAppliedUsersByProjectId(Long projectId);
 
-    Set<User> approveAppliedUser(UUID projectId, UUID userId, User user);
+    Set<User> approveAppliedUser(Long projectId, UUID userId, User user);
 
-    Set<User> rejectAppliedUser(UUID projectId, UUID userId, User user);
+    Set<User> rejectAppliedUser(Long projectId, UUID userId, User user);
 
-    Set<User> removeMemberUser(UUID projectId, UUID userId, User user);
+    Set<User> removeMemberUser(Long projectId, UUID userId, User user);
 
-    void delegateLeader(UUID projectId, UUID userId, User user);
+    void delegateLeader(Long projectId, UUID userId, User user);
 
     Set<Project> getUserProjects(UUID userId);
 
-    void withdrawFromProject(UUID projectId, User user);
+    void withdrawFromProject(Long projectId, User user);
 
     Set<Project> getUserBookmarkProjects(UUID userId);
 
-    Project applyProject(UUID projectId, ProjectApplicationDto projectApplicationDto, User user);
+    Project applyProject(Long projectId, ProjectApplicationDto projectApplicationDto, User user);
 
-    void cancelProjectApplication(UUID projectId, User user);
+    void cancelProjectApplication(Long projectId, User user);
 
     Set<Project> getAppliedProjects(User user);
 
-    boolean toggleCurrentUserBookmark(UUID projectId, User user);
+    boolean toggleCurrentUserBookmark(Long projectId, User user);
 
     Set<Project> getCurrentUserBookmarkProjects(User user);
 
