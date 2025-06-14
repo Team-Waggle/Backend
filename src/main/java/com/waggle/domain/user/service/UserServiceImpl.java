@@ -1,26 +1,25 @@
 package com.waggle.domain.user.service;
 
-import com.waggle.domain.auth.service.AuthService;
 import com.waggle.domain.reference.enums.Industry;
 import com.waggle.domain.reference.enums.IntroductionType;
 import com.waggle.domain.reference.enums.Skill;
 import com.waggle.domain.user.UserInfo;
 import com.waggle.domain.user.dto.UserInputDto;
 import com.waggle.domain.user.dto.UserIntroductionDto;
-import com.waggle.domain.user.dto.UserPositionDto;
 import com.waggle.domain.user.dto.UserPortfolioDto;
+import com.waggle.domain.user.dto.UserPositionDto;
 import com.waggle.domain.user.entity.User;
 import com.waggle.domain.user.entity.UserDayOfWeek;
 import com.waggle.domain.user.entity.UserIndustry;
 import com.waggle.domain.user.entity.UserIntroduction;
-import com.waggle.domain.user.entity.UserPosition;
 import com.waggle.domain.user.entity.UserPortfolio;
+import com.waggle.domain.user.entity.UserPosition;
 import com.waggle.domain.user.entity.UserSkill;
 import com.waggle.domain.user.repository.UserDayOfWeekRepository;
 import com.waggle.domain.user.repository.UserIndustryRepository;
 import com.waggle.domain.user.repository.UserIntroductionRepository;
-import com.waggle.domain.user.repository.UserPositionRepository;
 import com.waggle.domain.user.repository.UserPortfolioRepository;
+import com.waggle.domain.user.repository.UserPositionRepository;
 import com.waggle.domain.user.repository.UserRepository;
 import com.waggle.domain.user.repository.UserSkillRepository;
 import com.waggle.global.aws.service.S3Service;
@@ -41,7 +40,6 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final AuthService authService;
     private final S3Service s3Service;
     private final UserRepository userRepository;
     private final UserDayOfWeekRepository userDayOfWeekRepository;
