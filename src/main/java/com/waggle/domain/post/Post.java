@@ -1,6 +1,6 @@
 package com.waggle.domain.post;
 
-import com.waggle.domain.project.entity.Project;
+import com.waggle.domain.projectV2.ProjectV2;
 import com.waggle.domain.user.entity.User;
 import com.waggle.global.entity.BaseEntity;
 import jakarta.persistence.Column;
@@ -38,19 +38,19 @@ public class Post extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
-    private Project project;
+    private ProjectV2 project;
 
     private Instant deletedAt;
 
     @Builder
-    public Post(String title, String content, User user, Project project) {
+    private Post(String title, String content, User user, ProjectV2 project) {
         this.title = title;
         this.content = content;
         this.user = user;
         this.project = project;
     }
 
-    public void update(String title, String content, Project project) {
+    public void update(String title, String content, ProjectV2 project) {
         this.title = title;
         this.content = content;
         this.project = project;

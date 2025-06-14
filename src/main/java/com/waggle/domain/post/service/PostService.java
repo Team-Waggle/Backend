@@ -3,8 +3,8 @@ package com.waggle.domain.post.service;
 import com.waggle.domain.post.Post;
 import com.waggle.domain.post.dto.UpsertPostDto;
 import com.waggle.domain.post.repository.PostRepository;
-import com.waggle.domain.project.entity.Project;
-import com.waggle.domain.project.repository.ProjectRepository;
+import com.waggle.domain.projectV2.ProjectV2;
+import com.waggle.domain.projectV2.repository.ProjectV2Repository;
 import com.waggle.domain.user.entity.User;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
@@ -19,12 +19,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class PostService {
 
     private final PostRepository postRepository;
-    private final ProjectRepository projectRepository;
+    private final ProjectV2Repository projectRepository;
 
     @Transactional
     public Post createPost(UpsertPostDto upsertPostDto, User user) {
-        Project project = Optional.ofNullable(upsertPostDto.projectId())
-            .map(id -> projectRepository.findById(id)
+        ProjectV2 project = Optional.ofNullable(upsertPostDto.projectId())
+            .map(id -> projectRepository.findByIdWithRelations(id)
                 .orElseThrow(() -> new EntityNotFoundException("Project not found with id: " + id))
             )
             .orElse(null);
@@ -60,7 +60,7 @@ public class PostService {
             throw new AccessDeniedException("Access denied to post with id: " + postId);
         }
 
-        Project project = Optional.ofNullable(upsertPostDto.projectId())
+        ProjectV2 project = Optional.ofNullable(upsertPostDto.projectId())
             .map(id -> projectRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Project not found with id: " + id))
             )
