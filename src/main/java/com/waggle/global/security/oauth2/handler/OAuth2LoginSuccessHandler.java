@@ -5,13 +5,11 @@ import com.waggle.domain.user.repository.UserRepository;
 import com.waggle.global.security.jwt.JwtUtil;
 import com.waggle.global.security.oauth2.adapter.GoogleUserInfoAdapter;
 import com.waggle.global.security.oauth2.adapter.KakaoUserInfoAdapter;
-import com.waggle.global.security.oauth2.adapter.NaverUserInfoAdapter;
 import com.waggle.global.security.oauth2.adapter.OAuth2UserInfo;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.Duration;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +18,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
@@ -63,11 +62,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                 log.info("카카오 로그인 요청");
                 oAuth2UserInfo = new KakaoUserInfoAdapter(token.getPrincipal().getAttributes());
             }
-            case "naver" -> {
-                log.info("네이버 로그인 요청");
-                oAuth2UserInfo = new NaverUserInfoAdapter(
-                    (Map<String, Object>) token.getPrincipal().getAttributes().get("response"));
-            }
+            default -> throw new OAuth2AuthenticationException("Unsupported provider: " + provider);
         }
 
         // 정보 추출
