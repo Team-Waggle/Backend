@@ -1,4 +1,4 @@
-package com.waggle.global.secure.oauth2.adapter;
+package com.waggle.global.security.oauth2.adapter;
 
 public interface OAuth2UserInfo {
 

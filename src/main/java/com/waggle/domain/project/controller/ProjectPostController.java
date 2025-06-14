@@ -10,7 +10,7 @@ import com.waggle.global.response.BaseResponse;
 import com.waggle.global.response.ErrorResponse;
 import com.waggle.global.response.SuccessResponse;
 import com.waggle.global.response.swagger.ProjectSuccessResponse;
-import com.waggle.global.secure.oauth2.CustomUserDetails;
+import com.waggle.global.security.oauth2.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

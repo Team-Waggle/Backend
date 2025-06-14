@@ -3,7 +3,7 @@ package com.waggle.domain.auth.service;
 import com.waggle.domain.auth.dto.AccessTokenVo;
 import com.waggle.global.exception.JwtTokenException;
 import com.waggle.global.response.ApiStatus;
-import com.waggle.global.secure.jwt.JwtUtil;
+import com.waggle.global.security.jwt.JwtUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;

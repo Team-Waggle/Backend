@@ -1,10 +1,10 @@
-package com.waggle.global.secure.filter;
+package com.waggle.global.security.filter;
 
 import com.waggle.domain.user.entity.User;
 import com.waggle.domain.user.repository.UserRepository;
 import com.waggle.global.exception.JwtTokenException;
-import com.waggle.global.secure.jwt.JwtUtil;
-import com.waggle.global.secure.oauth2.CustomUserDetails;
+import com.waggle.global.security.jwt.JwtUtil;
+import com.waggle.global.security.oauth2.CustomUserDetails;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

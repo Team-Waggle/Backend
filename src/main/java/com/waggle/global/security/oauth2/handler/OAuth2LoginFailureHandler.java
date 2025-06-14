@@ -1,4 +1,4 @@
-package com.waggle.global.secure.oauth2.handler;
+package com.waggle.global.security.oauth2.handler;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

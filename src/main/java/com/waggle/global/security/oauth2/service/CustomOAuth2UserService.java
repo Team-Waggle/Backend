@@ -1,12 +1,12 @@
-package com.waggle.global.secure.oauth2.service;
+package com.waggle.global.security.oauth2.service;
 
 import com.waggle.domain.user.entity.User;
 import com.waggle.domain.user.repository.UserRepository;
-import com.waggle.global.secure.oauth2.CustomUserDetails;
-import com.waggle.global.secure.oauth2.adapter.GoogleUserInfoAdapter;
-import com.waggle.global.secure.oauth2.adapter.KakaoUserInfoAdapter;
-import com.waggle.global.secure.oauth2.adapter.NaverUserInfoAdapter;
-import com.waggle.global.secure.oauth2.adapter.OAuth2UserInfo;
+import com.waggle.global.security.oauth2.CustomUserDetails;
+import com.waggle.global.security.oauth2.adapter.GoogleUserInfoAdapter;
+import com.waggle.global.security.oauth2.adapter.KakaoUserInfoAdapter;
+import com.waggle.global.security.oauth2.adapter.NaverUserInfoAdapter;
+import com.waggle.global.security.oauth2.adapter.OAuth2UserInfo;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;

@@ -1,21 +1,21 @@
-package com.waggle.global.secure.oauth2.adapter;
+package com.waggle.global.security.oauth2.adapter;
 
 import java.util.Map;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class GoogleUserInfoAdapter implements OAuth2UserInfo {
+public class NaverUserInfoAdapter implements OAuth2UserInfo {
 
     private Map<String, Object> attributes;
 
     @Override
     public String getProviderId() {
-        return (String) attributes.get("sub");
+        return String.valueOf(attributes.get("id"));
     }
 
     @Override
     public String getProvider() {
-        return "google";
+        return "naver";
     }
 
     @Override
@@ -30,6 +30,6 @@ public class GoogleUserInfoAdapter implements OAuth2UserInfo {
 
     @Override
     public String getProfileImage() {
-        return (String) attributes.get("picture");
+        return (String) attributes.get("profile_image");
     }
 }

@@ -1,4 +1,4 @@
-package com.waggle.global.secure.jwt;
+package com.waggle.global.security.jwt;
 
 import com.waggle.global.exception.JwtTokenException;
 import com.waggle.global.response.ApiStatus;

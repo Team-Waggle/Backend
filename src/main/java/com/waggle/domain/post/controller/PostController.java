@@ -11,7 +11,7 @@ import com.waggle.global.response.SuccessResponse;
 import com.waggle.global.response.swagger.EmptySuccessResponse;
 import com.waggle.global.response.swagger.PostSuccessResponse;
 import com.waggle.global.response.swagger.PostsSuccessResponse;
-import com.waggle.global.secure.oauth2.CustomUserDetails;
+import com.waggle.global.security.oauth2.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;

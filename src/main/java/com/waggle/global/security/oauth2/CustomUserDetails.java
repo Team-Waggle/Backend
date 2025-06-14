@@ -1,4 +1,4 @@
-package com.waggle.global.secure.oauth2;
+package com.waggle.global.security.oauth2;
 
 import com.waggle.domain.user.entity.User;
 import java.util.Collection;

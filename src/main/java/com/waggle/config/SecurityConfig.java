@@ -1,9 +1,9 @@
 package com.waggle.config;
 
-import com.waggle.global.secure.filter.JwtAuthenticationFilter;
-import com.waggle.global.secure.oauth2.handler.OAuth2LoginFailureHandler;
-import com.waggle.global.secure.oauth2.handler.OAuth2LoginSuccessHandler;
-import com.waggle.global.secure.oauth2.service.CustomOAuth2UserService;
+import com.waggle.global.security.filter.JwtAuthenticationFilter;
+import com.waggle.global.security.oauth2.handler.OAuth2LoginFailureHandler;
+import com.waggle.global.security.oauth2.handler.OAuth2LoginSuccessHandler;
+import com.waggle.global.security.oauth2.service.CustomOAuth2UserService;
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

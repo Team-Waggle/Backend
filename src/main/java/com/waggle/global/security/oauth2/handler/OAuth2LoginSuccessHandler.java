@@ -1,12 +1,12 @@
-package com.waggle.global.secure.oauth2.handler;
+package com.waggle.global.security.oauth2.handler;
 
 import com.waggle.domain.user.entity.User;
 import com.waggle.domain.user.repository.UserRepository;
-import com.waggle.global.secure.jwt.JwtUtil;
-import com.waggle.global.secure.oauth2.adapter.GoogleUserInfoAdapter;
-import com.waggle.global.secure.oauth2.adapter.KakaoUserInfoAdapter;
-import com.waggle.global.secure.oauth2.adapter.NaverUserInfoAdapter;
-import com.waggle.global.secure.oauth2.adapter.OAuth2UserInfo;
+import com.waggle.global.security.jwt.JwtUtil;
+import com.waggle.global.security.oauth2.adapter.GoogleUserInfoAdapter;
+import com.waggle.global.security.oauth2.adapter.KakaoUserInfoAdapter;
+import com.waggle.global.security.oauth2.adapter.NaverUserInfoAdapter;
+import com.waggle.global.security.oauth2.adapter.OAuth2UserInfo;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
