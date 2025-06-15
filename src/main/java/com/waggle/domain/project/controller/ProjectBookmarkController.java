@@ -7,7 +7,7 @@ import com.waggle.global.response.BaseResponse;
 import com.waggle.global.response.ErrorResponse;
 import com.waggle.global.response.SuccessResponse;
 import com.waggle.global.response.swagger.ProjectsSuccessResponse;
-import com.waggle.global.security.oauth2.CustomUserDetails;
+import com.waggle.global.security.oauth2.UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -72,11 +72,11 @@ public class ProjectBookmarkController {
     })
     public ResponseEntity<BaseResponse<Boolean>> toggleMyBookmark(
         @PathVariable Long projectId,
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
         return SuccessResponse.of(
             ApiStatus._OK,
-            projectService.toggleCurrentUserBookmark(projectId, userDetails.getUser())
+            projectService.toggleCurrentUserBookmark(projectId, userPrincipal.getUser())
         );
     }
 
@@ -110,11 +110,11 @@ public class ProjectBookmarkController {
         )
     })
     public ResponseEntity<BaseResponse<Set<ProjectResponseDto>>> fetchMyBookmarkProjects(
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
         return SuccessResponse.of(
             ApiStatus._OK,
-            projectService.getCurrentUserBookmarkProjects(userDetails.getUser()).stream()
+            projectService.getCurrentUserBookmarkProjects(userPrincipal.getUser()).stream()
                 .map(projectService::getProjectInfoByProject)
                 .map(ProjectResponseDto::from)
                 .collect(Collectors.toSet())

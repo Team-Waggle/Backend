@@ -10,7 +10,7 @@ import com.waggle.global.response.BaseResponse;
 import com.waggle.global.response.ErrorResponse;
 import com.waggle.global.response.SuccessResponse;
 import com.waggle.global.response.swagger.ProjectSuccessResponse;
-import com.waggle.global.security.oauth2.CustomUserDetails;
+import com.waggle.global.security.oauth2.UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -96,9 +96,9 @@ public class ProjectPostController {
     })
     public ResponseEntity<BaseResponse<ProjectResponseDto>> createProject(
         @Valid @RequestBody ProjectInputDto projectInputDto,
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
-        Project project = projectService.createProject(projectInputDto, userDetails.getUser());
+        Project project = projectService.createProject(projectInputDto, userPrincipal.getUser());
         ProjectInfo projectInfo = projectService.getProjectInfoByProject(project);
         return SuccessResponse.of(ApiStatus._CREATED, ProjectResponseDto.from(projectInfo));
     }
@@ -142,12 +142,12 @@ public class ProjectPostController {
     public ResponseEntity<BaseResponse<ProjectResponseDto>> updateProject(
         @PathVariable Long projectId,
         @Valid @RequestBody ProjectInputDto projectInputDto,
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
         Project project = projectService.updateProject(
             projectId,
             projectInputDto,
-            userDetails.getUser()
+            userPrincipal.getUser()
         );
         ProjectInfo projectInfo = projectService.getProjectInfoByProject(project);
         return SuccessResponse.of(ApiStatus._OK, ProjectResponseDto.from(projectInfo));
@@ -189,9 +189,9 @@ public class ProjectPostController {
     })
     public ResponseEntity<BaseResponse<Object>> deleteProject(
         @PathVariable Long projectId,
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
-        projectService.deleteProject(projectId, userDetails.getUser());
+        projectService.deleteProject(projectId, userPrincipal.getUser());
         return SuccessResponse.of(ApiStatus._NO_CONTENT, null);
     }
 }

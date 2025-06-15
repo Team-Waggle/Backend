@@ -4,7 +4,7 @@ import com.waggle.domain.user.entity.User;
 import com.waggle.domain.user.repository.UserRepository;
 import com.waggle.global.exception.JwtTokenException;
 import com.waggle.global.security.jwt.JwtUtil;
-import com.waggle.global.security.oauth2.CustomUserDetails;
+import com.waggle.global.security.oauth2.UserPrincipal;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -45,9 +45,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 User user = userRepository.findById(userId).orElse(null);
 
                 if (user != null) {
-                    CustomUserDetails customUserDetails = new CustomUserDetails(null, user);
+                    UserPrincipal userPrincipal = new UserPrincipal(null, user);
                     Authentication authentication = new UsernamePasswordAuthenticationToken(
-                        customUserDetails,
+                        userPrincipal,
                         null,
                         Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"))
                     );

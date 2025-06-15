@@ -2,7 +2,7 @@ package com.waggle.global.security.oauth2.service;
 
 import com.waggle.domain.user.entity.User;
 import com.waggle.domain.user.repository.UserRepository;
-import com.waggle.global.security.oauth2.CustomUserDetails;
+import com.waggle.global.security.oauth2.UserPrincipal;
 import com.waggle.global.security.oauth2.adapter.GoogleUserInfo;
 import com.waggle.global.security.oauth2.adapter.KakaoUserInfo;
 import com.waggle.global.security.oauth2.adapter.OAuth2UserInfo;
@@ -52,6 +52,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 );
             });
 
-        return new CustomUserDetails(oauth2User, user);
+        return new UserPrincipal(oauth2User, user);
     }
 }

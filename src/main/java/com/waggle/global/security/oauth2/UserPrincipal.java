@@ -11,7 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 @RequiredArgsConstructor
-public class CustomUserDetails implements OAuth2User, UserDetails {
+public class UserPrincipal implements OAuth2User, UserDetails {
 
     private final OAuth2User oAuth2User;
 

@@ -10,7 +10,7 @@ import com.waggle.global.response.ErrorResponse;
 import com.waggle.global.response.SuccessResponse;
 import com.waggle.global.response.swagger.ProjectSuccessResponse;
 import com.waggle.global.response.swagger.ProjectsSuccessResponse;
-import com.waggle.global.security.oauth2.CustomUserDetails;
+import com.waggle.global.security.oauth2.UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -121,11 +121,11 @@ public class ProjectMemberController {
     public ResponseEntity<BaseResponse<Set<UserResponseDto>>> removeMember(
         @PathVariable Long projectId,
         @PathVariable UUID userId,
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
         return SuccessResponse.of(
             ApiStatus._OK,
-            projectService.removeMemberUser(projectId, userId, userDetails.getUser()).stream()
+            projectService.removeMemberUser(projectId, userId, userPrincipal.getUser()).stream()
                 .map(userService::getUserInfoByUser)
                 .map(UserResponseDto::from)
                 .collect(Collectors.toCollection(LinkedHashSet::new))
@@ -171,9 +171,9 @@ public class ProjectMemberController {
     public ResponseEntity<BaseResponse<Set<UserResponseDto>>> delegateLeader(
         @PathVariable Long projectId,
         @PathVariable UUID userId,
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
-        projectService.delegateLeader(projectId, userId, userDetails.getUser());
+        projectService.delegateLeader(projectId, userId, userPrincipal.getUser());
         return SuccessResponse.of(ApiStatus._OK, null);
     }
 
@@ -208,9 +208,9 @@ public class ProjectMemberController {
     })
     public ResponseEntity<BaseResponse<Object>> quitMyProject(
         @PathVariable Long projectId,
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
-        projectService.withdrawFromProject(projectId, userDetails.getUser());
+        projectService.withdrawFromProject(projectId, userPrincipal.getUser());
         return SuccessResponse.of(ApiStatus._NO_CONTENT, null);
     }
 
@@ -237,11 +237,11 @@ public class ProjectMemberController {
         )
     })
     public ResponseEntity<BaseResponse<Set<ProjectResponseDto>>> fetchMyProjects(
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
         return SuccessResponse.of(
             ApiStatus._OK,
-            projectService.getCurrentUserProjects(userDetails.getUser()).stream()
+            projectService.getCurrentUserProjects(userPrincipal.getUser()).stream()
                 .map(projectService::getProjectInfoByProject)
                 .map(ProjectResponseDto::from)
                 .collect(Collectors.toCollection(LinkedHashSet::new))

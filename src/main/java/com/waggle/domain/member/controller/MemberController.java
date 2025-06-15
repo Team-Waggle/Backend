@@ -10,7 +10,7 @@ import com.waggle.global.response.ErrorResponse;
 import com.waggle.global.response.SuccessResponse;
 import com.waggle.global.response.swagger.EmptySuccessResponse;
 import com.waggle.global.response.swagger.MemberSuccessResponse;
-import com.waggle.global.security.oauth2.CustomUserDetails;
+import com.waggle.global.security.oauth2.UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -85,12 +85,12 @@ public class MemberController {
     public ResponseEntity<BaseResponse<MemberResponse>> updateMemberPosition(
         @PathVariable Long memberId,
         @RequestBody UpdatePositionDto updatePositionDto,
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
         Member member = memberService.updateMemberPosition(
             memberId,
             updatePositionDto,
-            userDetails.getUser()
+            userPrincipal.getUser()
         );
 
         return SuccessResponse.of(
@@ -140,9 +140,9 @@ public class MemberController {
     @DeleteMapping("/{memberId}")
     public ResponseEntity<BaseResponse<Void>> deleteMember(
         @PathVariable Long memberId,
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
-        memberService.deleteMember(memberId, userDetails.getUser());
+        memberService.deleteMember(memberId, userPrincipal.getUser());
 
         return SuccessResponse.of(
             ApiStatus._NO_CONTENT,

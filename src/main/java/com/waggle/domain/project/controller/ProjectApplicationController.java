@@ -13,7 +13,7 @@ import com.waggle.global.response.ErrorResponse;
 import com.waggle.global.response.SuccessResponse;
 import com.waggle.global.response.swagger.ProjectSuccessResponse;
 import com.waggle.global.response.swagger.ProjectsSuccessResponse;
-import com.waggle.global.security.oauth2.CustomUserDetails;
+import com.waggle.global.security.oauth2.UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -119,11 +119,11 @@ public class ProjectApplicationController {
     public ResponseEntity<BaseResponse<Set<UserResponseDto>>> approveUser(
         @PathVariable Long projectId,
         @PathVariable UUID userId,
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
         return SuccessResponse.of(
             ApiStatus._OK,
-            projectService.approveAppliedUser(projectId, userId, userDetails.getUser()).stream()
+            projectService.approveAppliedUser(projectId, userId, userPrincipal.getUser()).stream()
                 .map(userService::getUserInfoByUser)
                 .map(UserResponseDto::from)
                 .collect(Collectors.toCollection(LinkedHashSet::new))
@@ -169,11 +169,11 @@ public class ProjectApplicationController {
     public ResponseEntity<BaseResponse<Set<UserResponseDto>>> rejectUser(
         @PathVariable Long projectId,
         @PathVariable UUID userId,
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
         return SuccessResponse.of(
             ApiStatus._OK,
-            projectService.rejectAppliedUser(projectId, userId, userDetails.getUser()).stream()
+            projectService.rejectAppliedUser(projectId, userId, userPrincipal.getUser()).stream()
                 .map(userService::getUserInfoByUser)
                 .map(UserResponseDto::from)
                 .collect(Collectors.toCollection(LinkedHashSet::new))
@@ -203,11 +203,11 @@ public class ProjectApplicationController {
         )
     })
     public ResponseEntity<BaseResponse<Set<ProjectResponseDto>>> getAppliedProjects(
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
         return SuccessResponse.of(
             ApiStatus._OK,
-            projectService.getAppliedProjects(userDetails.getUser()).stream()
+            projectService.getAppliedProjects(userPrincipal.getUser()).stream()
                 .map(projectService::getProjectInfoByProject)
                 .map(ProjectResponseDto::from)
                 .collect(Collectors.toCollection(LinkedHashSet::new))
@@ -246,12 +246,12 @@ public class ProjectApplicationController {
     public ResponseEntity<BaseResponse<ProjectResponseDto>> applyProject(
         @PathVariable Long projectId,
         @Valid @RequestBody ProjectApplicationDto projectApplicationDto,
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
         Project project = projectService.applyProject(
             projectId,
             projectApplicationDto,
-            userDetails.getUser()
+            userPrincipal.getUser()
         );
         ProjectInfo projectInfo = projectService.getProjectInfoByProject(project);
         return SuccessResponse.of(ApiStatus._CREATED, ProjectResponseDto.from(projectInfo));
@@ -286,9 +286,9 @@ public class ProjectApplicationController {
     })
     public ResponseEntity<BaseResponse<Object>> cancelApplyProject(
         @PathVariable Long projectId,
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
-        projectService.cancelProjectApplication(projectId, userDetails.getUser());
+        projectService.cancelProjectApplication(projectId, userPrincipal.getUser());
         return SuccessResponse.of(ApiStatus._NO_CONTENT, null);
     }
 }

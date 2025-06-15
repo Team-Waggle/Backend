@@ -11,7 +11,7 @@ import com.waggle.global.response.SuccessResponse;
 import com.waggle.global.response.swagger.EmptySuccessResponse;
 import com.waggle.global.response.swagger.PostSuccessResponse;
 import com.waggle.global.response.swagger.PostsSuccessResponse;
-import com.waggle.global.security.oauth2.CustomUserDetails;
+import com.waggle.global.security.oauth2.UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -82,9 +82,9 @@ public class PostController {
     @PostMapping
     public ResponseEntity<BaseResponse<PostResponse>> createPost(
         @Valid @RequestBody UpsertPostDto upsertPostDto,
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
-        Post post = postService.createPost(upsertPostDto, userDetails.getUser());
+        Post post = postService.createPost(upsertPostDto, userPrincipal.getUser());
 
         return SuccessResponse.of(
             ApiStatus._CREATED,
@@ -218,9 +218,9 @@ public class PostController {
     public ResponseEntity<BaseResponse<PostResponse>> updatePost(
         @PathVariable Long postId,
         @Valid @RequestBody UpsertPostDto upsertPostDto,
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
-        Post post = postService.updatePost(postId, upsertPostDto, userDetails.getUser());
+        Post post = postService.updatePost(postId, upsertPostDto, userPrincipal.getUser());
 
         return SuccessResponse.of(
             ApiStatus._OK,
@@ -261,9 +261,9 @@ public class PostController {
     @DeleteMapping("/{postId}")
     public ResponseEntity<BaseResponse<Void>> deletePost(
         @PathVariable Long postId,
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
-        postService.deletePost(postId, userDetails.getUser());
+        postService.deletePost(postId, userPrincipal.getUser());
 
         return SuccessResponse.of(
             ApiStatus._NO_CONTENT,
