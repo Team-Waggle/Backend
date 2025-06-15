@@ -1,12 +1,12 @@
 package com.waggle.global.security.oauth2.adapter;
 
 import java.util.Map;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class GoogleUserInfo implements OAuth2UserInfo {
 
-    private Map<String, Object> attributes;
+    private final Map<String, Object> attributes;
 
     @Override
     public String getProviderId() {

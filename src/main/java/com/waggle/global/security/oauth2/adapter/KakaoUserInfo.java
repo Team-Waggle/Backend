@@ -1,12 +1,19 @@
 package com.waggle.global.security.oauth2.adapter;
 
 import java.util.Map;
-import lombok.AllArgsConstructor;
 
-@AllArgsConstructor
 public class KakaoUserInfo implements OAuth2UserInfo {
 
-    private Map<String, Object> attributes;
+    private final Map<String, Object> attributes;
+    private final Map<String, Object> account;
+    private final Map<String, Object> profile;
+
+    public KakaoUserInfo(Map<String, Object> attributes) {
+        this.attributes = attributes;
+        this.account = (Map<String, Object>) attributes.get("kakao_account");
+        this.profile = account != null ?
+            (Map<String, Object>) account.get("profile") : null;
+    }
 
     @Override
     public String getProviderId() {
@@ -20,20 +27,16 @@ public class KakaoUserInfo implements OAuth2UserInfo {
 
     @Override
     public String getName() {
-        Map<String, Object> profile = (Map<String, Object>) ((Map<String, Object>) attributes.get(
-            "kakao_account")).get("profile");
-        return (String) profile.get("nickname");
+        return profile != null ? (String) profile.get("nickname") : null;
     }
 
     @Override
     public String getEmail() {
-        return (String) ((Map<String, Object>) attributes.get("kakao_account")).get("email");
+        return account != null ? (String) account.get("email") : null;
     }
 
     @Override
     public String getProfileImage() {
-        Map<String, Object> profile = (Map<String, Object>) ((Map<String, Object>) attributes.get(
-            "kakao_account")).get("profile");
-        return (String) profile.get("profile_image_url");
+        return profile != null ? (String) profile.get("profile_image_url") : null;
     }
 }
