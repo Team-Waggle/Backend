@@ -38,14 +38,14 @@ public class User {
     @Column(name = "provider_id", nullable = false)
     private String providerId;
 
-    @Column(name = "profile_img_url")
-    private String profileImageUrl;
-
     @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "email", nullable = false)
     private String email;
+
+    @Column(name = "profile_img_url")
+    private String profileImageUrl;
 
     @Column(name = "preferred_work_time")
     private WorkTime workTime;
