@@ -12,14 +12,16 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Service
 @RequiredArgsConstructor
+@Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
 
     @Override
+    @Transactional
     public OAuth2User loadUser(
         OAuth2UserRequest oAuth2UserRequest
     ) throws OAuth2AuthenticationException {
@@ -33,18 +35,22 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 throw new OAuth2AuthenticationException("Unsupported provider: " + registrationId);
         };
 
-        String providerId = userInfo.getProviderId();
-        User user = userRepository.findByProviderId(providerId).orElseGet(() ->
-            userRepository.save(
-                User.builder()
-                    .provider(userInfo.getProvider())
-                    .providerId(userInfo.getProviderId())
-                    .profileImageUrl(userInfo.getProfileImage())
-                    .name(userInfo.getName())
-                    .email(userInfo.getEmail())
-                    .build()
-            )
-        );
+        User user = userRepository.findByProviderId(userInfo.getProviderId())
+            .orElseGet(() -> {
+                if (userRepository.existsByEmail(userInfo.getEmail())) {
+                    throw new IllegalStateException("Email already in use: " + userInfo.getEmail());
+                }
+
+                return userRepository.save(
+                    User.builder()
+                        .provider(userInfo.getProvider())
+                        .providerId(userInfo.getProviderId())
+                        .name(userInfo.getName())
+                        .email(userInfo.getEmail())
+                        .profileImageUrl(userInfo.getProfileImage())
+                        .build()
+                );
+            });
 
         return new CustomUserDetails(oauth2User, user);
     }
