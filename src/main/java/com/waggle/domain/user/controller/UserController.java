@@ -63,10 +63,44 @@ public class UserController {
             )
         )
     })
-    public ResponseEntity<BaseResponse<UserResponseDto>> fetchMe(
+    public ResponseEntity<BaseResponse<UserResponseDto>> getMe(
         @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
         UserInfo userInfo = userService.getUserInfoByUser(userPrincipal.getUser());
+        return SuccessResponse.of(ApiStatus._OK, UserResponseDto.from(userInfo));
+    }
+
+    @GetMapping("/{userId}")
+    @Operation(
+        summary = "특정 사용자 조회",
+        description = "특정 사용자를 조회합니다."
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "사용자 조회 성공",
+            content = @Content(
+                schema = @Schema(implementation = UserSuccessResponse.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "인증되지 않은 사용자",
+            content = @Content(
+                schema = @Schema(implementation = ErrorResponse.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "사용자를 찾을 수 없음",
+            content = @Content(
+                schema = @Schema(implementation = ErrorResponse.class)
+            )
+        )
+    })
+    public ResponseEntity<BaseResponse<UserResponseDto>> getUser(@PathVariable UUID userId) {
+        User user = userService.getUserById(userId);
+        UserInfo userInfo = userService.getUserInfoByUser(user);
         return SuccessResponse.of(ApiStatus._OK, UserResponseDto.from(userInfo));
     }
 
@@ -117,39 +151,5 @@ public class UserController {
     ) {
         userService.deleteUser(userPrincipal.getUser());
         return SuccessResponse.of(ApiStatus._NO_CONTENT, null);
-    }
-
-    @GetMapping("/{userId}")
-    @Operation(
-        summary = "특정 사용자 조회",
-        description = "특정 사용자를 조회합니다."
-    )
-    @ApiResponses({
-        @ApiResponse(
-            responseCode = "200",
-            description = "사용자 조회 성공",
-            content = @Content(
-                schema = @Schema(implementation = UserSuccessResponse.class)
-            )
-        ),
-        @ApiResponse(
-            responseCode = "401",
-            description = "인증되지 않은 사용자",
-            content = @Content(
-                schema = @Schema(implementation = ErrorResponse.class)
-            )
-        ),
-        @ApiResponse(
-            responseCode = "404",
-            description = "사용자를 찾을 수 없음",
-            content = @Content(
-                schema = @Schema(implementation = ErrorResponse.class)
-            )
-        )
-    })
-    public ResponseEntity<BaseResponse<UserResponseDto>> fetchUser(@PathVariable UUID userId) {
-        User user = userService.getUserById(userId);
-        UserInfo userInfo = userService.getUserInfoByUser(user);
-        return SuccessResponse.of(ApiStatus._OK, UserResponseDto.from(userInfo));
     }
 }
