@@ -2,9 +2,14 @@ name: CI - Pull Request Validation
 
 on:
   pull_request:
-    branches: [main, dev]
+    branches: [ main, dev ]
   push:
-    branches: [main, dev]
+    branches: [ main, dev ]
+
+permissions:
+  issues: write
+  pull-requests: write
+  contents: read
 
 jobs:
   build-and-validate:
