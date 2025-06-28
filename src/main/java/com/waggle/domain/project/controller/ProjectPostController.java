@@ -1,7 +1,28 @@
 package com.waggle.domain.project.controller;
 
-import java.util.UUID;
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
+import com.waggle.domain.project.ProjectInfo;
+import com.waggle.domain.project.dto.ProjectInputDto;
+import com.waggle.domain.project.dto.ProjectResponseDto;
+import com.waggle.domain.project.entity.Project;
+import com.waggle.domain.project.service.ProjectService;
+import com.waggle.global.response.ApiStatus;
+import com.waggle.global.response.BaseResponse;
+import com.waggle.global.response.ErrorResponse;
+import com.waggle.global.response.SuccessResponse;
+import com.waggle.global.response.swagger.ProjectSuccessResponse;
+import com.waggle.global.secure.oauth2.CustomUserDetails;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import java.util.UUID;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -15,28 +36,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.waggle.domain.project.ProjectInfo;
-import com.waggle.domain.project.dto.ProjectInputDto;
-import com.waggle.domain.project.dto.ProjectResponseDto;
-import com.waggle.domain.project.entity.Project;
-import com.waggle.domain.project.service.ProjectService;
-import com.waggle.global.response.ApiStatus;
-import com.waggle.global.response.BaseResponse;
-import com.waggle.global.response.ErrorResponse;
-import com.waggle.global.response.SuccessResponse;
-import com.waggle.global.response.swagger.ProjectSuccessResponse;
-import com.waggle.global.secure.oauth2.CustomUserDetails;
-
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 
 //get: 조회, post: 생성, put: 수정, delete: 삭제
 //put은 전체 다 수정, patch는 일부만 수정
@@ -70,11 +69,13 @@ public class ProjectPostController {
         )
     })
     public ResponseEntity<BaseResponse<Page<ProjectResponseDto>>> fetchProjects(
-        @PageableDefault(size = 10, sort = "createdAt", direction = DESC) Pageable pageable
+        @PageableDefault(size = 15, sort = "createdAt", direction = DESC) Pageable pageable
     ) {
         return SuccessResponse.of(
             ApiStatus._OK,
-            projectService.getProjects(pageable).map(ProjectResponseDto::from)
+            projectService.getProjects(pageable)
+                .map(projectService::getProjectInfoByProject)
+                .map(ProjectResponseDto::from)
         );
     }
 

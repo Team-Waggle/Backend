@@ -1,17 +1,20 @@
 package com.waggle.domain.project.service;
 
-import java.util.Set;
-import java.util.UUID;
-
 import com.waggle.domain.project.ProjectInfo;
 import com.waggle.domain.project.dto.ProjectApplicationDto;
 import com.waggle.domain.project.dto.ProjectInputDto;
 import com.waggle.domain.project.entity.Project;
 import com.waggle.domain.user.entity.User;
+import java.util.Set;
+import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface ProjectService {
 
     Project createProject(ProjectInputDto projectInputDto, User user);
+
+    Page<Project> getProjects(Pageable pageable);
 
     Project getProjectById(UUID projectId);
 
