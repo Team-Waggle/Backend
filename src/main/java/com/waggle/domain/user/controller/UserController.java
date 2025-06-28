@@ -10,7 +10,7 @@ import com.waggle.global.response.BaseResponse;
 import com.waggle.global.response.ErrorResponse;
 import com.waggle.global.response.SuccessResponse;
 import com.waggle.global.response.swagger.UserSuccessResponse;
-import com.waggle.global.security.oauth2.CustomUserDetails;
+import com.waggle.global.security.oauth2.UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -64,9 +64,9 @@ public class UserController {
         )
     })
     public ResponseEntity<BaseResponse<UserResponseDto>> fetchMe(
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
-        UserInfo userInfo = userService.getUserInfoByUser(userDetails.getUser());
+        UserInfo userInfo = userService.getUserInfoByUser(userPrincipal.getUser());
         return SuccessResponse.of(ApiStatus._OK, UserResponseDto.from(userInfo));
     }
 
@@ -95,9 +95,9 @@ public class UserController {
     public ResponseEntity<BaseResponse<UserResponseDto>> updateMe(
         @RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
         @Valid @RequestPart(value = "updateUserDto") UserInputDto userInputDto,
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
-        User user = userService.updateUser(profileImage, userInputDto, userDetails.getUser());
+        User user = userService.updateUser(profileImage, userInputDto, userPrincipal.getUser());
         UserInfo userInfo = userService.getUserInfoByUser(user);
         return SuccessResponse.of(ApiStatus._OK, UserResponseDto.from(userInfo));
     }
@@ -113,9 +113,9 @@ public class UserController {
         @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     public ResponseEntity<BaseResponse<Object>> deleteMe(
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
-        userService.deleteUser(userDetails.getUser());
+        userService.deleteUser(userPrincipal.getUser());
         return SuccessResponse.of(ApiStatus._NO_CONTENT, null);
     }
 

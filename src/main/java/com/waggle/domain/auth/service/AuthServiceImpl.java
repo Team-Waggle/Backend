@@ -27,7 +27,7 @@ public class AuthServiceImpl implements AuthService {
         try {
             // 토큰 기본 검증
             if (!jwtUtil.validateToken(refreshToken)) {
-                log.warn("유효하지 않은 리프레시 토큰");
+                log.warn("Invalid refresh token provided");
                 throw new JwtTokenException(ApiStatus._INVALID_REFRESH_TOKEN);
             }
 
@@ -40,65 +40,63 @@ public class AuthServiceImpl implements AuthService {
 
             // 저장된 토큰 검증
             if (storedRefreshToken == null) {
-                log.warn("Redis에 저장된 리프레시 토큰이 없음: userId={}", userId);
+                log.warn("No refresh token found in Redis for userId: {}", userId);
                 throw new JwtTokenException(ApiStatus._INVALID_REFRESH_TOKEN);
             }
 
             if (!storedRefreshToken.equals(refreshToken)) {
-                log.warn("요청된 리프레시 토큰과 저장된 토큰이 불일치: userId={}", userId);
+                log.warn("Refresh token mismatch for userId: {}", userId);
                 throw new JwtTokenException(ApiStatus._INVALID_REFRESH_TOKEN);
             }
 
             // 액세스 토큰 재발급
-            log.info("액세스 토큰 재발급: userId={}", userId);
+            log.info("Access token reissued for userId: {}", userId);
             String accessToken = jwtUtil.generateAccessToken(UUID.fromString(userId));
             return AccessTokenVo.from(accessToken);
-
         } catch (ExpiredJwtException e) {
             // 만료된 토큰인 경우 처리
-            log.warn("리프레시 토큰 만료: {}", e.getMessage());
+            log.warn("Refresh token expired: {}", e.getMessage());
 
             try {
                 // 만료된 토큰에서도 userId는 추출 가능
                 String userId = e.getClaims().get("userId", String.class);
                 if (userId != null) {
-                    redisTemplate.delete(REFRESH_TOKEN_PREFIX + userId);  // 만료된 토큰 삭제
+                    redisTemplate.delete(REFRESH_TOKEN_PREFIX + userId);
+                    log.info("Deleted expired refresh token for userId: {}", userId);
                 }
             } catch (Exception ex) {
-                log.error("만료된 토큰에서 userId 추출 실패", ex);
+                log.error("Failed to extract userId from expired token", ex);
             }
 
             throw new JwtTokenException(ApiStatus._EXPIRED_TOKEN);
         } catch (JwtTokenException e) {
             throw e;
         } catch (Exception e) {
-            log.error("토큰 재발급 중 오류 발생", e);
+            log.error("Unexpected error during token reissue", e);
             throw new JwtTokenException(ApiStatus._INTERNAL_SERVER_ERROR);
         }
     }
 
     @Override
-    public AccessTokenVo exchangeTemporaryToken(String temporaryToken) {
-        String key = TEMP_TOKEN_PREFIX + temporaryToken;
-        String accessToken = redisTemplate.opsForValue().get(key);
-
-        if (accessToken == null) {
-            throw new JwtTokenException(ApiStatus._INVALID_TEMPORARY_TOKEN);
-        }
-
-        // 임시 토큰 삭제
-        redisTemplate.delete(key);
-
-        return AccessTokenVo.from(accessToken);
-    }
-
-    @Override
     public void deleteRefreshToken(String refreshToken) {
         if (refreshToken == null) {
+            log.warn("Attempted to delete null refresh token");
             throw new JwtTokenException(ApiStatus._REFRESH_TOKEN_NOT_FOUND);
         }
 
-        String userId = jwtUtil.getUserIdFromToken(refreshToken);
-        redisTemplate.delete(REFRESH_TOKEN_PREFIX + userId);
+        try {
+            String userId = jwtUtil.getUserIdFromToken(refreshToken);
+            String redisKey = REFRESH_TOKEN_PREFIX + userId;
+
+            Boolean isDeleted = redisTemplate.delete(redisKey);
+            if (Boolean.TRUE.equals(isDeleted)) {
+                log.info("Refresh token deleted for userId: {}", userId);
+            } else {
+                log.warn("No refresh token found to delete for userId: {}", userId);
+            }
+        } catch (Exception e) {
+            log.error("Failed to delete refresh token", e);
+            throw new JwtTokenException(ApiStatus._INVALID_REFRESH_TOKEN);
+        }
     }
 }

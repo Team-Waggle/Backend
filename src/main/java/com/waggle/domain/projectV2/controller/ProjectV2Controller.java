@@ -26,7 +26,7 @@ import com.waggle.global.response.swagger.MembersSuccessResponse;
 import com.waggle.global.response.swagger.ProjectV2SuccessResponse;
 import com.waggle.global.response.swagger.ProjectV2sSuccessResponse;
 import com.waggle.global.response.swagger.RecruitmentsSuccessResponse;
-import com.waggle.global.security.oauth2.CustomUserDetails;
+import com.waggle.global.security.oauth2.UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -85,9 +85,9 @@ public class ProjectV2Controller {
     @PostMapping
     public ResponseEntity<BaseResponse<ProjectResponse>> createProject(
         @Valid @RequestBody UpsertProjectDto upsertProjectDto,
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
-        ProjectV2 project = projectService.createProject(upsertProjectDto, userDetails.getUser());
+        ProjectV2 project = projectService.createProject(upsertProjectDto, userPrincipal.getUser());
 
         return SuccessResponse.of(
             ApiStatus._CREATED,
@@ -130,12 +130,12 @@ public class ProjectV2Controller {
     public ResponseEntity<BaseResponse<ApplicationResponse>> applyProject(
         @PathVariable UUID projectId,
         @Valid @RequestBody CreateApplicationDto createApplicationDto,
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
         Application application = applicationService.createApplication(
             projectId,
             createApplicationDto,
-            userDetails.getUser()
+            userPrincipal.getUser()
         );
 
         return SuccessResponse.of(
@@ -234,12 +234,12 @@ public class ProjectV2Controller {
     public ResponseEntity<BaseResponse<List<ApplicationResponse>>> getProjectApplications(
         @PathVariable UUID projectId,
         @RequestParam(required = false) ApplicationStatus status,
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
         List<Application> applications = applicationService.getProjectApplications(
             projectId,
             status,
-            userDetails.getUser()
+            userPrincipal.getUser()
         );
 
         return SuccessResponse.of(
@@ -324,9 +324,9 @@ public class ProjectV2Controller {
     })
     @GetMapping("/me")
     public ResponseEntity<BaseResponse<List<ProjectResponse>>> getMyProjects(
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
-        List<ProjectV2> projects = projectService.getUserProjects(userDetails.getUser().getId());
+        List<ProjectV2> projects = projectService.getUserProjects(userPrincipal.getUser().getId());
 
         return SuccessResponse.of(
             ApiStatus._OK,
@@ -384,12 +384,12 @@ public class ProjectV2Controller {
     public ResponseEntity<BaseResponse<ProjectResponse>> updateProject(
         @PathVariable UUID projectId,
         @Valid @RequestBody UpsertProjectDto upsertProjectDto,
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
         ProjectV2 project = projectService.updateProject(
             projectId,
             upsertProjectDto,
-            userDetails.getUser()
+            userPrincipal.getUser()
         );
 
         return SuccessResponse.of(
@@ -431,9 +431,9 @@ public class ProjectV2Controller {
     @DeleteMapping("/{projectId}")
     public ResponseEntity<BaseResponse<ProjectResponse>> deleteProject(
         @PathVariable UUID projectId,
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
-        projectService.deleteProject(projectId, userDetails.getUser());
+        projectService.deleteProject(projectId, userPrincipal.getUser());
 
         return SuccessResponse.of(
             ApiStatus._NO_CONTENT,

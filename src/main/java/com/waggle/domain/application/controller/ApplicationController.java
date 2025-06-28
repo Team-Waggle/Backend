@@ -11,7 +11,7 @@ import com.waggle.global.response.ErrorResponse;
 import com.waggle.global.response.SuccessResponse;
 import com.waggle.global.response.swagger.ApplicationSuccessResponse;
 import com.waggle.global.response.swagger.ApplicationsSuccessResponse;
-import com.waggle.global.security.oauth2.CustomUserDetails;
+import com.waggle.global.security.oauth2.UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -65,11 +65,11 @@ public class ApplicationController {
     @GetMapping("/me")
     public ResponseEntity<BaseResponse<List<ApplicationResponse>>> getMyApplications(
         @RequestParam(required = false) ApplicationStatus status,
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
         List<Application> applications = applicationService.getMyApplications(
             status,
-            userDetails.getUser()
+            userPrincipal.getUser()
         );
 
         return SuccessResponse.of(
@@ -164,12 +164,12 @@ public class ApplicationController {
     public ResponseEntity<BaseResponse<ApplicationResponse>> updateApplicationStatus(
         @PathVariable Long applicationId,
         @Valid @RequestBody UpdateStatusDto updateStatusDto,
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
         Application application = applicationService.updateApplicationStatus(
             applicationId,
             updateStatusDto,
-            userDetails.getUser()
+            userPrincipal.getUser()
         );
 
         return SuccessResponse.of(

@@ -8,7 +8,7 @@ import com.waggle.global.response.SuccessResponse;
 import com.waggle.global.response.swagger.EmptySuccessResponse;
 import com.waggle.global.response.swagger.NotificationsSuccessResponse;
 import com.waggle.global.response.swagger.UnreadCountSuccessResponse;
-import com.waggle.global.security.oauth2.CustomUserDetails;
+import com.waggle.global.security.oauth2.UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -59,11 +59,11 @@ public class NotificationController {
         )
     })
     public ResponseEntity<BaseResponse<Set<NotificationResponseDto>>> getMyNotifications(
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
         return SuccessResponse.of(
             ApiStatus._OK,
-            notificationService.getNotifications(userDetails.getUser()).stream()
+            notificationService.getNotifications(userPrincipal.getUser()).stream()
                 .map(NotificationResponseDto::from)
                 .collect(Collectors.toCollection(LinkedHashSet::new))
         );
@@ -92,11 +92,11 @@ public class NotificationController {
         )
     })
     public ResponseEntity<BaseResponse<Integer>> getUnreadNotificationCount(
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
         return SuccessResponse.of(
             ApiStatus._OK,
-            notificationService.getUnreadNotificationCount(userDetails.getUser())
+            notificationService.getUnreadNotificationCount(userPrincipal.getUser())
         );
     }
 
@@ -123,9 +123,9 @@ public class NotificationController {
         )
     })
     public ResponseEntity<BaseResponse<Void>> readAllNotifications(
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
-        notificationService.readAllNotifications(userDetails.getUser());
+        notificationService.readAllNotifications(userPrincipal.getUser());
         return SuccessResponse.of(ApiStatus._OK, null);
     }
 }
