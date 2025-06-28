@@ -2,7 +2,6 @@ package com.waggle.global.security.filter;
 
 import com.waggle.domain.user.entity.User;
 import com.waggle.domain.user.repository.UserRepository;
-import com.waggle.global.exception.JwtTokenException;
 import com.waggle.global.security.jwt.JwtUtil;
 import com.waggle.global.security.oauth2.UserPrincipal;
 import jakarta.servlet.FilterChain;
@@ -10,21 +9,18 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+@RequiredArgsConstructor
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
@@ -36,29 +32,29 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         @NonNull HttpServletResponse response,
         @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-        try {
-            String authorizationHeader = request.getHeader("Authorization");
-            String token = jwtUtil.getTokenFromHeader(authorizationHeader);
+        String token = jwtUtil.extractToken(request);
 
-            if (jwtUtil.validateToken(token)) {
+        if (token != null && jwtUtil.validateToken(token)
+            && SecurityContextHolder.getContext().getAuthentication() == null
+        ) {
+            try {
                 UUID userId = UUID.fromString(jwtUtil.getUserIdFromToken(token));
                 User user = userRepository.findById(userId).orElse(null);
 
                 if (user != null) {
                     UserPrincipal userPrincipal = new UserPrincipal(null, user);
-                    Authentication authentication = new UsernamePasswordAuthenticationToken(
-                        userPrincipal,
-                        null,
-                        Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"))
+
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                        userPrincipal, null, userPrincipal.getAuthorities()
                     );
 
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                    log.debug("JWT authentication successful for user: {}", userId);
                 }
+            } catch (Exception e) {
+                log.error("JWT authentication failed: {}", e.getMessage());
+
             }
-        } catch (JwtTokenException e) {
-            log.warn("JWT Token 예외: {}", e.getMessage());
-        } catch (Exception e) {
-            log.error("JWT 인증 과정에서 예상치 못한 예외 발생", e);
         }
 
         filterChain.doFilter(request, response);
