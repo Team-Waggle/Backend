@@ -5,7 +5,7 @@ import com.waggle.domain.notification.dto.NotificationRequestDto;
 import com.waggle.domain.notification.entity.Notification;
 import com.waggle.domain.notification.repository.NotificationRepository;
 import com.waggle.domain.user.entity.User;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -38,7 +38,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     @Transactional(readOnly = true)
     public List<Notification> getNotifications(User user, Long cursor, int size) {
-        LocalDateTime cursorCreatedAt = null;
+        Instant cursorCreatedAt = null;
 
         if (cursor != null) {
             cursorCreatedAt = notificationRepository.findCreatedAtById(cursor).orElse(null);
