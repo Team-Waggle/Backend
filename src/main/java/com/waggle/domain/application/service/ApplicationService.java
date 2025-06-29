@@ -64,7 +64,7 @@ public class ApplicationService {
     }
 
     @Transactional(readOnly = true)
-    public List<Application> getMyApplications(
+    public List<Application> getUserApplications(
         ApplicationStatus status,
         User user
     ) {
