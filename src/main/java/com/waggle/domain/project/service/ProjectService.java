@@ -5,12 +5,16 @@ import com.waggle.domain.project.dto.ProjectApplicationDto;
 import com.waggle.domain.project.dto.ProjectInputDto;
 import com.waggle.domain.project.entity.Project;
 import com.waggle.domain.user.entity.User;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface ProjectService {
 
     Project createProject(ProjectInputDto projectInputDto, User user);
+
+    Page<Project> getProjects(Pageable pageable);
 
     Project getProjectById(Long projectId);
 
@@ -20,33 +24,31 @@ public interface ProjectService {
 
     void deleteProject(Long projectId, User user);
 
-    Set<User> getUsersByProjectId(Long projectId);
+    List<User> getUsersByProjectId(Long projectId);
 
-    Set<User> getAppliedUsersByProjectId(Long projectId);
+    List<User> getAppliedUsersByProjectId(Long projectId);
 
-    Set<User> approveAppliedUser(Long projectId, UUID userId, User user);
+    List<User> approveAppliedUser(Long projectId, UUID userId, User user);
 
-    Set<User> rejectAppliedUser(Long projectId, UUID userId, User user);
+    List<User> rejectAppliedUser(Long projectId, UUID userId, User user);
 
-    Set<User> removeMemberUser(Long projectId, UUID userId, User user);
+    List<User> removeMemberUser(Long projectId, UUID userId, User user);
 
     void delegateLeader(Long projectId, UUID userId, User user);
 
-    Set<Project> getUserProjects(UUID userId);
+    List<Project> getUserProjects(UUID userId);
 
     void withdrawFromProject(Long projectId, User user);
-
-    Set<Project> getUserBookmarkProjects(UUID userId);
 
     Project applyProject(Long projectId, ProjectApplicationDto projectApplicationDto, User user);
 
     void cancelProjectApplication(Long projectId, User user);
 
-    Set<Project> getAppliedProjects(User user);
+    List<Project> getAppliedProjects(User user);
 
     boolean toggleCurrentUserBookmark(Long projectId, User user);
 
-    Set<Project> getCurrentUserBookmarkProjects(User user);
+    List<Project> getUserBookmarkProjects(UUID userId, Long cursor, int size);
 
-    Set<Project> getCurrentUserProjects(User user);
+    List<Project> getCurrentUserProjects(User user);
 }

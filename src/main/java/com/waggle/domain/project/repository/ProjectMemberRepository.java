@@ -12,9 +12,9 @@ public interface ProjectMemberRepository extends JpaRepository<ProjectMember, UU
 
     Optional<ProjectMember> findByProjectIdAndUserId(Long projectId, UUID userId);
 
-    List<ProjectMember> findByUserId(UUID userId);
+    List<ProjectMember> findByUserIdOrderByProject_CreatedAtDesc(UUID userId);
 
-    List<ProjectMember> findByProjectId(Long projectId);
+    List<ProjectMember> findByProjectIdOrderByJoinedAtDesc(Long projectId);
 
     void deleteByProjectId(Long projectId);
 

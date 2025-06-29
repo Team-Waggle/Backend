@@ -22,10 +22,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -68,7 +66,7 @@ public class ProjectApplicationController {
             )
         )
     })
-    public ResponseEntity<BaseResponse<Set<UserResponseDto>>> fetchAppliedUsers(
+    public ResponseEntity<BaseResponse<List<UserResponseDto>>> fetchAppliedUsers(
         @PathVariable Long projectId
     ) {
         return SuccessResponse.of(
@@ -76,7 +74,7 @@ public class ProjectApplicationController {
             projectService.getAppliedUsersByProjectId(projectId).stream()
                 .map(userService::getUserInfoByUser)
                 .map(UserResponseDto::from)
-                .collect(Collectors.toCollection(LinkedHashSet::new))
+                .toList()
         );
     }
 
@@ -116,7 +114,7 @@ public class ProjectApplicationController {
             )
         )
     })
-    public ResponseEntity<BaseResponse<Set<UserResponseDto>>> approveUser(
+    public ResponseEntity<BaseResponse<List<UserResponseDto>>> approveUser(
         @PathVariable Long projectId,
         @PathVariable UUID userId,
         @AuthenticationPrincipal UserPrincipal userPrincipal
@@ -126,7 +124,7 @@ public class ProjectApplicationController {
             projectService.approveAppliedUser(projectId, userId, userPrincipal.getUser()).stream()
                 .map(userService::getUserInfoByUser)
                 .map(UserResponseDto::from)
-                .collect(Collectors.toCollection(LinkedHashSet::new))
+                .toList()
         );
     }
 
@@ -166,7 +164,7 @@ public class ProjectApplicationController {
             )
         )
     })
-    public ResponseEntity<BaseResponse<Set<UserResponseDto>>> rejectUser(
+    public ResponseEntity<BaseResponse<List<UserResponseDto>>> rejectUser(
         @PathVariable Long projectId,
         @PathVariable UUID userId,
         @AuthenticationPrincipal UserPrincipal userPrincipal
@@ -176,7 +174,7 @@ public class ProjectApplicationController {
             projectService.rejectAppliedUser(projectId, userId, userPrincipal.getUser()).stream()
                 .map(userService::getUserInfoByUser)
                 .map(UserResponseDto::from)
-                .collect(Collectors.toCollection(LinkedHashSet::new))
+                .toList()
         );
     }
 
@@ -202,7 +200,7 @@ public class ProjectApplicationController {
             )
         )
     })
-    public ResponseEntity<BaseResponse<Set<ProjectResponseDto>>> getAppliedProjects(
+    public ResponseEntity<BaseResponse<List<ProjectResponseDto>>> getAppliedProjects(
         @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
         return SuccessResponse.of(
@@ -210,7 +208,7 @@ public class ProjectApplicationController {
             projectService.getAppliedProjects(userPrincipal.getUser()).stream()
                 .map(projectService::getProjectInfoByProject)
                 .map(ProjectResponseDto::from)
-                .collect(Collectors.toCollection(LinkedHashSet::new))
+                .toList()
         );
     }
 

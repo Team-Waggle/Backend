@@ -1,5 +1,7 @@
 package com.waggle.domain.project.controller;
 
+import static org.springframework.data.domain.Sort.Direction.DESC;
+
 import com.waggle.domain.project.ProjectInfo;
 import com.waggle.domain.project.dto.ProjectInputDto;
 import com.waggle.domain.project.dto.ProjectResponseDto;
@@ -20,6 +22,9 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,6 +45,38 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProjectPostController {
 
     private final ProjectService projectService;
+
+    @GetMapping
+    @Operation(
+        summary = "프로젝트 모집글 목록 조회",
+        description = "프로젝트 모집글 목록을 페이지네이션으로 조회한다."
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "프로젝트 모집글 목록 조회 성공",
+            content = @Content(
+                schema = @Schema(implementation = ProjectSuccessResponse.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "잘못된 요청입니다.",
+            content = @Content(
+                schema = @Schema(implementation = ErrorResponse.class)
+            )
+        )
+    })
+    public ResponseEntity<BaseResponse<Page<ProjectResponseDto>>> fetchProjects(
+        @PageableDefault(size = 10, sort = "createdAt", direction = DESC) Pageable pageable
+    ) {
+        return SuccessResponse.of(
+            ApiStatus._OK,
+            projectService.getProjects(pageable).map(project ->
+                ProjectResponseDto.from(projectService.getProjectInfoByProject(project))
+            )
+        );
+    }
 
     @GetMapping("/{projectId}")
     @Operation(

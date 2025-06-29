@@ -18,10 +18,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -62,7 +60,7 @@ public class ProjectMemberController {
             )
         )
     })
-    public ResponseEntity<BaseResponse<Set<UserResponseDto>>> fetchUsers(
+    public ResponseEntity<BaseResponse<List<UserResponseDto>>> fetchUsers(
         @PathVariable Long projectId
     ) {
         // TODO: 정렬 기준 재고
@@ -78,7 +76,7 @@ public class ProjectMemberController {
 //                        return positions != null && !positions.isEmpty() ? positions.get(0) : "";
 //                    })
 //                    .thenComparing(UserResponseDto::name))
-                .collect(Collectors.toCollection(LinkedHashSet::new))
+                .toList()
         );
     }
 
@@ -118,7 +116,7 @@ public class ProjectMemberController {
             )
         )
     })
-    public ResponseEntity<BaseResponse<Set<UserResponseDto>>> removeMember(
+    public ResponseEntity<BaseResponse<List<UserResponseDto>>> removeMember(
         @PathVariable Long projectId,
         @PathVariable UUID userId,
         @AuthenticationPrincipal UserPrincipal userPrincipal
@@ -128,7 +126,7 @@ public class ProjectMemberController {
             projectService.removeMemberUser(projectId, userId, userPrincipal.getUser()).stream()
                 .map(userService::getUserInfoByUser)
                 .map(UserResponseDto::from)
-                .collect(Collectors.toCollection(LinkedHashSet::new))
+                .toList()
         );
     }
 
@@ -168,7 +166,7 @@ public class ProjectMemberController {
             )
         )
     })
-    public ResponseEntity<BaseResponse<Set<UserResponseDto>>> delegateLeader(
+    public ResponseEntity<BaseResponse<List<UserResponseDto>>> delegateLeader(
         @PathVariable Long projectId,
         @PathVariable UUID userId,
         @AuthenticationPrincipal UserPrincipal userPrincipal
@@ -236,7 +234,7 @@ public class ProjectMemberController {
             )
         )
     })
-    public ResponseEntity<BaseResponse<Set<ProjectResponseDto>>> fetchMyProjects(
+    public ResponseEntity<BaseResponse<List<ProjectResponseDto>>> fetchMyProjects(
         @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
         return SuccessResponse.of(
@@ -244,7 +242,7 @@ public class ProjectMemberController {
             projectService.getCurrentUserProjects(userPrincipal.getUser()).stream()
                 .map(projectService::getProjectInfoByProject)
                 .map(ProjectResponseDto::from)
-                .collect(Collectors.toCollection(LinkedHashSet::new))
+                .toList()
         );
     }
 
@@ -276,7 +274,7 @@ public class ProjectMemberController {
             )
         )
     })
-    public ResponseEntity<BaseResponse<Set<ProjectResponseDto>>> fetchUserProjects(
+    public ResponseEntity<BaseResponse<List<ProjectResponseDto>>> fetchUserProjects(
         @PathVariable UUID userId
     ) {
 
@@ -285,7 +283,7 @@ public class ProjectMemberController {
             projectService.getUserProjects(userId).stream()
                 .map(projectService::getProjectInfoByProject)
                 .map(ProjectResponseDto::from)
-                .collect(Collectors.toCollection(LinkedHashSet::new))
+                .toList()
         );
     }
 }
