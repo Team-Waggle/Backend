@@ -301,40 +301,6 @@ public class ProjectV2Controller {
     }
 
     @Operation(
-        summary = "프로젝트 목록 조회",
-        description = "인증된 사용자의 프로젝트 목록을 조회합니다."
-    )
-    @ApiResponses({
-        @ApiResponse(
-            responseCode = "200",
-            description = "프로젝트 목록 조회 성공",
-            content = @Content(
-                mediaType = "application/json",
-                schema = @Schema(implementation = ProjectV2sSuccessResponse.class)
-            )
-        ),
-        @ApiResponse(
-            responseCode = "401",
-            description = "인증되지 않은 사용자",
-            content = @Content(
-                mediaType = "application/json",
-                schema = @Schema(implementation = ErrorResponse.class)
-            )
-        )
-    })
-    @GetMapping("/me")
-    public ResponseEntity<BaseResponse<List<ProjectResponse>>> getMyProjects(
-        @AuthenticationPrincipal UserPrincipal userPrincipal
-    ) {
-        List<ProjectV2> projects = projectService.getUserProjects(userPrincipal.getUser().getId());
-
-        return SuccessResponse.of(
-            ApiStatus._OK,
-            projects.stream().map(ProjectResponse::from).toList()
-        );
-    }
-
-    @Operation(
         summary = "프로젝트 수정",
         description = "프로젝트를 수정합니다."
     )
