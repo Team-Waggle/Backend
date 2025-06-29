@@ -13,9 +13,6 @@ spring:
           kakao:
             redirect-uri: ${PROD_HTTPS_FULL_URL}${KAKAO_REDIRECT_URI}
 
-          naver:
-            redirect-uri: ${PROD_HTTPS_FULL_URL}${NAVER_REDIRECT_URI}
-
 server:
   servlet:
     context-path: ${PROD_ENDPOINT}

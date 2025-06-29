@@ -14,7 +14,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.List;
 import org.hibernate.validator.constraints.URL;
 
 @Schema(description = "프로젝트 생성 dto")
@@ -52,11 +52,11 @@ public record ProjectInputDto(
     @NotEmpty(message = "최소 하나 이상의 직무 및 인원이 필요합니다")
     @Schema(description = "직무 및 인원 목록")
     @JsonProperty("recruitments")
-    Set<ProjectRecruitmentDto> projectRecruitmentDtos,
+    List<ProjectRecruitmentDto> projectRecruitmentDtos,
 
     @Schema(description = "사용 스킬 목록", example = "[\"JAVA\", \"AWS\"]")
     @JsonProperty("skills")
-    Set<Skill> skills,
+    List<Skill> skills,
 
     @NotBlank(message = "프로젝트 소개는 필수 입력 항목입니다")
     @Schema(description = "소개", example = "기본적으로 Spring을 쓰실 줄 알며, RestAPI를 잘 쓰시는 분을 모집합니다.")

@@ -7,8 +7,9 @@ import com.waggle.global.exception.S3Exception;
 import com.waggle.global.response.ApiStatus;
 import com.waggle.global.response.BaseResponse;
 import com.waggle.global.response.ErrorResponse;
-import org.springframework.dao.EmptyResultDataAccessException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,47 +19,62 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(JwtTokenException.class)
-    public ResponseEntity<BaseResponse<String>> handleJwtTokenException(JwtTokenException ex) {
-        return ErrorResponse.of(ex.getStatus());
-    }
-
-    @ExceptionHandler(EmptyResultDataAccessException.class)
-    public ResponseEntity<BaseResponse<String>> handleEmptyResultDataAccessException(
-        EmptyResultDataAccessException ex) {
-        return ErrorResponse.of(ApiStatus._NOT_FOUND);
+    public ResponseEntity<BaseResponse<Void>> handleJwtTokenException(JwtTokenException e) {
+        return ErrorResponse.of(e.getStatus());
     }
 
     @ExceptionHandler(S3Exception.class)
-    public ResponseEntity<BaseResponse<Object>> handleS3Exception(S3Exception ex) {
-        return ErrorResponse.of(ex.getStatus(), ex.getMessage());
+    public ResponseEntity<BaseResponse<Void>> handleS3Exception(S3Exception e) {
+        return ErrorResponse.of(e.getStatus(), e.getMessage());
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<BaseResponse<Object>> handleAccessDeniedException(
-        AccessDeniedException ex) {
-        return ErrorResponse.of(ex.getStatus());
+    public ResponseEntity<BaseResponse<Void>> handleAccessDeniedException(
+        AccessDeniedException e
+    ) {
+        return ErrorResponse.of(e.getStatus());
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<BaseResponse<Void>> handleEntityNotFoundException(
+        EntityNotFoundException e
+    ) {
+        return ErrorResponse.of(ApiStatus._NOT_FOUND, e.getMessage());
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<BaseResponse<Void>> handleHttpMessageNotReadableException(
+        HttpMessageNotReadableException e
+    ) {
+        return ErrorResponse.of(ApiStatus._BAD_REQUEST, e.getMessage());
     }
 
     @ExceptionHandler(ProjectException.class)
-    public ResponseEntity<BaseResponse<Object>> handleProjectException(ProjectException ex) {
-        return ErrorResponse.of(ex.getStatus(), ex.getMessage());
+    public ResponseEntity<BaseResponse<Void>> handleProjectException(ProjectException e) {
+        return ErrorResponse.of(e.getStatus(), e.getMessage());
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<BaseResponse<Object>> handleIllegalArgumentException(
-        IllegalArgumentException ex
+    public ResponseEntity<BaseResponse<Void>> handleIllegalArgumentException(
+        IllegalArgumentException e
     ) {
-        return ErrorResponse.of(ApiStatus._BAD_REQUEST, ex.getMessage());
+        return ErrorResponse.of(ApiStatus._BAD_REQUEST, e.getMessage());
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<BaseResponse<Void>> handleIllegalStateException(
+        IllegalStateException e
+    ) {
+        return ErrorResponse.of(ApiStatus._CONFLICT, e.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<BaseResponse<Object>> handleMethodArgumentNotValidException(
-        MethodArgumentNotValidException ex
+    public ResponseEntity<BaseResponse<Void>> handleMethodArgumentNotValidException(
+        MethodArgumentNotValidException e
     ) {
-
         StringBuilder errorMessage = new StringBuilder();
 
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
+        e.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
             String message = error.getDefaultMessage();
             errorMessage.append(fieldName).append(": ").append(message).append("; ");

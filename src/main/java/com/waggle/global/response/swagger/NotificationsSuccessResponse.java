@@ -1,15 +1,15 @@
 package com.waggle.global.response.swagger;
 
-import com.waggle.domain.notification.dto.NotificationResponseDto;
+import com.waggle.domain.notification.dto.NotificationResponse;
 import com.waggle.global.response.SuccessResponse;
-import java.util.Set;
+import java.util.List;
 
-public class NotificationsSuccessResponse extends SuccessResponse<Set<NotificationResponseDto>> {
+public class NotificationsSuccessResponse extends SuccessResponse<List<NotificationResponse>> {
 
     public NotificationsSuccessResponse(
         int code,
         String message,
-        Set<NotificationResponseDto> payload
+        List<NotificationResponse> payload
     ) {
         super(code, message, payload);
     }

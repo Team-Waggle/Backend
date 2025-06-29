@@ -6,7 +6,5 @@ public interface AuthService {
 
     AccessTokenVo reissueAccessToken(String refreshToken);
 
-    AccessTokenVo exchangeTemporaryToken(String temporaryToken);
-
     void deleteRefreshToken(String refreshToken);
 }
