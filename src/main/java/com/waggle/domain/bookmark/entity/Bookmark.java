@@ -14,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -27,7 +28,7 @@ public class Bookmark extends BaseEntity {
     private Long id;
 
     @Column(nullable = false, updatable = false)
-    private String targetId;
+    private String bookmarkableId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, updatable = false)
@@ -36,4 +37,11 @@ public class Bookmark extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, updatable = false)
     private User user;
+
+    @Builder
+    public Bookmark(String bookmarkableId, BookmarkType bookmarkType, User user) {
+        this.bookmarkableId = bookmarkableId;
+        this.bookmarkType = bookmarkType;
+        this.user = user;
+    }
 }
