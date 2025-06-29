@@ -1,5 +1,8 @@
 package com.waggle.domain.post;
 
+import static com.waggle.domain.bookmark.Bookmarkable.BookmarkType.POST;
+
+import com.waggle.domain.bookmark.Bookmarkable;
 import com.waggle.domain.projectV2.ProjectV2;
 import com.waggle.domain.user.entity.User;
 import com.waggle.global.entity.BaseEntity;
@@ -20,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Post extends BaseEntity {
+public class Post extends BaseEntity implements Bookmarkable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,4 +62,15 @@ public class Post extends BaseEntity {
     public void delete() {
         this.deletedAt = Instant.now();
     }
+
+    @Override
+    public String getBookmarkableId() {
+        return String.valueOf(id);
+    }
+
+    @Override
+    public BookmarkType getBookmarkableType() {
+        return POST;
+    }
+
 }

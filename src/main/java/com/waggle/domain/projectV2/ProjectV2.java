@@ -1,6 +1,9 @@
 package com.waggle.domain.projectV2;
 
 
+import static com.waggle.domain.bookmark.Bookmarkable.BookmarkType.PROJECT;
+
+import com.waggle.domain.bookmark.Bookmarkable;
 import com.waggle.domain.user.entity.User;
 import com.waggle.global.entity.BaseEntity;
 import jakarta.persistence.Column;
@@ -21,7 +24,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ProjectV2 extends BaseEntity {
+public class ProjectV2 extends BaseEntity implements Bookmarkable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -68,5 +71,15 @@ public class ProjectV2 extends BaseEntity {
 
     public void delete() {
         this.deletedAt = Instant.now();
+    }
+
+    @Override
+    public String getBookmarkableId() {
+        return String.valueOf(id);
+    }
+
+    @Override
+    public BookmarkType getBookmarkableType() {
+        return PROJECT;
     }
 }
