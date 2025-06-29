@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 @Schema(description = "프로젝트 생성 및 수정 요청 DTO")
-public record UpsertProjectDto(
+public record UpsertProjectRequest(
     @Schema(description = "프로젝트 이름", example = "waggle")
     @NotBlank(message = "name must not be blank")
     @Size(max = 30, message = "name must not exceed 30 characters")

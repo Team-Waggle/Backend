@@ -2,7 +2,7 @@ package com.waggle.domain.projectV2.service;
 
 import com.waggle.domain.member.repository.MemberRepository;
 import com.waggle.domain.projectV2.ProjectV2;
-import com.waggle.domain.projectV2.dto.UpsertProjectDto;
+import com.waggle.domain.projectV2.dto.UpsertProjectRequest;
 import com.waggle.domain.projectV2.repository.ProjectV2Repository;
 import com.waggle.domain.user.entity.User;
 import jakarta.persistence.EntityNotFoundException;
@@ -21,13 +21,13 @@ public class ProjectV2Service {
     private final ProjectV2Repository projectRepository;
 
     @Transactional
-    public ProjectV2 createProject(UpsertProjectDto upsertProjectDto, User user) {
+    public ProjectV2 createProject(UpsertProjectRequest upsertProjectRequest, User user) {
         Long maxSequenceId = projectRepository.findMaxSequenceId();
 
         ProjectV2 project = ProjectV2.builder()
-            .name(upsertProjectDto.name())
-            .tagline(upsertProjectDto.tagline())
-            .description(upsertProjectDto.description())
+            .name(upsertProjectRequest.name())
+            .tagline(upsertProjectRequest.tagline())
+            .description(upsertProjectRequest.description())
             .sequenceId(maxSequenceId + 1)
             .leader(user)
             .build();
@@ -54,23 +54,24 @@ public class ProjectV2Service {
     }
 
     @Transactional
-    public ProjectV2 updateProject(UUID projectId, UpsertProjectDto upsertProjectDto, User user) {
+    public ProjectV2 updateProject(UUID projectId, UpsertProjectRequest upsertProjectRequest,
+        User user) {
         ProjectV2 project = getProject(projectId);
 
         if (!project.getLeader().getId().equals(user.getId())) {
             throw new AccessDeniedException("Access denied to project with id: " + projectId);
         }
 
-        if (projectRepository.existsByIdNotAndName(projectId, upsertProjectDto.name())) {
+        if (projectRepository.existsByIdNotAndName(projectId, upsertProjectRequest.name())) {
             throw new IllegalArgumentException(
-                "Project already exists with name: " + upsertProjectDto.name()
+                "Project already exists with name: " + upsertProjectRequest.name()
             );
         }
 
         project.update(
-            upsertProjectDto.name(),
-            upsertProjectDto.tagline(),
-            upsertProjectDto.description()
+            upsertProjectRequest.name(),
+            upsertProjectRequest.tagline(),
+            upsertProjectRequest.description()
         );
 
         return project;

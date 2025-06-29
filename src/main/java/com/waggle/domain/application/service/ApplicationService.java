@@ -2,8 +2,8 @@ package com.waggle.domain.application.service;
 
 import com.waggle.domain.application.Application;
 import com.waggle.domain.application.ApplicationStatus;
-import com.waggle.domain.application.dto.CreateApplicationDto;
-import com.waggle.domain.application.dto.UpdateStatusDto;
+import com.waggle.domain.application.dto.CreateApplicationRequest;
+import com.waggle.domain.application.dto.UpdateStatusRequest;
 import com.waggle.domain.application.repository.ApplicationRepository;
 import com.waggle.domain.member.repository.MemberRepository;
 import com.waggle.domain.projectV2.ProjectV2;
@@ -28,7 +28,7 @@ public class ApplicationService {
     @Transactional
     public Application createApplication(
         UUID projectId,
-        CreateApplicationDto createApplicationDto,
+        CreateApplicationRequest createApplicationRequest,
         User user
     ) {
         ProjectV2 project = projectRepository.findByIdWithRelations(projectId).orElseThrow(
@@ -36,7 +36,7 @@ public class ApplicationService {
         );
 
         Application application = Application.builder()
-            .position(createApplicationDto.position())
+            .position(createApplicationRequest.position())
             .user(user)
             .project(project)
             .build();
@@ -78,7 +78,7 @@ public class ApplicationService {
     @Transactional
     public Application updateApplicationStatus(
         Long applicationId,
-        UpdateStatusDto updateStatusDto,
+        UpdateStatusRequest updateStatusRequest,
         User user
     ) {
         Application application = applicationRepository.findByIdWithRelations(applicationId)
@@ -86,12 +86,12 @@ public class ApplicationService {
                 "Application not found with id " + applicationId)
             );
 
-        switch (updateStatusDto.status()) {
+        switch (updateStatusRequest.status()) {
             case APPROVED -> approveApplication(application, user);
             case REJECTED -> rejectApplication(application, user);
             case CANCELLED -> cancelApplication(application, user);
-            default ->
-                throw new IllegalStateException("Unexpected value: " + updateStatusDto.status());
+            default -> throw new IllegalStateException(
+                "Unexpected value: " + updateStatusRequest.status());
         }
 
         return application;

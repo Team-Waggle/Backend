@@ -3,7 +3,7 @@ package com.waggle.domain.notification.dto;
 import com.waggle.domain.notification.entity.Notification;
 import java.time.Instant;
 
-public record NotificationResponseDto(
+public record NotificationResponse(
     Long id,
     String title,
     String content,
@@ -13,8 +13,8 @@ public record NotificationResponseDto(
     Instant updatedAt
 ) {
 
-    public static NotificationResponseDto from(Notification notification) {
-        return new NotificationResponseDto(
+    public static NotificationResponse from(Notification notification) {
+        return new NotificationResponse(
             notification.getId(),
             notification.getTitle(),
             notification.getContent(),

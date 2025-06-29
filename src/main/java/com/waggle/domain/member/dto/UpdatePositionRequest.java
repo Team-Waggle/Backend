@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 
 @Schema(description = "직무 변경 DTO")
-public record UpdatePositionDto(
+public record UpdatePositionRequest(
     @Schema(description = "직무", example = "FRONTEND")
     @NotNull(message = "position must not be null")
     Position position

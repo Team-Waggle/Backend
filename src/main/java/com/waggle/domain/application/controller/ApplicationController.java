@@ -2,7 +2,7 @@ package com.waggle.domain.application.controller;
 
 import com.waggle.domain.application.Application;
 import com.waggle.domain.application.dto.ApplicationResponse;
-import com.waggle.domain.application.dto.UpdateStatusDto;
+import com.waggle.domain.application.dto.UpdateStatusRequest;
 import com.waggle.domain.application.service.ApplicationService;
 import com.waggle.global.response.ApiStatus;
 import com.waggle.global.response.BaseResponse;
@@ -120,12 +120,12 @@ public class ApplicationController {
     @PatchMapping("/{applicationId}")
     public ResponseEntity<BaseResponse<ApplicationResponse>> updateApplicationStatus(
         @PathVariable Long applicationId,
-        @Valid @RequestBody UpdateStatusDto updateStatusDto,
+        @Valid @RequestBody UpdateStatusRequest updateStatusRequest,
         @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
         Application application = applicationService.updateApplicationStatus(
             applicationId,
-            updateStatusDto,
+            updateStatusRequest,
             userPrincipal.getUser()
         );
 

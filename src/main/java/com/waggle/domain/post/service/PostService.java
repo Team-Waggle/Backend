@@ -1,7 +1,7 @@
 package com.waggle.domain.post.service;
 
 import com.waggle.domain.post.Post;
-import com.waggle.domain.post.dto.UpsertPostDto;
+import com.waggle.domain.post.dto.UpsertPostRequest;
 import com.waggle.domain.post.repository.PostRepository;
 import com.waggle.domain.projectV2.ProjectV2;
 import com.waggle.domain.projectV2.repository.ProjectV2Repository;
@@ -22,8 +22,8 @@ public class PostService {
     private final ProjectV2Repository projectRepository;
 
     @Transactional
-    public Post createPost(UpsertPostDto upsertPostDto, User user) {
-        ProjectV2 project = Optional.ofNullable(upsertPostDto.projectId())
+    public Post createPost(UpsertPostRequest upsertPostRequest, User user) {
+        ProjectV2 project = Optional.ofNullable(upsertPostRequest.projectId())
             .map(id -> projectRepository.findByIdWithRelations(id)
                 .orElseThrow(() -> new EntityNotFoundException("Project not found with id: " + id))
             )
@@ -32,8 +32,8 @@ public class PostService {
         // TODO: 프로젝트 멤버 검증
 
         Post post = Post.builder()
-            .title(upsertPostDto.title())
-            .content(upsertPostDto.content())
+            .title(upsertPostRequest.title())
+            .content(upsertPostRequest.content())
             .user(user)
             .project(project)
             .build();
@@ -53,14 +53,14 @@ public class PostService {
     }
 
     @Transactional
-    public Post updatePost(Long postId, UpsertPostDto upsertPostDto, User user) {
+    public Post updatePost(Long postId, UpsertPostRequest upsertPostRequest, User user) {
         Post post = getPost(postId);
 
         if (!post.getUser().getId().equals(user.getId())) {
             throw new AccessDeniedException("Access denied to post with id: " + postId);
         }
 
-        ProjectV2 project = Optional.ofNullable(upsertPostDto.projectId())
+        ProjectV2 project = Optional.ofNullable(upsertPostRequest.projectId())
             .map(id -> projectRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Project not found with id: " + id))
             )
@@ -68,7 +68,7 @@ public class PostService {
 
         // TODO: 프로젝트 멤버 검증
 
-        post.update(upsertPostDto.title(), upsertPostDto.content(), project);
+        post.update(upsertPostRequest.title(), upsertPostRequest.content(), project);
 
         return post;
     }

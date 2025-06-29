@@ -2,7 +2,7 @@ package com.waggle.domain.member.controller;
 
 import com.waggle.domain.member.Member;
 import com.waggle.domain.member.dto.MemberResponse;
-import com.waggle.domain.member.dto.UpdatePositionDto;
+import com.waggle.domain.member.dto.UpdatePositionRequest;
 import com.waggle.domain.member.service.MemberService;
 import com.waggle.global.response.ApiStatus;
 import com.waggle.global.response.BaseResponse;
@@ -84,12 +84,12 @@ public class MemberController {
     @PatchMapping("/{memberId}")
     public ResponseEntity<BaseResponse<MemberResponse>> updateMemberPosition(
         @PathVariable Long memberId,
-        @RequestBody UpdatePositionDto updatePositionDto,
+        @RequestBody UpdatePositionRequest updatePositionRequest,
         @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
         Member member = memberService.updateMemberPosition(
             memberId,
-            updatePositionDto,
+            updatePositionRequest,
             userPrincipal.getUser()
         );
 

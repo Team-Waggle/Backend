@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import java.util.UUID;
 
-public record UpsertPostDto(
+public record UpsertPostRequest(
     @Schema(description = "제목", example = "팀 Waggle에서 개발자를 모집합니다.")
     @NotBlank(message = "title must be not blank")
     String title,

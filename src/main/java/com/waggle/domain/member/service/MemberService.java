@@ -1,7 +1,7 @@
 package com.waggle.domain.member.service;
 
 import com.waggle.domain.member.Member;
-import com.waggle.domain.member.dto.UpdatePositionDto;
+import com.waggle.domain.member.dto.UpdatePositionRequest;
 import com.waggle.domain.member.repository.MemberRepository;
 import com.waggle.domain.user.entity.User;
 import jakarta.persistence.EntityNotFoundException;
@@ -26,7 +26,7 @@ public class MemberService {
     @Transactional
     public Member updateMemberPosition(
         Long memberId,
-        UpdatePositionDto updatePositionDto,
+        UpdatePositionRequest updatePositionRequest,
         User user
     ) {
         Member member = memberRepository.findByIdWithRelations(memberId)
@@ -41,7 +41,7 @@ public class MemberService {
 
         // TODO: 해당 직무 공석 여부 확인
 
-        member.updatePosition(updatePositionDto.position());
+        member.updatePosition(updatePositionRequest.position());
 
         return member;
     }

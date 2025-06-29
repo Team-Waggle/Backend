@@ -3,14 +3,14 @@ package com.waggle.domain.projectV2.controller;
 import com.waggle.domain.application.Application;
 import com.waggle.domain.application.ApplicationStatus;
 import com.waggle.domain.application.dto.ApplicationResponse;
-import com.waggle.domain.application.dto.CreateApplicationDto;
+import com.waggle.domain.application.dto.CreateApplicationRequest;
 import com.waggle.domain.application.service.ApplicationService;
 import com.waggle.domain.member.Member;
 import com.waggle.domain.member.dto.MemberResponse;
 import com.waggle.domain.member.service.MemberService;
 import com.waggle.domain.projectV2.ProjectV2;
 import com.waggle.domain.projectV2.dto.ProjectResponse;
-import com.waggle.domain.projectV2.dto.UpsertProjectDto;
+import com.waggle.domain.projectV2.dto.UpsertProjectRequest;
 import com.waggle.domain.projectV2.service.ProjectV2Service;
 import com.waggle.domain.recruitment.Recruitment;
 import com.waggle.domain.recruitment.dto.RecruitmentResponse;
@@ -84,10 +84,11 @@ public class ProjectV2Controller {
     })
     @PostMapping
     public ResponseEntity<BaseResponse<ProjectResponse>> createProject(
-        @Valid @RequestBody UpsertProjectDto upsertProjectDto,
+        @Valid @RequestBody UpsertProjectRequest upsertProjectRequest,
         @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
-        ProjectV2 project = projectService.createProject(upsertProjectDto, userPrincipal.getUser());
+        ProjectV2 project = projectService.createProject(upsertProjectRequest,
+            userPrincipal.getUser());
 
         return SuccessResponse.of(
             ApiStatus._CREATED,
@@ -129,12 +130,12 @@ public class ProjectV2Controller {
     @PostMapping("/{projectId}")
     public ResponseEntity<BaseResponse<ApplicationResponse>> applyProject(
         @PathVariable UUID projectId,
-        @Valid @RequestBody CreateApplicationDto createApplicationDto,
+        @Valid @RequestBody CreateApplicationRequest createApplicationRequest,
         @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
         Application application = applicationService.createApplication(
             projectId,
-            createApplicationDto,
+            createApplicationRequest,
             userPrincipal.getUser()
         );
 
@@ -349,12 +350,12 @@ public class ProjectV2Controller {
     @PatchMapping("/{projectId}")
     public ResponseEntity<BaseResponse<ProjectResponse>> updateProject(
         @PathVariable UUID projectId,
-        @Valid @RequestBody UpsertProjectDto upsertProjectDto,
+        @Valid @RequestBody UpsertProjectRequest upsertProjectRequest,
         @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
         ProjectV2 project = projectService.updateProject(
             projectId,
-            upsertProjectDto,
+            upsertProjectRequest,
             userPrincipal.getUser()
         );
 

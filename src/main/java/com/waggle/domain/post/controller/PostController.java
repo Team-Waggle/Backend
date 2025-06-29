@@ -2,7 +2,7 @@ package com.waggle.domain.post.controller;
 
 import com.waggle.domain.post.Post;
 import com.waggle.domain.post.dto.PostResponse;
-import com.waggle.domain.post.dto.UpsertPostDto;
+import com.waggle.domain.post.dto.UpsertPostRequest;
 import com.waggle.domain.post.service.PostService;
 import com.waggle.global.response.ApiStatus;
 import com.waggle.global.response.BaseResponse;
@@ -81,10 +81,10 @@ public class PostController {
     })
     @PostMapping
     public ResponseEntity<BaseResponse<PostResponse>> createPost(
-        @Valid @RequestBody UpsertPostDto upsertPostDto,
+        @Valid @RequestBody UpsertPostRequest upsertPostRequest,
         @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
-        Post post = postService.createPost(upsertPostDto, userPrincipal.getUser());
+        Post post = postService.createPost(upsertPostRequest, userPrincipal.getUser());
 
         return SuccessResponse.of(
             ApiStatus._CREATED,
@@ -217,10 +217,10 @@ public class PostController {
     @PatchMapping("/{postId}")
     public ResponseEntity<BaseResponse<PostResponse>> updatePost(
         @PathVariable Long postId,
-        @Valid @RequestBody UpsertPostDto upsertPostDto,
+        @Valid @RequestBody UpsertPostRequest upsertPostRequest,
         @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
-        Post post = postService.updatePost(postId, upsertPostDto, userPrincipal.getUser());
+        Post post = postService.updatePost(postId, upsertPostRequest, userPrincipal.getUser());
 
         return SuccessResponse.of(
             ApiStatus._OK,
