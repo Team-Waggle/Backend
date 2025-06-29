@@ -37,7 +37,6 @@ import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -172,12 +171,12 @@ class UserServiceImplTest {
         when(profileImage.isEmpty()).thenReturn(false);
         when(s3Service.uploadFile(any(MultipartFile.class), anyString())).thenReturn("newImageUrl");
 
-        Set<UserPositionDto> positions = Set.of(new UserPositionDto(null, 5));
-        Set<Industry> industries = Set.of(Industry.FINANCE);
-        Set<Skill> skills = Set.of(Skill.JAVA);
-        Set<DayOfWeek> daysOfWeek = Set.of(DayOfWeek.MONDAY);
+        List<UserPositionDto> positions = List.of(new UserPositionDto(null, 5));
+        List<Industry> industries = List.of(Industry.FINANCE);
+        List<Skill> skills = List.of(Skill.JAVA);
+        List<DayOfWeek> daysOfWeek = List.of(DayOfWeek.MONDAY);
         UserIntroductionDto introduction = new UserIntroductionDto(null, null, null, null, null);
-        Set<UserPortfolioDto> portfolios = Set.of(
+        List<UserPortfolioDto> portfolios = List.of(
             new UserPortfolioDto(null, "https://example.com"));
 
         UserInputDto inputDto = new UserInputDto(

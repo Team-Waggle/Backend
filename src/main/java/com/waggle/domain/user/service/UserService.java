@@ -27,7 +27,6 @@ import jakarta.persistence.EntityNotFoundException;
 import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -109,7 +108,7 @@ public class UserService {
         userPortfolioRepository.deleteByUserId(user.getId());
     }
 
-    private void updateUserPositions(UUID userId, Set<UserPositionDto> userPositions) {
+    private void updateUserPositions(UUID userId, List<UserPositionDto> userPositions) {
         if (userPositions == null) {
             return;
         }
@@ -128,7 +127,7 @@ public class UserService {
         userPositionRepository.saveAll(entities);
     }
 
-    private void updateUserIndustries(UUID userId, Set<Industry> industries) {
+    private void updateUserIndustries(UUID userId, List<Industry> industries) {
         if (industries == null) {
             return;
         }
@@ -146,7 +145,7 @@ public class UserService {
         userIndustryRepository.saveAll(entities);
     }
 
-    private void updateUserSkills(UUID userId, Set<Skill> skills) {
+    private void updateUserSkills(UUID userId, List<Skill> skills) {
         if (skills == null) {
             return;
         }
@@ -164,7 +163,7 @@ public class UserService {
         userSkillRepository.saveAll(entities);
     }
 
-    private void updateUserDaysOfWeek(UUID userId, Set<DayOfWeek> dayOfWeeks) {
+    private void updateUserDaysOfWeek(UUID userId, List<DayOfWeek> dayOfWeeks) {
         if (dayOfWeeks == null) {
             return;
         }
@@ -247,7 +246,7 @@ public class UserService {
         userIntroductionRepository.saveAll(entities);
     }
 
-    private void updateUserPortfolios(UUID userId, Set<UserPortfolioDto> portfolios) {
+    private void updateUserPortfolios(UUID userId, List<UserPortfolioDto> portfolios) {
         if (portfolios == null) {
             return;
         }
