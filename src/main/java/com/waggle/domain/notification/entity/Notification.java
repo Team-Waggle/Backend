@@ -11,16 +11,13 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "notifications")
 public class Notification extends BaseEntity {
 
@@ -43,4 +40,12 @@ public class Notification extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @Builder
+    public Notification(String title, String content, String redirectUrl, User user) {
+        this.title = title;
+        this.content = content;
+        this.redirectUrl = redirectUrl;
+        this.user = user;
+    }
 }

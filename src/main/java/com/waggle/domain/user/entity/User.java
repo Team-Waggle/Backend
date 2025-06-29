@@ -12,16 +12,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.util.UUID;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "users")
 public class User extends BaseEntity {
 
@@ -56,6 +53,29 @@ public class User extends BaseEntity {
 
     @Column(name = "detail")
     private String detail;
+
+    @Builder
+    public User(
+        String provider,
+        String providerId,
+        String name,
+        String email,
+        String profileImageUrl,
+        WorkTime workTime,
+        WorkWay workWay,
+        Sido sido,
+        String detail
+    ) {
+        this.provider = provider;
+        this.providerId = providerId;
+        this.name = name;
+        this.email = email;
+        this.profileImageUrl = profileImageUrl;
+        this.workTime = workTime;
+        this.workWay = workWay;
+        this.sido = sido;
+        this.detail = detail;
+    }
 
     public void update(
         String name,
