@@ -1,8 +1,7 @@
 package com.waggle.domain.user.controller;
 
-import com.waggle.domain.user.UserInfo;
 import com.waggle.domain.user.dto.UserInputDto;
-import com.waggle.domain.user.dto.UserResponseDto;
+import com.waggle.domain.user.dto.UserResponse;
 import com.waggle.domain.user.entity.User;
 import com.waggle.domain.user.service.UserService;
 import com.waggle.global.response.ApiStatus;
@@ -63,11 +62,11 @@ public class UserController {
             )
         )
     })
-    public ResponseEntity<BaseResponse<UserResponseDto>> getMe(
+    public ResponseEntity<BaseResponse<UserResponse>> getMe(
         @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
-        UserInfo userInfo = userService.getUserInfoByUser(userPrincipal.getUser());
-        return SuccessResponse.of(ApiStatus._OK, UserResponseDto.from(userInfo));
+        User user = userService.getUserById(userPrincipal.getUser().getId());
+        return SuccessResponse.of(ApiStatus._OK, UserResponse.from(user));
     }
 
     @GetMapping("/{userId}")
@@ -98,10 +97,9 @@ public class UserController {
             )
         )
     })
-    public ResponseEntity<BaseResponse<UserResponseDto>> getUser(@PathVariable UUID userId) {
+    public ResponseEntity<BaseResponse<UserResponse>> getUser(@PathVariable UUID userId) {
         User user = userService.getUserById(userId);
-        UserInfo userInfo = userService.getUserInfoByUser(user);
-        return SuccessResponse.of(ApiStatus._OK, UserResponseDto.from(userInfo));
+        return SuccessResponse.of(ApiStatus._OK, UserResponse.from(user));
     }
 
     @PutMapping(value = "/me", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -126,14 +124,13 @@ public class UserController {
             )
         )
     })
-    public ResponseEntity<BaseResponse<UserResponseDto>> updateMe(
+    public ResponseEntity<BaseResponse<UserResponse>> updateMe(
         @RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
         @Valid @RequestPart(value = "updateUserDto") UserInputDto userInputDto,
         @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
         User user = userService.updateUser(profileImage, userInputDto, userPrincipal.getUser());
-        UserInfo userInfo = userService.getUserInfoByUser(user);
-        return SuccessResponse.of(ApiStatus._OK, UserResponseDto.from(userInfo));
+        return SuccessResponse.of(ApiStatus._OK, UserResponse.from(user));
     }
 
     @DeleteMapping("/me")
