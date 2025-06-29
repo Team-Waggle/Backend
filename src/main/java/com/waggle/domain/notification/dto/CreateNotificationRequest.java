@@ -2,17 +2,17 @@ package com.waggle.domain.notification.dto;
 
 import com.waggle.domain.notification.NotificationType;
 
-public record NotificationRequestDto(
+public record CreateNotificationRequest(
     NotificationType type,
     String redirectUrl,
     Object[] contentArgs
 ) {
 
-    public static NotificationRequestDto of(
+    public static CreateNotificationRequest of(
         NotificationType type,
         String redirectUrl,
         Object... contentArgs
     ) {
-        return new NotificationRequestDto(type, redirectUrl, contentArgs);
+        return new CreateNotificationRequest(type, redirectUrl, contentArgs);
     }
 }

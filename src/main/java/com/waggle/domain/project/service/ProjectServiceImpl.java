@@ -2,7 +2,7 @@ package com.waggle.domain.project.service;
 
 import com.waggle.domain.application.ApplicationStatus;
 import com.waggle.domain.notification.NotificationType;
-import com.waggle.domain.notification.dto.NotificationRequestDto;
+import com.waggle.domain.notification.dto.CreateNotificationRequest;
 import com.waggle.domain.notification.service.NotificationService;
 import com.waggle.domain.project.ProjectInfo;
 import com.waggle.domain.project.dto.ProjectApplicationDto;
@@ -229,7 +229,7 @@ public class ProjectServiceImpl implements ProjectService {
         projectMemberRepository.save(member);
 
         notificationService.createNotification(
-            NotificationRequestDto.of(
+            CreateNotificationRequest.of(
                 NotificationType.APPLICATION_ACCEPTED,
                 "/projects/" + projectId,
                 project.getTitle()
@@ -258,7 +258,7 @@ public class ProjectServiceImpl implements ProjectService {
         projectApplicant.updateStatus(ApplicationStatus.REJECTED);
 
         notificationService.createNotification(
-            NotificationRequestDto.of(
+            CreateNotificationRequest.of(
                 NotificationType.APPLICATION_REJECTED,
                 "/projects/",
                 project.getTitle()
@@ -404,7 +404,7 @@ public class ProjectServiceImpl implements ProjectService {
         projectApplicantRepository.save(applicant);
 
         notificationService.createNotification(
-            NotificationRequestDto.of(
+            CreateNotificationRequest.of(
                 NotificationType.APPLICATION_RECEIVED,
                 "/projects/" + project.getId() + "/applications",
                 user.getName(),
