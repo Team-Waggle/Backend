@@ -31,4 +31,13 @@ public interface ProjectV2Repository extends JpaRepository<ProjectV2, UUID> {
         ORDER BY p.createdAt DESC, p.sequenceId DESC
         """)
     List<ProjectV2> findAllWithRelations();
+
+    @Query("""
+        SELECT p
+        FROM ProjectV2 p
+        JOIN FETCH p.leader
+        WHERE p.id IN :ids AND p.deletedAt IS NULL
+        ORDER BY p.createdAt DESC, p.sequenceId DESC
+        """)
+    List<ProjectV2> findAllByIdInWithRelations(@Param("ids") List<UUID> ids);
 }
