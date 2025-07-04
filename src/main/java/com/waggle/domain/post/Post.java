@@ -72,5 +72,4 @@ public class Post extends BaseEntity implements Bookmarkable {
     public BookmarkType getBookmarkableType() {
         return POST;
     }
-
 }
