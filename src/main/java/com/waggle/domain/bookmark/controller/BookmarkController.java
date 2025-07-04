@@ -2,7 +2,9 @@ package com.waggle.domain.bookmark.controller;
 
 import com.waggle.domain.bookmark.dto.ToggleBookmarkRequest;
 import com.waggle.domain.bookmark.service.BookmarkService;
+import com.waggle.global.response.ApiStatus;
 import com.waggle.global.response.BaseResponse;
+import com.waggle.global.response.SuccessResponse;
 import com.waggle.global.security.oauth2.UserPrincipal;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,10 +23,13 @@ public class BookmarkController {
     private final BookmarkService bookmarkService;
 
     @PostMapping
-    public ResponseEntity<BaseResponse<Void>> toggleBookmark(
-        @Valid @RequestBody ToggleBookmarkRequest request,
+    public ResponseEntity<BaseResponse<Boolean>> toggleBookmark(
+        @Valid @RequestBody ToggleBookmarkRequest toggleBookmarkRequest,
         @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
-        return null;
+        return SuccessResponse.of(
+            ApiStatus._OK,
+            bookmarkService.toggleBookmark(toggleBookmarkRequest, userPrincipal.getUser())
+        );
     }
 }
