@@ -22,12 +22,6 @@ import org.springframework.context.annotation.Profile;
 @Configuration
 public class SwaggerConfig {
 
-    @Value("${NAVER_REDIRECT_URI}")
-    private String naverRedirectUri;
-
-    @Value("${NAVER_TOKEN_URI}")
-    private String naverTokenUri;
-
     @Value("${LOCAL_FULL_URL}")
     private String localServerUrl;
 
@@ -45,8 +39,6 @@ public class SwaggerConfig {
             .type(SecurityScheme.Type.OAUTH2)
             .flows(new OAuthFlows()
                 .authorizationCode(new OAuthFlow()
-                    .authorizationUrl(serverUrl + naverTokenUri)
-                    .tokenUrl(serverUrl + naverRedirectUri)
                     .scopes(new Scopes()
                         .addString("name", "이름 정보")
                         .addString("email", "이메일 정보")

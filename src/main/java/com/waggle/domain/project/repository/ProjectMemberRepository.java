@@ -8,15 +8,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProjectMemberRepository extends JpaRepository<ProjectMember, UUID> {
 
-    Optional<ProjectMember> findByProjectIdAndIsLeaderTrue(UUID projectId);
+    Optional<ProjectMember> findByProjectIdAndIsLeaderTrue(Long projectId);
 
-    Optional<ProjectMember> findByProjectIdAndUserId(UUID projectId, UUID userId);
+    Optional<ProjectMember> findByProjectIdAndUserId(Long projectId, UUID userId);
 
-    List<ProjectMember> findByUserId(UUID userId);
+    List<ProjectMember> findByUserIdOrderByProject_CreatedAtDesc(UUID userId);
 
-    List<ProjectMember> findByProjectId(UUID projectId);
+    List<ProjectMember> findByProjectIdOrderByJoinedAtDesc(Long projectId);
 
-    void deleteByProjectId(UUID projectId);
+    void deleteByProjectId(Long projectId);
 
-    boolean existsByProjectIdAndUserId(UUID projectId, UUID userId);
+    boolean existsByProjectIdAndUserId(Long projectId, UUID userId);
 }

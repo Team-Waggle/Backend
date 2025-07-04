@@ -1,5 +1,7 @@
 package com.waggle.domain.project.controller;
 
+import static org.springframework.data.domain.Sort.Direction.DESC;
+
 import com.waggle.domain.project.ProjectInfo;
 import com.waggle.domain.project.dto.ProjectInputDto;
 import com.waggle.domain.project.dto.ProjectResponseDto;
@@ -10,7 +12,7 @@ import com.waggle.global.response.BaseResponse;
 import com.waggle.global.response.ErrorResponse;
 import com.waggle.global.response.SuccessResponse;
 import com.waggle.global.response.swagger.ProjectSuccessResponse;
-import com.waggle.global.secure.oauth2.CustomUserDetails;
+import com.waggle.global.security.oauth2.UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -19,8 +21,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -41,6 +45,38 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProjectPostController {
 
     private final ProjectService projectService;
+
+    @GetMapping
+    @Operation(
+        summary = "프로젝트 모집글 목록 조회",
+        description = "프로젝트 모집글 목록을 페이지네이션으로 조회한다."
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "프로젝트 모집글 목록 조회 성공",
+            content = @Content(
+                schema = @Schema(implementation = ProjectSuccessResponse.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "잘못된 요청입니다.",
+            content = @Content(
+                schema = @Schema(implementation = ErrorResponse.class)
+            )
+        )
+    })
+    public ResponseEntity<BaseResponse<Page<ProjectResponseDto>>> fetchProjects(
+        @PageableDefault(size = 10, sort = "createdAt", direction = DESC) Pageable pageable
+    ) {
+        return SuccessResponse.of(
+            ApiStatus._OK,
+            projectService.getProjects(pageable).map(project ->
+                ProjectResponseDto.from(projectService.getProjectInfoByProject(project))
+            )
+        );
+    }
 
     @GetMapping("/{projectId}")
     @Operation(
@@ -65,7 +101,7 @@ public class ProjectPostController {
         )
     })
     public ResponseEntity<BaseResponse<ProjectResponseDto>> fetchProject(
-        @PathVariable UUID projectId
+        @PathVariable Long projectId
     ) {
         Project project = projectService.getProjectById(projectId);
         ProjectInfo projectInfo = projectService.getProjectInfoByProject(project);
@@ -97,9 +133,9 @@ public class ProjectPostController {
     })
     public ResponseEntity<BaseResponse<ProjectResponseDto>> createProject(
         @Valid @RequestBody ProjectInputDto projectInputDto,
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
-        Project project = projectService.createProject(projectInputDto, userDetails.getUser());
+        Project project = projectService.createProject(projectInputDto, userPrincipal.getUser());
         ProjectInfo projectInfo = projectService.getProjectInfoByProject(project);
         return SuccessResponse.of(ApiStatus._CREATED, ProjectResponseDto.from(projectInfo));
     }
@@ -141,14 +177,14 @@ public class ProjectPostController {
         )
     })
     public ResponseEntity<BaseResponse<ProjectResponseDto>> updateProject(
-        @PathVariable UUID projectId,
+        @PathVariable Long projectId,
         @Valid @RequestBody ProjectInputDto projectInputDto,
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
         Project project = projectService.updateProject(
             projectId,
             projectInputDto,
-            userDetails.getUser()
+            userPrincipal.getUser()
         );
         ProjectInfo projectInfo = projectService.getProjectInfoByProject(project);
         return SuccessResponse.of(ApiStatus._OK, ProjectResponseDto.from(projectInfo));
@@ -189,10 +225,10 @@ public class ProjectPostController {
         )
     })
     public ResponseEntity<BaseResponse<Object>> deleteProject(
-        @PathVariable UUID projectId,
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @PathVariable Long projectId,
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
-        projectService.deleteProject(projectId, userDetails.getUser());
+        projectService.deleteProject(projectId, userPrincipal.getUser());
         return SuccessResponse.of(ApiStatus._NO_CONTENT, null);
     }
 }
