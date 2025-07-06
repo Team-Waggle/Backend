@@ -99,20 +99,20 @@ public class SecurityConfig {
             )
             .addFilterAfter(jwtAuthenticationFilter, OAuth2LoginAuthenticationFilter.class)
             .oauth2Login(oauth -> oauth
-                .authorizationEndpoint(authorization ->
-                    authorization.baseUri("/oauth2/authorization"))
-                .redirectionEndpoint(redirection ->
-                    redirection.baseUri("/oauth2/callback/*"))
+//                .authorizationEndpoint(authorization ->
+//                    authorization.baseUri("/oauth2/authorization"))
+//                .redirectionEndpoint(redirection ->
+//                    redirection.baseUri("/oauth2/callback/*"))
 
-                // 사용자 정보 처리
-                .userInfoEndpoint(userInfo ->
-                    userInfo.userService(customOAuth2UserService))
+                    // 사용자 정보 처리
+                    .userInfoEndpoint(userInfo ->
+                        userInfo.userService(customOAuth2UserService))
 
-                // 성공/실패 핸들러
-                .successHandler(oAuth2LoginSuccessHandler)
-                .failureHandler(oAuth2LoginFailureHandler)
+                    // 성공/실패 핸들러
+                    .successHandler(oAuth2LoginSuccessHandler)
+                    .failureHandler(oAuth2LoginFailureHandler)
 
-                .permitAll()
+                    .permitAll()
             )
             .exceptionHandling(exceptions -> exceptions
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint())
