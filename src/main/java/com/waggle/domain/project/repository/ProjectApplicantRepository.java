@@ -1,7 +1,7 @@
 package com.waggle.domain.project.repository;
 
+import com.waggle.domain.application.ApplicationStatus;
 import com.waggle.domain.project.entity.ProjectApplicant;
-import com.waggle.domain.reference.enums.ApplicationStatus;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -9,16 +9,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProjectApplicantRepository extends JpaRepository<ProjectApplicant, UUID> {
 
-    Optional<ProjectApplicant> findByProjectIdAndUserId(UUID projectId, UUID userId);
+    Optional<ProjectApplicant> findByProjectIdAndUserId(Long projectId, UUID userId);
 
-    List<ProjectApplicant> findByProjectId(UUID projectId);
+    List<ProjectApplicant> findByProjectIdOrderByAppliedAtDesc(Long projectId);
 
-    List<ProjectApplicant> findByUserId(UUID userId);
+    List<ProjectApplicant> findByUserIdOrderByAppliedAtDesc(UUID userId);
 
-    void deleteByProjectId(UUID projectId);
+    void deleteByProjectId(Long projectId);
 
     boolean existsByProjectIdAndUserIdAndStatusNot(
-        UUID projectId,
+        Long projectId,
         UUID userId,
         ApplicationStatus status
     );
