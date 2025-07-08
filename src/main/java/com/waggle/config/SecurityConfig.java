@@ -4,6 +4,7 @@ import com.waggle.global.secure.filter.JwtAuthenticationFilter;
 import com.waggle.global.secure.oauth2.handler.OAuth2LoginFailureHandler;
 import com.waggle.global.secure.oauth2.handler.OAuth2LoginSuccessHandler;
 import com.waggle.global.secure.oauth2.service.CustomOAuth2UserService;
+import java.util.Arrays;
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -31,8 +32,13 @@ public class SecurityConfig {
         return request -> {
             CorsConfiguration config = new CorsConfiguration();
             config.setAllowedHeaders(Collections.singletonList("*"));
-            config.setAllowedMethods(Collections.singletonList("*"));
-            config.setAllowedOriginPatterns(Collections.singletonList("*")); // 허용할 origin
+            config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+
+            config.setAllowedOrigins(Arrays.asList(
+                "http://localhost:5173",
+                "http://localhost:3000",
+                "https://waggle.o-r.kr"
+            ));
             config.setAllowCredentials(true);
             return config;
         };
