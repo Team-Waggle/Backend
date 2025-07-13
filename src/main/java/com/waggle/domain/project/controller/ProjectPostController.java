@@ -68,13 +68,13 @@ public class ProjectPostController {
         )
     })
     public ResponseEntity<BaseResponse<Page<ProjectResponseDto>>> fetchProjects(
-        @PageableDefault(size = 10, sort = "createdAt", direction = DESC) Pageable pageable
+        @PageableDefault(size = 15, sort = "createdAt", direction = DESC) Pageable pageable
     ) {
         return SuccessResponse.of(
             ApiStatus._OK,
-            projectService.getProjects(pageable).map(project ->
-                ProjectResponseDto.from(projectService.getProjectInfoByProject(project))
-            )
+            projectService.getProjects(pageable)
+                .map(projectService::getProjectInfoByProject)
+                .map(ProjectResponseDto::from)
         );
     }
 
