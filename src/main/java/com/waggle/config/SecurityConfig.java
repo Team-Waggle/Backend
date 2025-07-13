@@ -7,7 +7,6 @@ import com.waggle.global.security.filter.JwtAuthenticationFilter;
 import com.waggle.global.security.oauth2.handler.OAuth2LoginFailureHandler;
 import com.waggle.global.security.oauth2.handler.OAuth2LoginSuccessHandler;
 import com.waggle.global.security.oauth2.service.CustomOAuth2UserService;
-import java.util.Arrays;
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,13 +40,8 @@ public class SecurityConfig {
         return request -> {
             CorsConfiguration config = new CorsConfiguration();
             config.setAllowedHeaders(Collections.singletonList("*"));
-            config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-
-            config.setAllowedOrigins(Arrays.asList(
-                "http://localhost:5173",
-                "http://localhost:3000",
-                "https://waggle.o-r.kr"
-            ));
+            config.setAllowedMethods(Collections.singletonList("*"));
+            config.setAllowedOriginPatterns(Collections.singletonList("*")); // 원래대로
             config.setAllowCredentials(true);
             return config;
         };
