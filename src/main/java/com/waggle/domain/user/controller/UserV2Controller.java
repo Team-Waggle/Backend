@@ -10,6 +10,8 @@ import com.waggle.domain.bookmark.service.BookmarkService;
 import com.waggle.domain.projectV2.ProjectV2;
 import com.waggle.domain.projectV2.dto.ProjectResponse;
 import com.waggle.domain.projectV2.service.ProjectV2Service;
+import com.waggle.domain.user.dto.UserResponse;
+import com.waggle.domain.user.entity.User;
 import com.waggle.domain.user.service.UserService;
 import com.waggle.global.response.ApiStatus;
 import com.waggle.global.response.BaseResponse;
@@ -18,6 +20,7 @@ import com.waggle.global.response.SuccessResponse;
 import com.waggle.global.response.swagger.ApplicationsSuccessResponse;
 import com.waggle.global.response.swagger.BookmarksSuccessResponse;
 import com.waggle.global.response.swagger.ProjectV2sSuccessResponse;
+import com.waggle.global.response.swagger.UserSuccessResponse;
 import com.waggle.global.security.oauth2.UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -42,6 +45,40 @@ public class UserV2Controller {
     private final BookmarkService bookmarkService;
     private final ProjectV2Service projectService;
     private final UserService userService;
+
+    @Operation(
+        summary = "내 정보 조회",
+        description = "인증된 사용자의 정보를 조회합니다."
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "내 정보 조회 성공",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = UserSuccessResponse.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "인증되지 않은 사용자",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ErrorResponse.class)
+            )
+        )
+    })
+    @GetMapping
+    public ResponseEntity<BaseResponse<UserResponse>> getMe(
+        @AuthenticationPrincipal UserPrincipal userPrincipal
+    ) {
+        User user = userService.getUserById(userPrincipal.getUser().getId());
+
+        return SuccessResponse.of(
+            ApiStatus._OK,
+            UserResponse.from(user)
+        );
+    }
 
     @Operation(
         summary = "내 지원 목록 조회",
