@@ -184,7 +184,7 @@ public class JwtUtil {
         cookie.setSecure(true); // HTTPS에서만 전송 (개발시에는 false)
         cookie.setPath("/"); // 모든 경로에서 사용
         cookie.setMaxAge((int) (expirationMillis / 1000)); // 초 단위로 변환
-        cookie.setAttribute("SameSite", "Lax"); // CSRF 방지 (스프링 부트 2.6+)
+        cookie.setAttribute("SameSite", "None");
 
         response.addCookie(cookie);
         log.info(
