@@ -51,7 +51,9 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         jwtUtil.addAccessTokenCookie(response, accessToken);
         jwtUtil.addRefreshTokenCookie(response, refreshToken);
 
-        String redirectUri = frontendUrl + "/auth/callback?success=true";
+//        String redirectUri = frontendUrl + "/auth/callback?success=true";
+        String redirectUri = frontendUrl + "/auth/callback?success=true&access_token=" + accessToken
+            + "&refresh_token=" + refreshToken;
         response.sendRedirect(redirectUri);
     }
 }
