@@ -12,7 +12,7 @@ import jakarta.validation.constraints.PositiveOrZero;
 public record ProjectRecruitmentDto(
     @NotNull(message = "직무는 필수 입력 항목입니다")
     @Schema(description = "직무", example = "JAVA")
-    @JsonProperty("job_role")
+    @JsonProperty("position")
     Position position,
 
     @Min(value = 0, message = "모집 인원 수는 0 이상이어야 합니다")

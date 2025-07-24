@@ -24,7 +24,7 @@ public record UserInputDto(
     String name,
 
     @Valid
-    @JsonProperty("job_roles")
+    @JsonProperty("positions")
     @Schema(description = "직무 및 경력 목록")
     List<UserPositionDto> positions,
 

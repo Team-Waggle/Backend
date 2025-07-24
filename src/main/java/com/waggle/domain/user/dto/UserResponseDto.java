@@ -44,7 +44,7 @@ public record UserResponseDto(
     String email,
 
     @Schema(description = "사용자 직무 정보")
-    @JsonProperty("job_roles")
+    @JsonProperty("positions")
     List<UserPositionDto> userPositionDtos,
 
     @Schema(description = "사용자 관심 산업 정보")

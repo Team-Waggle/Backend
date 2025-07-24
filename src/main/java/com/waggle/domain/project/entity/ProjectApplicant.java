@@ -46,7 +46,7 @@ public class ProjectApplicant {
     private User user;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "job_role", nullable = false)
+    @Column(name = "position", nullable = false)
     private Position position;
 
     @Enumerated(EnumType.STRING)

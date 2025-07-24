@@ -30,7 +30,7 @@ public class ProjectRecruitment {
     @JoinColumn(name = "project_id", nullable = false)
     private Project project;
 
-    @Column(name = "job_role", nullable = false)
+    @Column(name = "position", nullable = false)
     private Position position;
 
     @Column(name = "remaining_count", nullable = false)

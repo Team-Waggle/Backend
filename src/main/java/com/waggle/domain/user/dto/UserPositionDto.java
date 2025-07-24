@@ -9,7 +9,7 @@ import jakarta.validation.constraints.NotNull;
 
 public record UserPositionDto(
     @NotNull(message = "직무는 필수 항목입니다")
-    @JsonProperty("job_role")
+    @JsonProperty("position")
     @Schema(description = "직무", example = "BACKEND")
     Position position,
 

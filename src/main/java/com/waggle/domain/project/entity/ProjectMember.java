@@ -45,7 +45,7 @@ public class ProjectMember {
     private User user;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "job_role", nullable = false)
+    @Column(name = "position", nullable = false)
     private Position position;
 
     @Column(name = "is_leader", nullable = false, columnDefinition = "boolean default false")

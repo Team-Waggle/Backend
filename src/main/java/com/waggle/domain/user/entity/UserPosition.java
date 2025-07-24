@@ -34,7 +34,7 @@ public class UserPosition {
     private User user;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "job_role", nullable = false)
+    @Column(name = "position", nullable = false)
     private Position position;
 
     @Column(name = "year_count", nullable = false)

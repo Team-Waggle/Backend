@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotNull;
 public record ProjectApplicationDto(
     @NotNull(message = "지원 직무는 필수 입력 항목입니다")
     @Schema(description = "지원 직무", example = "BACKEND")
-    @JsonProperty("job_role")
+    @JsonProperty("position")
     Position position
 ) {
 
