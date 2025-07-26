@@ -54,8 +54,8 @@ public record ProjectResponseDto(
     String detail,
 
     @Schema(description = "연락 링크", example = "https://open.kakao.com/o/si3gRPMa")
-    @JsonProperty("connect_url")
-    String connectUrl,
+    @JsonProperty("contact_url")
+    String contactUrl,
 
     @Schema(description = "참조 링크", example = "www.naver.com")
     @JsonProperty("reference_url")
