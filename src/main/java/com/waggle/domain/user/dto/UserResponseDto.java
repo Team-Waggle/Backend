@@ -49,27 +49,45 @@ public record UserResponseDto(
     @JsonProperty("job_roles")
     Set<UserJobRoleDto> userJobRoleDtos,
 
-    @Schema(description = "사용자 관심 산업 정보")
+    @Schema(
+        description = "사용자 관심 산업 정보",
+        example = "[{\"display_name\": \"금융\"}, {\"display_name\": \"부동산\"}]"
+    )
     @JsonProperty("industries")
     Set<Industry> industries,
 
-    @Schema(description = "사용자 보유 기술 정보")
+    @Schema(
+        description = "사용 스킬 목록",
+        example = "[{\"display_name\": \"Java\", \"image_url\": \"https://logo.clearbit.com/Java.com\"}, {\"display_name\": \"Spring\", \"image_url\": \"https://logo.clearbit.com/Spring.io\"}]"
+    )
     @JsonProperty("skills")
     Set<Skill> skills,
 
-    @Schema(description = "사용자 선호 요일 정보")
+    @Schema(
+        description = "사용자 선호 요일 정보",
+        example = "[\"MONDAY\", \"TUESDAY\", \"FRIDAY\"]"
+    )
     @JsonProperty("days_of_week")
     Set<DayOfWeek> daysOfWeek,
 
-    @Schema(description = "사용자 선호 작업 시간 정보")
+    @Schema(
+        description = "사용자 선호 작업 시간 정보",
+        example = "{\"display_name\": \"오전\"}"
+    )
     @JsonProperty("preferred_work_time")
     WorkTime workTime,
 
-    @Schema(description = "사용자 선호 작업 방식 정보")
+    @Schema(
+        description = "사용자 선호 작업 방식 정보",
+        example = "{\"display_name\": \"온라인\"}"
+    )
     @JsonProperty("preferred_work_way")
     WorkWay workWay,
 
-    @Schema(description = "사용자 지역 정보")
+    @Schema(
+        description = "사용자 지역 정보",
+        example = "{\"display_name\": \"서울특별시\"}"
+    )
     @JsonProperty("preferred_sido")
     Sido sido,
 

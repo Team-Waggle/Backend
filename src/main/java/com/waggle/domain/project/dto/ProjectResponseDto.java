@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.waggle.domain.project.ProjectInfo;
 import com.waggle.domain.project.entity.ProjectSkill;
 import com.waggle.domain.reference.enums.Industry;
+import com.waggle.domain.reference.enums.Skill;
 import com.waggle.domain.reference.enums.WorkPeriod;
 import com.waggle.domain.reference.enums.WorkWay;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -25,11 +26,11 @@ public record ProjectResponseDto(
     @JsonProperty("title")
     String title,
 
-    @Schema(description = "산업 분야")
+    @Schema(description = "산업 분야", example = "{\"display_name\": \"금융\"}")
     @JsonProperty("industry")
     Industry industry,
 
-    @Schema(description = "진행 방식")
+    @Schema(description = "진행 방식", example = "{\"display_name\": \"온라인\"}")
     @JsonProperty("ways_of_working")
     WorkWay workWay,
 
@@ -37,7 +38,7 @@ public record ProjectResponseDto(
     @JsonProperty("recruitment_end_date")
     LocalDate recruitmentEndDate,
 
-    @Schema(description = "진행 기간")
+    @Schema(description = "진행 기간", example = "{\"display_name\": \"3개월\"}")
     @JsonProperty("work_period")
     WorkPeriod workPeriod,
 
@@ -45,9 +46,12 @@ public record ProjectResponseDto(
     @JsonProperty("recruitments")
     Set<ProjectRecruitmentDto> projectRecruitmentDtos,
 
-    @Schema(description = "사용 스킬 목록")
+    @Schema(
+        description = "사용 스킬 목록",
+        example = "[{\"display_name\": \"Java\", \"image_url\": \"https://logo.clearbit.com/Java.com\"}, {\"display_name\": \"Spring\", \"image_url\": \"https://logo.clearbit.com/Spring.io\"}]"
+    )
     @JsonProperty("skills")
-    Set<ProjectSkill> projectSkills,
+    Set<Skill> skills,
 
     @Schema(description = "소개")
     @JsonProperty("detail")
@@ -87,7 +91,8 @@ public record ProjectResponseDto(
                 .sorted(Comparator.comparing(prj -> prj.jobRole().name()))
                 .collect(Collectors.toCollection(LinkedHashSet::new)),
             projectInfo.projectSkills().stream()
-                .sorted(Comparator.comparing(prj -> prj.getSkill().name()))
+                .map(ProjectSkill::getSkill)
+                .sorted(Comparator.comparing(Enum::name))
                 .collect(Collectors.toCollection(LinkedHashSet::new)),
             projectInfo.project().getDetail(),
             projectInfo.project().getContactUrl(),
