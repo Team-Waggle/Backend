@@ -11,7 +11,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.time.DayOfWeek;
-import java.util.Set;
+import java.util.List;
 import lombok.Builder;
 
 @Builder
@@ -24,22 +24,22 @@ public record UserInputDto(
     String name,
 
     @Valid
-    @JsonProperty("job_roles")
+    @JsonProperty("positions")
     @Schema(description = "직무 및 경력 목록")
-    Set<UserJobRoleDto> jobRoles,
+    List<UserPositionDto> positions,
 
     @Size(max = 5, message = "관심 산업 분야는 최대 5개까지 선택 가능합니다")
     @JsonProperty("industries")
     @Schema(description = "관심 산업 분야 목록", example = "[\"FINANCE\", \"MEDICAL_HEALTHCARE\", \"ECOMMERCE\"]")
-    Set<Industry> industries,
+    List<Industry> industries,
 
     @JsonProperty("skills")
     @Schema(description = "보유 기술 목록", example = "[\"JAVA\", \"TYPESCRIPT\", \"NEXT_JS\"]")
-    Set<Skill> skills,
+    List<Skill> skills,
 
     @JsonProperty("preferred_days_of_week")
     @Schema(description = "선호 요일 목록", example = "[\"MONDAY\", \"TUESDAY\", \"WEDNESDAY\"]")
-    Set<DayOfWeek> daysOfWeek,
+    List<DayOfWeek> daysOfWeek,
 
     @JsonProperty("preferred_work_time")
     @Schema(description = "선호 시간대", example = "EVENING")
@@ -66,7 +66,7 @@ public record UserInputDto(
     @Valid
     @JsonProperty("portfolio_urls")
     @Schema(description = "포트폴리오 목록")
-    Set<UserPortfolioDto> portfolios
+    List<UserPortfolioDto> portfolios
 ) {
 
 }

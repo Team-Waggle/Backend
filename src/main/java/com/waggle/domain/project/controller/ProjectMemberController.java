@@ -10,7 +10,7 @@ import com.waggle.global.response.ErrorResponse;
 import com.waggle.global.response.SuccessResponse;
 import com.waggle.global.response.swagger.ProjectSuccessResponse;
 import com.waggle.global.response.swagger.ProjectsSuccessResponse;
-import com.waggle.global.secure.oauth2.CustomUserDetails;
+import com.waggle.global.security.oauth2.UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -18,10 +18,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -62,8 +60,8 @@ public class ProjectMemberController {
             )
         )
     })
-    public ResponseEntity<BaseResponse<Set<UserResponseDto>>> fetchUsers(
-        @PathVariable UUID projectId
+    public ResponseEntity<BaseResponse<List<UserResponseDto>>> fetchUsers(
+        @PathVariable Long projectId
     ) {
         // TODO: 정렬 기준 재고
         return SuccessResponse.of(
@@ -73,12 +71,12 @@ public class ProjectMemberController {
                 .map(UserResponseDto::from)
 //                .sorted(Comparator
 //                    .comparing((UserResponseDto dto) -> {
-//                        // JobRole 이름으로 먼저 정렬 (첫 번째 JobRole 기준 - 없으면 빈 문자열)
-//                        Set<UserJobRoleDto> jobRoles = dto.userJobRoleDtos();
-//                        return jobRoles != null && !jobRoles.isEmpty() ? jobRoles.get(0) : "";
+//                        // Position 이름으로 먼저 정렬 (첫 번째 Position 기준 - 없으면 빈 문자열)
+//                        Set<UserPositionDto> positions = dto.userPositionDtos();
+//                        return positions != null && !positions.isEmpty() ? positions.get(0) : "";
 //                    })
 //                    .thenComparing(UserResponseDto::name))
-                .collect(Collectors.toCollection(LinkedHashSet::new))
+                .toList()
         );
     }
 
@@ -118,17 +116,17 @@ public class ProjectMemberController {
             )
         )
     })
-    public ResponseEntity<BaseResponse<Set<UserResponseDto>>> removeMember(
-        @PathVariable UUID projectId,
+    public ResponseEntity<BaseResponse<List<UserResponseDto>>> removeMember(
+        @PathVariable Long projectId,
         @PathVariable UUID userId,
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
         return SuccessResponse.of(
             ApiStatus._OK,
-            projectService.removeMemberUser(projectId, userId, userDetails.getUser()).stream()
+            projectService.removeMemberUser(projectId, userId, userPrincipal.getUser()).stream()
                 .map(userService::getUserInfoByUser)
                 .map(UserResponseDto::from)
-                .collect(Collectors.toCollection(LinkedHashSet::new))
+                .toList()
         );
     }
 
@@ -168,12 +166,12 @@ public class ProjectMemberController {
             )
         )
     })
-    public ResponseEntity<BaseResponse<Set<UserResponseDto>>> delegateLeader(
-        @PathVariable UUID projectId,
+    public ResponseEntity<BaseResponse<List<UserResponseDto>>> delegateLeader(
+        @PathVariable Long projectId,
         @PathVariable UUID userId,
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
-        projectService.delegateLeader(projectId, userId, userDetails.getUser());
+        projectService.delegateLeader(projectId, userId, userPrincipal.getUser());
         return SuccessResponse.of(ApiStatus._OK, null);
     }
 
@@ -207,10 +205,10 @@ public class ProjectMemberController {
         )
     })
     public ResponseEntity<BaseResponse<Object>> quitMyProject(
-        @PathVariable UUID projectId,
-        @AuthenticationPrincipal CustomUserDetails userDetails
+        @PathVariable Long projectId,
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
-        projectService.withdrawFromProject(projectId, userDetails.getUser());
+        projectService.withdrawFromProject(projectId, userPrincipal.getUser());
         return SuccessResponse.of(ApiStatus._NO_CONTENT, null);
     }
 
@@ -236,15 +234,15 @@ public class ProjectMemberController {
             )
         )
     })
-    public ResponseEntity<BaseResponse<Set<ProjectResponseDto>>> fetchMyProjects(
-        @AuthenticationPrincipal CustomUserDetails userDetails
+    public ResponseEntity<BaseResponse<List<ProjectResponseDto>>> fetchMyProjects(
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
         return SuccessResponse.of(
             ApiStatus._OK,
-            projectService.getCurrentUserProjects(userDetails.getUser()).stream()
+            projectService.getCurrentUserProjects(userPrincipal.getUser()).stream()
                 .map(projectService::getProjectInfoByProject)
                 .map(ProjectResponseDto::from)
-                .collect(Collectors.toCollection(LinkedHashSet::new))
+                .toList()
         );
     }
 
@@ -276,7 +274,7 @@ public class ProjectMemberController {
             )
         )
     })
-    public ResponseEntity<BaseResponse<Set<ProjectResponseDto>>> fetchUserProjects(
+    public ResponseEntity<BaseResponse<List<ProjectResponseDto>>> fetchUserProjects(
         @PathVariable UUID userId
     ) {
 
@@ -285,7 +283,7 @@ public class ProjectMemberController {
             projectService.getUserProjects(userId).stream()
                 .map(projectService::getProjectInfoByProject)
                 .map(ProjectResponseDto::from)
-                .collect(Collectors.toCollection(LinkedHashSet::new))
+                .toList()
         );
     }
 }

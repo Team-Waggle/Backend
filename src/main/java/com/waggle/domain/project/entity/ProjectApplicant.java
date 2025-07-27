@@ -1,7 +1,7 @@
 package com.waggle.domain.project.entity;
 
-import com.waggle.domain.reference.enums.ApplicationStatus;
-import com.waggle.domain.reference.enums.JobRole;
+import com.waggle.domain.application.ApplicationStatus;
+import com.waggle.domain.reference.enums.Position;
 import com.waggle.domain.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -46,8 +46,8 @@ public class ProjectApplicant {
     private User user;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "job_role", nullable = false)
-    private JobRole jobRole;
+    @Column(name = "position", nullable = false)
+    private Position position;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "application_status", nullable = false)

@@ -1,7 +1,7 @@
 package com.waggle.domain.project.service;
 
 import com.waggle.domain.notification.NotificationType;
-import com.waggle.domain.notification.dto.NotificationRequestDto;
+import com.waggle.domain.notification.dto.CreateNotificationRequest;
 import com.waggle.domain.notification.service.NotificationService;
 import com.waggle.domain.project.entity.Project;
 import com.waggle.domain.project.entity.ProjectBookmark;
@@ -77,13 +77,13 @@ public class ProjectDeadlineSchedulerImpl implements ProjectDeadlineScheduler {
                 Arrays.stream(args)
             ).toArray();
 
-            NotificationRequestDto notificationRequestDto = NotificationRequestDto.of(
+            CreateNotificationRequest createNotificationRequest = CreateNotificationRequest.of(
                 type,
                 redirectUrl,
                 contentArgs
             );
 
-            notificationService.createNotification(notificationRequestDto, user);
+            notificationService.createNotification(createNotificationRequest, user);
         }
     }
 }

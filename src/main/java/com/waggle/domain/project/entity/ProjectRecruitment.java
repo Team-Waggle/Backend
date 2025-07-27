@@ -1,6 +1,6 @@
 package com.waggle.domain.project.entity;
 
-import com.waggle.domain.reference.enums.JobRole;
+import com.waggle.domain.reference.enums.Position;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,8 +30,8 @@ public class ProjectRecruitment {
     @JoinColumn(name = "project_id", nullable = false)
     private Project project;
 
-    @Column(name = "job_role", nullable = false)
-    private JobRole jobRole;
+    @Column(name = "position", nullable = false)
+    private Position position;
 
     @Column(name = "remaining_count", nullable = false)
     private int remainingCount;
@@ -45,7 +45,7 @@ public class ProjectRecruitment {
 
     public void addMember() {
         if (remainingCount <= 0) {
-            throw new IllegalStateException("No remaining positions for job role: " + jobRole);
+            throw new IllegalStateException("No remaining positions for job role: " + position);
         }
         remainingCount--;
         currentCount++;
@@ -53,7 +53,7 @@ public class ProjectRecruitment {
 
     public void removeMember() {
         if (currentCount <= 0) {
-            throw new IllegalStateException("No current positions for job role: " + jobRole);
+            throw new IllegalStateException("No current positions for job role: " + position);
         }
         remainingCount++;
         currentCount--;

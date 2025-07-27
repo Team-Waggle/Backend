@@ -11,16 +11,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @Schema(description = "프로젝트 응답 dto")
 public record ProjectResponseDto(
     @Schema(description = "고유값", example = "550e8400-e29b-41d4-a716-446655440000")
     @JsonProperty("id")
-    UUID id,
+    Long id,
 
     @Schema(description = "제목", example = "Waggle 백엔드 모집합니다.")
     @JsonProperty("title")
@@ -44,14 +41,14 @@ public record ProjectResponseDto(
 
     @Schema(description = "직무 및 인원")
     @JsonProperty("recruitments")
-    Set<ProjectRecruitmentDto> projectRecruitmentDtos,
+    List<ProjectRecruitmentDto> projectRecruitmentDtos,
 
     @Schema(
         description = "사용 스킬 목록",
         example = "[{\"display_name\": \"Java\", \"image_url\": \"https://logo.clearbit.com/Java.com\"}, {\"display_name\": \"Spring\", \"image_url\": \"https://logo.clearbit.com/Spring.io\"}]"
     )
     @JsonProperty("skills")
-    Set<Skill> skills,
+    List<Skill> skills,
 
     @Schema(description = "소개")
     @JsonProperty("detail")
@@ -88,12 +85,12 @@ public record ProjectResponseDto(
             projectInfo.project().getWorkPeriod(),
             projectInfo.projectRecruitments().stream()
                 .map(ProjectRecruitmentDto::from)
-                .sorted(Comparator.comparing(prj -> prj.jobRole().name()))
-                .collect(Collectors.toCollection(LinkedHashSet::new)),
+                .sorted(Comparator.comparing(prj -> prj.position().name()))
+                .toList(),
             projectInfo.projectSkills().stream()
                 .map(ProjectSkill::getSkill)
                 .sorted(Comparator.comparing(Enum::name))
-                .collect(Collectors.toCollection(LinkedHashSet::new)),
+                .toList(),
             projectInfo.project().getDetail(),
             projectInfo.project().getContactUrl(),
             projectInfo.project().getReferenceUrl(),

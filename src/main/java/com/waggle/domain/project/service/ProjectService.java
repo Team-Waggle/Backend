@@ -5,7 +5,7 @@ import com.waggle.domain.project.dto.ProjectApplicationDto;
 import com.waggle.domain.project.dto.ProjectInputDto;
 import com.waggle.domain.project.entity.Project;
 import com.waggle.domain.user.entity.User;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,41 +16,39 @@ public interface ProjectService {
 
     Page<Project> getProjects(Pageable pageable);
 
-    Project getProjectById(UUID projectId);
+    Project getProjectById(Long projectId);
 
     ProjectInfo getProjectInfoByProject(Project project);
 
-    Project updateProject(UUID projectId, ProjectInputDto projectInputDto, User user);
+    Project updateProject(Long projectId, ProjectInputDto projectInputDto, User user);
 
-    void deleteProject(UUID projectId, User user);
+    void deleteProject(Long projectId, User user);
 
-    Set<User> getUsersByProjectId(UUID projectId);
+    List<User> getUsersByProjectId(Long projectId);
 
-    Set<User> getAppliedUsersByProjectId(UUID projectId);
+    List<User> getAppliedUsersByProjectId(Long projectId);
 
-    Set<User> approveAppliedUser(UUID projectId, UUID userId, User user);
+    List<User> approveAppliedUser(Long projectId, UUID userId, User user);
 
-    Set<User> rejectAppliedUser(UUID projectId, UUID userId, User user);
+    List<User> rejectAppliedUser(Long projectId, UUID userId, User user);
 
-    Set<User> removeMemberUser(UUID projectId, UUID userId, User user);
+    List<User> removeMemberUser(Long projectId, UUID userId, User user);
 
-    void delegateLeader(UUID projectId, UUID userId, User user);
+    void delegateLeader(Long projectId, UUID userId, User user);
 
-    Set<Project> getUserProjects(UUID userId);
+    List<Project> getUserProjects(UUID userId);
 
-    void withdrawFromProject(UUID projectId, User user);
+    void withdrawFromProject(Long projectId, User user);
 
-    Set<Project> getUserBookmarkProjects(UUID userId);
+    Project applyProject(Long projectId, ProjectApplicationDto projectApplicationDto, User user);
 
-    Project applyProject(UUID projectId, ProjectApplicationDto projectApplicationDto, User user);
+    void cancelProjectApplication(Long projectId, User user);
 
-    void cancelProjectApplication(UUID projectId, User user);
+    List<Project> getAppliedProjects(User user);
 
-    Set<Project> getAppliedProjects(User user);
+    boolean toggleCurrentUserBookmark(Long projectId, User user);
 
-    boolean toggleCurrentUserBookmark(UUID projectId, User user);
+    List<Project> getUserBookmarkProjects(UUID userId, Long cursor, int size);
 
-    Set<Project> getCurrentUserBookmarkProjects(User user);
-
-    Set<Project> getCurrentUserProjects(User user);
+    List<Project> getCurrentUserProjects(User user);
 }
