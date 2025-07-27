@@ -15,7 +15,7 @@ public record BookmarkResponse(
     @Schema(description = "북마크 대상 ID")
     String targetId,
 
-    @Schema(description = "북마크 타입")
+    @Schema(description = "북마크 타입", example = "PROJECT", allowableValues = {"POST", "PROJECT"})
     BookmarkType bookmarkType,
 
     @Schema(description = "북마크 객체")

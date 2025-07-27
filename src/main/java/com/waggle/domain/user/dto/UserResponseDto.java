@@ -43,7 +43,10 @@ public record UserResponseDto(
     @JsonProperty("email")
     String email,
 
-    @Schema(description = "사용자 직무 정보")
+    @Schema(
+        description = "사용자 직무 정보",
+        example = "[{\"position\": {\"display_name\": \"백엔드\"}, \"year_count\": 3}, {\"position\": {\"display_name\": \"프론트엔드\"}, \"year_count\": 2}]"
+    )
     @JsonProperty("positions")
     List<UserPositionDto> userPositionDtos,
 

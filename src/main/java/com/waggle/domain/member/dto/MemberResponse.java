@@ -12,7 +12,7 @@ public record MemberResponse(
     @Schema(description = "멤버 ID", example = "42")
     Long id,
 
-    @Schema(description = "직무", example = "BACKEND")
+    @Schema(description = "직무", example = "{\"display_name\": \"백엔드\"}")
     Position position,
 
     @Schema(description = "사용자")

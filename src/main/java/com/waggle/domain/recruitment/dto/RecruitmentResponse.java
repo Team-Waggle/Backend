@@ -9,7 +9,7 @@ public record RecruitmentResponse(
     @Schema(description = "모집 ID", example = "42")
     Long id,
 
-    @Schema(description = "모집 직무", example = "BACKEND")
+    @Schema(description = "직무", example = "{\"display_name\": \"백엔드\"}")
     Position position,
 
     @Schema(description = "해당 직무 모집 명수", example = "1")
