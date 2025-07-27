@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.waggle.domain.project.ProjectInfo;
 import com.waggle.domain.project.entity.ProjectSkill;
 import com.waggle.domain.reference.enums.Industry;
+import com.waggle.domain.reference.enums.Skill;
 import com.waggle.domain.reference.enums.WorkPeriod;
 import com.waggle.domain.reference.enums.WorkWay;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -14,7 +15,7 @@ import java.util.List;
 
 @Schema(description = "프로젝트 응답 dto")
 public record ProjectResponseDto(
-    @Schema(description = "고유값", example = "1")
+    @Schema(description = "고유값", example = "550e8400-e29b-41d4-a716-446655440000")
     @JsonProperty("id")
     Long id,
 
@@ -22,11 +23,11 @@ public record ProjectResponseDto(
     @JsonProperty("title")
     String title,
 
-    @Schema(description = "산업 분야")
+    @Schema(description = "산업 분야", example = "{\"display_name\": \"금융\"}")
     @JsonProperty("industry")
     Industry industry,
 
-    @Schema(description = "진행 방식")
+    @Schema(description = "진행 방식", example = "{\"display_name\": \"온라인\"}")
     @JsonProperty("ways_of_working")
     WorkWay workWay,
 
@@ -34,7 +35,7 @@ public record ProjectResponseDto(
     @JsonProperty("recruitment_end_date")
     LocalDate recruitmentEndDate,
 
-    @Schema(description = "진행 기간")
+    @Schema(description = "진행 기간", example = "{\"display_name\": \"3개월\"}")
     @JsonProperty("work_period")
     WorkPeriod workPeriod,
 
@@ -42,17 +43,20 @@ public record ProjectResponseDto(
     @JsonProperty("recruitments")
     List<ProjectRecruitmentDto> projectRecruitmentDtos,
 
-    @Schema(description = "사용 스킬 목록")
+    @Schema(
+        description = "사용 스킬 목록",
+        example = "[{\"display_name\": \"Java\", \"image_url\": \"https://logo.clearbit.com/Java.com\"}, {\"display_name\": \"Spring\", \"image_url\": \"https://logo.clearbit.com/Spring.io\"}]"
+    )
     @JsonProperty("skills")
-    List<ProjectSkill> projectSkills,
+    List<Skill> skills,
 
     @Schema(description = "소개")
     @JsonProperty("detail")
     String detail,
 
     @Schema(description = "연락 링크", example = "https://open.kakao.com/o/si3gRPMa")
-    @JsonProperty("connect_url")
-    String connectUrl,
+    @JsonProperty("contact_url")
+    String contactUrl,
 
     @Schema(description = "참조 링크", example = "www.naver.com")
     @JsonProperty("reference_url")
@@ -81,10 +85,11 @@ public record ProjectResponseDto(
             projectInfo.project().getWorkPeriod(),
             projectInfo.projectRecruitments().stream()
                 .map(ProjectRecruitmentDto::from)
-                .sorted(Comparator.comparing(project -> project.position().name()))
+                .sorted(Comparator.comparing(prj -> prj.position().name()))
                 .toList(),
             projectInfo.projectSkills().stream()
-                .sorted(Comparator.comparing(project -> project.getSkill().name()))
+                .map(ProjectSkill::getSkill)
+                .sorted(Comparator.comparing(Enum::name))
                 .toList(),
             projectInfo.project().getDetail(),
             projectInfo.project().getContactUrl(),
