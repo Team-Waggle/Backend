@@ -10,6 +10,7 @@ import lombok.Builder;
 
 @Builder
 public record ProjectInfo(
+    Boolean bookmarked,
     Project project,
     List<ProjectSkill> projectSkills,
     List<ProjectMember> projectMembers,
@@ -18,6 +19,7 @@ public record ProjectInfo(
 ) {
 
     public static ProjectInfo of(
+        Boolean bookmarked,
         Project project,
         List<ProjectSkill> projectSkills,
         List<ProjectMember> projectMembers,
@@ -25,6 +27,7 @@ public record ProjectInfo(
         List<ProjectRecruitment> projectRecruitments
     ) {
         return new ProjectInfo(
+            bookmarked,
             project,
             projectSkills,
             projectMembers,
