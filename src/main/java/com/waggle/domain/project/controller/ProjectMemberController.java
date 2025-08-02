@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -240,12 +241,16 @@ public class ProjectMemberController {
         return SuccessResponse.of(
             ApiStatus._OK,
             projectService.getCurrentUserProjects(userPrincipal.getUser()).stream()
-                .map(projectService::getProjectInfoByProject)
+                .map(project -> projectService.getProjectInfoByProject(
+                    project,
+                    userPrincipal.getUser())
+                )
                 .map(ProjectResponseDto::from)
                 .toList()
         );
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping("/who/{userId}")
     @Operation(
         summary = "특정 사용자가 참가한 프로젝트 모집글 조회",
@@ -275,13 +280,16 @@ public class ProjectMemberController {
         )
     })
     public ResponseEntity<BaseResponse<List<ProjectResponseDto>>> fetchUserProjects(
-        @PathVariable UUID userId
+        @PathVariable UUID userId,
+        @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
-
         return SuccessResponse.of(
             ApiStatus._OK,
             projectService.getUserProjects(userId).stream()
-                .map(projectService::getProjectInfoByProject)
+                .map(project -> projectService.getProjectInfoByProject(
+                    project,
+                    userPrincipal.getUser())
+                )
                 .map(ProjectResponseDto::from)
                 .toList()
         );

@@ -18,7 +18,7 @@ public interface ProjectService {
 
     Project getProjectById(Long projectId);
 
-    ProjectInfo getProjectInfoByProject(Project project);
+    ProjectInfo getProjectInfoByProject(Project project, User user);
 
     Project updateProject(Long projectId, ProjectInputDto projectInputDto, User user);
 

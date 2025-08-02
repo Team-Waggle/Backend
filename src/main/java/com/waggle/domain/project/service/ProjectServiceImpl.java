@@ -27,6 +27,7 @@ import com.waggle.domain.user.service.UserService;
 import com.waggle.global.exception.AccessDeniedException;
 import com.waggle.global.exception.ProjectException;
 import com.waggle.global.response.ApiStatus;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -101,7 +102,11 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional(readOnly = true)
-    public ProjectInfo getProjectInfoByProject(Project project) {
+    public ProjectInfo getProjectInfoByProject(Project project, @Nullable User user) {
+        Boolean bookmarked = user != null && projectBookmarkRepository.existsByProjectIdAndUserId(
+            project.getId(),
+            user.getId()
+        );
         List<ProjectSkill> projectSkills = projectSkillRepository.findByProjectId(project.getId());
         List<ProjectMember> projectMembers =
             projectMemberRepository.findByProjectIdOrderByJoinedAtDesc(project.getId());
@@ -111,6 +116,7 @@ public class ProjectServiceImpl implements ProjectService {
             projectRecruitmentRepository.findByProjectId(project.getId());
 
         return ProjectInfo.of(
+            bookmarked,
             project,
             projectSkills,
             projectMembers,
