@@ -19,7 +19,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -118,56 +117,10 @@ public class ProjectBookmarkController {
                 projects,
                 size,
                 project -> {
-                    ProjectInfo projectInfo = projectService.getProjectInfoByProject(project);
-                    return ProjectResponseDto.from(projectInfo);
-                },
-                Project::getId
-            )
-        );
-    }
-
-    @GetMapping("/who/{userId}")
-    @Operation(
-        summary = "특정 사용자가 북마크한 프로젝트 모집글 조회",
-        description = "특정 사용자가 북마크한 프로젝트 모집글을 조회합니다."
-    )
-    @ApiResponses({
-        @ApiResponse(
-            responseCode = "200",
-            description = "북마크 목록 조회 성공",
-            content = @Content(
-                schema = @Schema(implementation = ProjectsSuccessResponse.class)
-            )
-        ),
-        @ApiResponse(
-            responseCode = "401",
-            description = "인증되지 않은 사용자",
-            content = @Content(
-                schema = @Schema(implementation = ErrorResponse.class)
-            )
-        ),
-        @ApiResponse(
-            responseCode = "404",
-            description = "사용자를 찾을 수 없음",
-            content = @Content(
-                schema = @Schema(implementation = ErrorResponse.class)
-            )
-        )
-    })
-    public ResponseEntity<BaseResponse<CursorResponse<ProjectResponseDto>>> fetchUserBookmarkProjects(
-        @PathVariable UUID userId,
-        @RequestParam(required = false) Long cursor,
-        @RequestParam(defaultValue = "10") int size
-    ) {
-        List<Project> projects = projectService.getUserBookmarkProjects(userId, cursor, size);
-
-        return SuccessResponse.of(
-            ApiStatus._OK,
-            CursorResponse.of(
-                projects,
-                size,
-                project -> {
-                    ProjectInfo projectInfo = projectService.getProjectInfoByProject(project);
+                    ProjectInfo projectInfo = projectService.getProjectInfoByProject(
+                        project,
+                        userPrincipal.getUser()
+                    );
                     return ProjectResponseDto.from(projectInfo);
                 },
                 Project::getId

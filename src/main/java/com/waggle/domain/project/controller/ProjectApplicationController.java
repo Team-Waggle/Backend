@@ -206,7 +206,10 @@ public class ProjectApplicationController {
         return SuccessResponse.of(
             ApiStatus._OK,
             projectService.getAppliedProjects(userPrincipal.getUser()).stream()
-                .map(projectService::getProjectInfoByProject)
+                .map(project -> projectService.getProjectInfoByProject(
+                    project,
+                    userPrincipal.getUser())
+                )
                 .map(ProjectResponseDto::from)
                 .toList()
         );
@@ -251,7 +254,10 @@ public class ProjectApplicationController {
             projectApplicationDto,
             userPrincipal.getUser()
         );
-        ProjectInfo projectInfo = projectService.getProjectInfoByProject(project);
+        ProjectInfo projectInfo = projectService.getProjectInfoByProject(
+            project,
+            userPrincipal.getUser()
+        );
         return SuccessResponse.of(ApiStatus._CREATED, ProjectResponseDto.from(projectInfo));
     }
 
