@@ -62,31 +62,4 @@ public record ProjectFilterDto(
     Set<WorkWay> workWays
 ) {
 
-    public boolean hasFilters() {
-        return (positions != null && !positions.isEmpty()) ||
-            (skills != null && !skills.isEmpty()) ||
-            (industries != null && !industries.isEmpty()) ||
-            (workPeriods != null && !workPeriods.isEmpty()) ||
-            (workWays != null && !workWays.isEmpty());
-    }
-
-    public boolean hasPositions() {
-        return positions != null && !positions.isEmpty();
-    }
-
-    public boolean hasSkills() {
-        return skills != null && !skills.isEmpty();
-    }
-
-    public boolean hasIndustries() {
-        return industries != null && !industries.isEmpty();
-    }
-
-    public boolean hasWorkPeriods() {
-        return workPeriods != null && !workPeriods.isEmpty();
-    }
-
-    public boolean hasWorkWays() {
-        return workWays != null && !workWays.isEmpty();
-    }
 }
