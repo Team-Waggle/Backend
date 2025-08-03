@@ -6,6 +6,7 @@ import com.waggle.domain.notification.dto.CreateNotificationRequest;
 import com.waggle.domain.notification.service.NotificationService;
 import com.waggle.domain.project.ProjectInfo;
 import com.waggle.domain.project.dto.ProjectApplicationDto;
+import com.waggle.domain.project.dto.ProjectFilterDto;
 import com.waggle.domain.project.dto.ProjectInputDto;
 import com.waggle.domain.project.dto.ProjectRecruitmentDto;
 import com.waggle.domain.project.entity.Project;
@@ -87,8 +88,15 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Project> getProjects(Pageable pageable) {
-        return projectRepository.findAll(pageable);
+    public Page<Project> getProjects(ProjectFilterDto projectFilterDto, Pageable pageable) {
+        return projectRepository.findProjectsWithFilters(
+            projectFilterDto.positions(),
+            projectFilterDto.skills(),
+            projectFilterDto.industries(),
+            projectFilterDto.workPeriods(),
+            projectFilterDto.workWays(),
+            pageable
+        );
     }
 
     @Override

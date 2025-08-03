@@ -2,6 +2,7 @@ package com.waggle.domain.project.service;
 
 import com.waggle.domain.project.ProjectInfo;
 import com.waggle.domain.project.dto.ProjectApplicationDto;
+import com.waggle.domain.project.dto.ProjectFilterDto;
 import com.waggle.domain.project.dto.ProjectInputDto;
 import com.waggle.domain.project.entity.Project;
 import com.waggle.domain.user.entity.User;
@@ -14,7 +15,7 @@ public interface ProjectService {
 
     Project createProject(ProjectInputDto projectInputDto, User user);
 
-    Page<Project> getProjects(Pageable pageable);
+    Page<Project> getProjects(ProjectFilterDto projectFilterDto, Pageable pageable);
 
     Project getProjectById(Long projectId);
 
