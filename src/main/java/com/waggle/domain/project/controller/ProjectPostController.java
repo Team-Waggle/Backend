@@ -25,6 +25,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -74,7 +75,7 @@ public class ProjectPostController {
         )
     })
     public ResponseEntity<BaseResponse<Page<ProjectResponseDto>>> fetchProjects(
-        @ModelAttribute ProjectFilterDto projectFilterDto,
+        @ParameterObject @ModelAttribute ProjectFilterDto projectFilterDto,
         @AuthenticationPrincipal @Nullable UserPrincipal userPrincipal,
         @PageableDefault(size = 15, sort = "createdAt", direction = DESC) Pageable pageable
     ) {
