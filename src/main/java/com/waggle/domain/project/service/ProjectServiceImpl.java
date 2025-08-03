@@ -230,7 +230,7 @@ public class ProjectServiceImpl implements ProjectService {
         ProjectRecruitment recruitment = projectRecruitmentRepository
             .findByProjectIdAndPosition(projectId, position)
             .orElseThrow(() -> new EntityNotFoundException(
-                "Recruitment not found for project id: " + projectId + "and job role: "
+                "Recruitment not found for project id: " + projectId + "and position: "
                     + position));
         recruitment.addMember();
 
@@ -307,7 +307,7 @@ public class ProjectServiceImpl implements ProjectService {
         ProjectRecruitment recruitment = projectRecruitmentRepository
             .findByProjectIdAndPosition(projectId, position)
             .orElseThrow(() -> new EntityNotFoundException(
-                "Recruitment not found for project id: " + projectId + "and job role: "
+                "Recruitment not found for project id: " + projectId + "and position: "
                     + position));
         recruitment.removeMember();
 
@@ -368,7 +368,7 @@ public class ProjectServiceImpl implements ProjectService {
         ProjectRecruitment recruitment = projectRecruitmentRepository
             .findByProjectIdAndPosition(projectId, position)
             .orElseThrow(() -> new EntityNotFoundException(
-                "Recruitment not found for project id: " + projectId + "and job role: "
+                "Recruitment not found for project id: " + projectId + "and position: "
                     + position));
         recruitment.removeMember();
     }
@@ -384,12 +384,12 @@ public class ProjectServiceImpl implements ProjectService {
         ProjectRecruitment recruitment = projectRecruitmentRepository
             .findByProjectIdAndPosition(projectId, position)
             .orElseThrow(() -> new EntityNotFoundException(
-                "Recruitment not found for project id: " + projectId + "and job role: "
+                "Recruitment not found for project id: " + projectId + "and position: "
                     + position));
 
         if (!recruitment.isRecruitable()) {
             throw new IllegalStateException(
-                "Not allowed to apply the project for job role: " + position);
+                "Not allowed to apply the project for position: " + position);
         }
 
         if (projectMemberRepository.existsByProjectIdAndUserId(projectId, user.getId())) {

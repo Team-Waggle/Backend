@@ -43,7 +43,7 @@ public class Recruitment extends BaseEntity {
 
     public void addMember() {
         if (remainingCount <= 0) {
-            throw new IllegalStateException("No remaining positions for job role: " + position);
+            throw new IllegalStateException("No remaining positions for position: " + position);
         }
         remainingCount--;
         currentCount++;
@@ -51,7 +51,7 @@ public class Recruitment extends BaseEntity {
 
     public void removeMember() {
         if (currentCount <= 0) {
-            throw new IllegalStateException("No current positions for job role: " + position);
+            throw new IllegalStateException("No current positions for position: " + position);
         }
         remainingCount++;
         currentCount--;
