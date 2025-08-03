@@ -89,7 +89,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     @Transactional(readOnly = true)
     public Page<Project> getProjects(ProjectFilterDto projectFilterDto, Pageable pageable) {
-        return projectRepository.findProjectsWithFilters(
+        return projectRepository.findWithFilter(
             projectFilterDto.positions(),
             projectFilterDto.skills(),
             projectFilterDto.industries(),

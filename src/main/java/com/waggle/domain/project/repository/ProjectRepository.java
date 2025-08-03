@@ -34,7 +34,7 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
         AND (:workPeriods IS NULL OR p.workPeriod IN :workPeriods)
         AND (:workWays IS NULL OR p.workWay IN :workWays)
         """)
-    Page<Project> findProjectsWithFilters(
+    Page<Project> findWithFilter(
         @Param("positions") Set<Position> positions,
         @Param("skills") Set<Skill> skills,
         @Param("industries") Set<Industry> industries,
