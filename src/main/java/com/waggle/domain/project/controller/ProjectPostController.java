@@ -3,6 +3,7 @@ package com.waggle.domain.project.controller;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
 import com.waggle.domain.project.ProjectInfo;
+import com.waggle.domain.project.dto.ProjectFilterDto;
 import com.waggle.domain.project.dto.ProjectInputDto;
 import com.waggle.domain.project.dto.ProjectResponseDto;
 import com.waggle.domain.project.entity.Project;
@@ -32,6 +33,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -72,16 +74,20 @@ public class ProjectPostController {
         )
     })
     public ResponseEntity<BaseResponse<Page<ProjectResponseDto>>> fetchProjects(
+        @ModelAttribute ProjectFilterDto projectFilterDto,
         @AuthenticationPrincipal @Nullable UserPrincipal userPrincipal,
         @PageableDefault(size = 15, sort = "createdAt", direction = DESC) Pageable pageable
     ) {
         User user = userPrincipal != null ? userPrincipal.getUser() : null;
 
+        Page<Project> projects = projectService.getProjects(projectFilterDto, pageable);
+        Page<ProjectInfo> projectInfos = projects.map(
+            project -> projectService.getProjectInfoByProject(project, user)
+        );
+
         return SuccessResponse.of(
             ApiStatus._OK,
-            projectService.getProjects(pageable)
-                .map(project -> projectService.getProjectInfoByProject(project, user))
-                .map(ProjectResponseDto::from)
+            projectInfos.map(ProjectResponseDto::from)
         );
     }
 

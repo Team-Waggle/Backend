@@ -6,6 +6,7 @@ import com.waggle.domain.notification.dto.CreateNotificationRequest;
 import com.waggle.domain.notification.service.NotificationService;
 import com.waggle.domain.project.ProjectInfo;
 import com.waggle.domain.project.dto.ProjectApplicationDto;
+import com.waggle.domain.project.dto.ProjectFilterDto;
 import com.waggle.domain.project.dto.ProjectInputDto;
 import com.waggle.domain.project.dto.ProjectRecruitmentDto;
 import com.waggle.domain.project.entity.Project;
@@ -87,8 +88,15 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Project> getProjects(Pageable pageable) {
-        return projectRepository.findAll(pageable);
+    public Page<Project> getProjects(ProjectFilterDto projectFilterDto, Pageable pageable) {
+        return projectRepository.findWithFilter(
+            projectFilterDto.positions(),
+            projectFilterDto.skills(),
+            projectFilterDto.industries(),
+            projectFilterDto.workPeriods(),
+            projectFilterDto.workWays(),
+            pageable
+        );
     }
 
     @Override
@@ -222,7 +230,7 @@ public class ProjectServiceImpl implements ProjectService {
         ProjectRecruitment recruitment = projectRecruitmentRepository
             .findByProjectIdAndPosition(projectId, position)
             .orElseThrow(() -> new EntityNotFoundException(
-                "Recruitment not found for project id: " + projectId + "and job role: "
+                "Recruitment not found for project id: " + projectId + "and position: "
                     + position));
         recruitment.addMember();
 
@@ -299,7 +307,7 @@ public class ProjectServiceImpl implements ProjectService {
         ProjectRecruitment recruitment = projectRecruitmentRepository
             .findByProjectIdAndPosition(projectId, position)
             .orElseThrow(() -> new EntityNotFoundException(
-                "Recruitment not found for project id: " + projectId + "and job role: "
+                "Recruitment not found for project id: " + projectId + "and position: "
                     + position));
         recruitment.removeMember();
 
@@ -360,7 +368,7 @@ public class ProjectServiceImpl implements ProjectService {
         ProjectRecruitment recruitment = projectRecruitmentRepository
             .findByProjectIdAndPosition(projectId, position)
             .orElseThrow(() -> new EntityNotFoundException(
-                "Recruitment not found for project id: " + projectId + "and job role: "
+                "Recruitment not found for project id: " + projectId + "and position: "
                     + position));
         recruitment.removeMember();
     }
@@ -376,12 +384,12 @@ public class ProjectServiceImpl implements ProjectService {
         ProjectRecruitment recruitment = projectRecruitmentRepository
             .findByProjectIdAndPosition(projectId, position)
             .orElseThrow(() -> new EntityNotFoundException(
-                "Recruitment not found for project id: " + projectId + "and job role: "
+                "Recruitment not found for project id: " + projectId + "and position: "
                     + position));
 
         if (!recruitment.isRecruitable()) {
             throw new IllegalStateException(
-                "Not allowed to apply the project for job role: " + position);
+                "Not allowed to apply the project for position: " + position);
         }
 
         if (projectMemberRepository.existsByProjectIdAndUserId(projectId, user.getId())) {
