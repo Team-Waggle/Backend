@@ -43,7 +43,7 @@ public record ProjectInputDto(
     LocalDate recruitmentEndDate,
 
     @NotNull(message = "진행 기간은 필수 입력 항목입니다")
-    @Schema(description = "진행 기간", example = "ONE_MONTH")
+    @Schema(description = "진행 기간", example = "UNDECIDED")
     @JsonProperty("work_period")
     WorkPeriod workPeriod,
 

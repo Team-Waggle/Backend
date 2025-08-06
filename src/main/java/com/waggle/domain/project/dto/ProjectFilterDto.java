@@ -46,9 +46,8 @@ public record ProjectFilterDto(
 
     @Parameter(
         description = "진행 기간 필터",
-        example = "THREE_MONTHS,SIX_MONTHS",
-        schema = @Schema(allowableValues = {"ONE_MONTH", "TWO_MONTHS", "THREE_MONTHS",
-            "FOUR_MONTHS", "FIVE_MONTHS", "SIX_MONTHS", "OVER_SIX_MONTHS"}
+        example = "SHORT_TERM",
+        schema = @Schema(allowableValues = {"SHORT_TERM", "MEDIUM_TERM", "LONG_TERM", "UNDECIDED"}
         )
     )
     Set<WorkPeriod> workPeriods,

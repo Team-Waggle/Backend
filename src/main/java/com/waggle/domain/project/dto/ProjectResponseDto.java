@@ -35,7 +35,7 @@ public record ProjectResponseDto(
     @JsonProperty("recruitment_end_date")
     LocalDate recruitmentEndDate,
 
-    @Schema(description = "진행 기간", example = "{\"display_name\": \"3개월\"}")
+    @Schema(description = "진행 기간", example = "{\"display_name\": \"미정\"}")
     @JsonProperty("work_period")
     WorkPeriod workPeriod,
 
