@@ -9,6 +9,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum Skill {
+    C("C", "https://upload.wikimedia.org/wikipedia/commons/1/19/C_Logo.png"),
+    CPP("C++", "https://en.wikipedia.org/wiki/C%2B%2B#/media/File:ISO_C++_Logo.svg"),
+    CSHARP("C#", "https://upload.wikimedia.org/wikipedia/commons/b/bd/Logo_C_sharp.svg"),
     JAVA("Java", "https://logo.clearbit.com/Java.com"),
     JAVASCRIPT("JavaScript", "https://logo.clearbit.com/JavaScript.com"),
     TYPESCRIPT("TypeScript", "https://logo.clearbit.com/TypeScriptlang.org"),
@@ -47,7 +50,6 @@ public enum Skill {
     ),
     ZEPLIN("Zeplin", "https://logo.clearbit.com/Zeplin.com"),
     JEST("Jest", "https://logo.clearbit.com/Jestjs.io"),
-    AXURE("Axure", "https://logo.clearbit.com/Axure.com"),
     MS_OFFICE("MS-Office", "https://logo.clearbit.com/office.com"),
     ILLUSTRATOR(
         "illustrator",
@@ -62,20 +64,20 @@ public enum Skill {
         "https://www.adobe.com/cc-shared/assets/img/product-icons/svg/indesign-40.svg"
     ),
     PREMIERE_PRO(
-        "Premiere pro",
+        "Premiere-pro",
         "https://www.adobe.com/cc-shared/assets/img/product-icons/svg/premiere-pro.svg"
     ),
     AFTER_EFFECTS(
-        "After Effects",
+        "After-Effects",
         "https://www.adobe.com/cc-shared/assets/img/product-icons/svg/after-effects.svg"
     ),
     MAX_3D(
-        "3D max",
+        "3D-max",
         "https://damassets.autodesk.net/content/dam/autodesk/www/product-imagery/badge-75x75/simplified-badges/3ds-max-2023-simplified-badge-75x75.png"
     ),
     BLENDER("Blender", "https://logo.clearbit.com/Blender.org"),
     CINEMA_4D(
-        "Cinema 4D",
+        "Cinema-4D",
         "https://maxonassets.imgix.net/images/Products/Cinema-4D/C4D-Iso-logo.png?fm=webp&auto=format,compress&w=1920&h=1932&ar=16:9&fit=clip&crop=faces&q=80"
     );
 

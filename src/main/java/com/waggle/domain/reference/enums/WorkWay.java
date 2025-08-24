@@ -9,9 +9,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum WorkWay {
-    ONLINE("온라인"),
-    OFFLINE("오프라인"),
-    ONLINE_OFFLINE("온/오프라인");
+    ONLINE("온라인만"),
+    OFFLINE("오프라인만"),
+    ONLINE_OFFLINE("모두 가능");
 
     @JsonProperty("display_name")
     private final String displayName;

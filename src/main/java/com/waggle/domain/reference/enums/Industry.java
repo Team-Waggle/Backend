@@ -25,7 +25,8 @@ public enum Industry {
     CONSTRUCTION("건설"),
     HEALTH("건강"),
     PARENTING("육아/출산"),
-    MEDIA_ADVERTISING("미디어/광고");
+    MEDIA_ADVERTISING("미디어/광고"),
+    ETC("기타");
 
     @JsonProperty("display_name")
     private final String displayName;

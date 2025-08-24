@@ -39,7 +39,7 @@ public record ProjectFilterDto(
         schema = @Schema(allowableValues = {"FINANCE", "REAL_ESTATE", "INTERIOR",
             "MEDICAL_HEALTHCARE", "ECOMMERCE", "ENTERTAINMENT", "TRAVEL", "SOCIAL_NETWORK",
             "CULTURE_ART", "BEAUTY_FASHION", "RELIGION", "SALES_DISTRIBUTION", "EDUCATION",
-            "CONSTRUCTION", "HEALTH", "PARENTING", "MEDIA_ADVERTISING"}
+            "CONSTRUCTION", "HEALTH", "PARENTING", "MEDIA_ADVERTISING", "ETC"}
         )
     )
     Set<Industry> industries,
