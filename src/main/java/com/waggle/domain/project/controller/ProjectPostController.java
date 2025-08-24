@@ -46,7 +46,7 @@ import org.springframework.web.bind.annotation.RestController;
 //put은 전체 다 수정, patch는 일부만 수정
 @Tag(name = "프로젝트 모집 게시글", description = "프로젝트 모집 게시글 관련 API")
 @RestController
-@RequestMapping("/api/v1/projects/post")
+@RequestMapping("/v1/projects/post")
 @RequiredArgsConstructor
 public class ProjectPostController {
 

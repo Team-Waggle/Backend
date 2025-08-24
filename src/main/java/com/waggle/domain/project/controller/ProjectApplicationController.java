@@ -38,7 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "프로젝트 지원", description = "프로젝트 지원 관련 API")
 @RestController
-@RequestMapping("/api/v1/projects")
+@RequestMapping("/v1/projects")
 @RequiredArgsConstructor
 public class ProjectApplicationController {
 

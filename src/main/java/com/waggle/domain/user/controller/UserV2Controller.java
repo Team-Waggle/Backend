@@ -37,7 +37,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/v2/users/me")
+@RequestMapping("/v2/users/me")
 @RestController
 public class UserV2Controller {
 

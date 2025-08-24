@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "인증", description = "인증 관련 API")
 @RestController
-@RequestMapping("/api/v2/auth")
+@RequestMapping("/v2/auth")
 @RequiredArgsConstructor
 @Slf4j
 public class AuthController {

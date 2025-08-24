@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Application", description = "지원 관리 API")
 @RequiredArgsConstructor
-@RequestMapping("/api/v2/applications")
+@RequestMapping("/v2/applications")
 @RestController
 public class ApplicationController {
 

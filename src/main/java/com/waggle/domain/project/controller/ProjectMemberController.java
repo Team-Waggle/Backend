@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "프로젝트 멤버", description = "프로젝트 멤버 관련 API")
 @RestController
-@RequestMapping("/api/v1/projects/member")
+@RequestMapping("/v1/projects/member")
 @RequiredArgsConstructor
 public class ProjectMemberController {
 

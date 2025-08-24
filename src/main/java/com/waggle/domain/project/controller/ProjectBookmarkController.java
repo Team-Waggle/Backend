@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "프로젝트 북마크", description = "프로젝트 북마크 관련 API")
 @RestController
-@RequestMapping("/api/v1/projects/bookmark")
+@RequestMapping("/v1/projects/bookmark")
 @RequiredArgsConstructor
 public class ProjectBookmarkController {
 

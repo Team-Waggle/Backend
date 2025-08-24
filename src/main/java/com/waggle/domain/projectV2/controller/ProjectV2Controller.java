@@ -51,7 +51,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "ProjectV2", description = "프로젝트 관리 API V2")
 @RequiredArgsConstructor
-@RequestMapping("/api/v2/projects")
+@RequestMapping("/v2/projects")
 @RestController
 public class ProjectV2Controller {
 

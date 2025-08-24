@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "인앱 알림", description = "인앱 알림 관련 API")
 @RestController
-@RequestMapping("/api/v1/notifications")
+@RequestMapping("/v1/notifications")
 @RequiredArgsConstructor
 public class NotificationController {
 
