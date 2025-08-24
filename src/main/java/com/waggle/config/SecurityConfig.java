@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -101,6 +102,7 @@ public class SecurityConfig {
                 .requestMatchers("/", "/login", "/error", "/favicon.ico").permitAll()
                 .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
                 .requestMatchers("/api/v2/auth/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/projects/post/**").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterAfter(jwtAuthenticationFilter, OAuth2LoginAuthenticationFilter.class)

@@ -52,7 +52,6 @@ public class ProjectPostController {
 
     private final ProjectService projectService;
 
-    @PreAuthorize("permitAll()")
     @GetMapping
     @Operation(
         summary = "프로젝트 모집글 목록 조회",
