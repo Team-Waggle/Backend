@@ -1,14 +1,15 @@
 package com.waggle.domain.user.controller;
 
+import com.waggle.domain.user.UserInfo;
 import com.waggle.domain.user.dto.UserInputDto;
-import com.waggle.domain.user.dto.UserResponse;
+import com.waggle.domain.user.dto.UserResponseDto;
 import com.waggle.domain.user.entity.User;
 import com.waggle.domain.user.service.UserService;
 import com.waggle.global.response.ApiStatus;
 import com.waggle.global.response.BaseResponse;
 import com.waggle.global.response.ErrorResponse;
 import com.waggle.global.response.SuccessResponse;
-import com.waggle.global.response.swagger.UserSuccessResponse;
+import com.waggle.global.response.swagger.UserDtoSuccessResponse;
 import com.waggle.global.security.oauth2.UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -53,7 +54,7 @@ public class UserController {
             responseCode = "200",
             description = "프로필 이미지 업로드 성공",
             content = @Content(
-                schema = @Schema(implementation = UserSuccessResponse.class)
+                schema = @Schema(implementation = UserDtoSuccessResponse.class)
             )
         ),
         @ApiResponse(
@@ -71,12 +72,13 @@ public class UserController {
             )
         )
     })
-    public ResponseEntity<BaseResponse<UserResponse>> uploadProfileImage(
+    public ResponseEntity<BaseResponse<UserResponseDto>> uploadProfileImage(
         @RequestPart("profileImage") MultipartFile profileImage,
         @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
         User user = userService.uploadProfileImage(profileImage, userPrincipal.getUser());
-        return SuccessResponse.of(ApiStatus._OK, UserResponse.from(user));
+        UserInfo userInfo = userService.getUserInfoByUser(user);
+        return SuccessResponse.of(ApiStatus._OK, UserResponseDto.from(userInfo));
     }
 
     @GetMapping("/me")
@@ -90,7 +92,7 @@ public class UserController {
             responseCode = "200",
             description = "사용자 조회 성공",
             content = @Content(
-                schema = @Schema(implementation = UserSuccessResponse.class)
+                schema = @Schema(implementation = UserDtoSuccessResponse.class)
             )
         ),
         @ApiResponse(
@@ -101,11 +103,12 @@ public class UserController {
             )
         )
     })
-    public ResponseEntity<BaseResponse<UserResponse>> getMe(
+    public ResponseEntity<BaseResponse<UserResponseDto>> getMe(
         @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
         User user = userService.getUserById(userPrincipal.getUser().getId());
-        return SuccessResponse.of(ApiStatus._OK, UserResponse.from(user));
+        UserInfo userInfo = userService.getUserInfoByUser(user);
+        return SuccessResponse.of(ApiStatus._OK, UserResponseDto.from(userInfo));
     }
 
     @GetMapping("/{userId}")
@@ -118,7 +121,7 @@ public class UserController {
             responseCode = "200",
             description = "사용자 조회 성공",
             content = @Content(
-                schema = @Schema(implementation = UserSuccessResponse.class)
+                schema = @Schema(implementation = UserDtoSuccessResponse.class)
             )
         ),
         @ApiResponse(
@@ -136,9 +139,10 @@ public class UserController {
             )
         )
     })
-    public ResponseEntity<BaseResponse<UserResponse>> getUser(@PathVariable UUID userId) {
+    public ResponseEntity<BaseResponse<UserResponseDto>> getUser(@PathVariable UUID userId) {
         User user = userService.getUserById(userId);
-        return SuccessResponse.of(ApiStatus._OK, UserResponse.from(user));
+        UserInfo userInfo = userService.getUserInfoByUser(user);
+        return SuccessResponse.of(ApiStatus._OK, UserResponseDto.from(userInfo));
     }
 
     @PutMapping("/me")
@@ -152,7 +156,7 @@ public class UserController {
             responseCode = "200",
             description = "사용자 정보 수정 성공",
             content = @Content(
-                schema = @Schema(implementation = UserSuccessResponse.class)
+                schema = @Schema(implementation = UserDtoSuccessResponse.class)
             )
         ),
         @ApiResponse(
@@ -163,12 +167,13 @@ public class UserController {
             )
         )
     })
-    public ResponseEntity<BaseResponse<UserResponse>> updateMe(
+    public ResponseEntity<BaseResponse<UserResponseDto>> updateMe(
         @Valid @RequestBody UserInputDto userInputDto,
         @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
         User user = userService.updateUser(userInputDto, userPrincipal.getUser());
-        return SuccessResponse.of(ApiStatus._OK, UserResponse.from(user));
+        UserInfo userInfo = userService.getUserInfoByUser(user);
+        return SuccessResponse.of(ApiStatus._OK, UserResponseDto.from(userInfo));
     }
 
     @DeleteMapping("/me")
