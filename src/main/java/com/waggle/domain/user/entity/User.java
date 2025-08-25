@@ -90,4 +90,8 @@ public class User extends BaseEntity {
         this.sido = sido;
         this.detail = detail;
     }
+
+    public void updateProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
+    }
 }
