@@ -76,10 +76,9 @@ public class UserService {
     }
 
     @Transactional
-    public User updateUser(MultipartFile profileImage, UserInputDto userInputDto, User user) {
+    public User updateUser(UserInputDto userInputDto, User user) {
         user.update(
             userInputDto.name(),
-            getProfileImageUrl(profileImage, user),
             userInputDto.workTime(),
             userInputDto.workWay(),
             userInputDto.sido(),

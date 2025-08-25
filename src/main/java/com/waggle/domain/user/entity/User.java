@@ -79,14 +79,12 @@ public class User extends BaseEntity {
 
     public void update(
         String name,
-        String profileImageUrl,
         WorkTime workTime,
         WorkWay workWay,
         Sido sido,
         String detail
     ) {
         this.name = name;
-        this.profileImageUrl = profileImageUrl;
         this.workTime = workTime;
         this.workWay = workWay;
         this.sido = sido;

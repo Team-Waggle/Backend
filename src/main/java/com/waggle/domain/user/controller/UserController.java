@@ -20,17 +20,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "사용자", description = "사용자 관련 API")
 @RestController
@@ -102,7 +100,7 @@ public class UserController {
         return SuccessResponse.of(ApiStatus._OK, UserResponse.from(user));
     }
 
-    @PutMapping(value = "/me", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping("/me")
     @Operation(
         summary = "현재 사용자 정보 수정",
         description = "현재 로그인 된 사용자의 정보를 수정합니다.",
@@ -125,11 +123,10 @@ public class UserController {
         )
     })
     public ResponseEntity<BaseResponse<UserResponse>> updateMe(
-        @RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
-        @Valid @RequestPart(value = "updateUserDto") UserInputDto userInputDto,
+        @Valid @RequestBody UserInputDto userInputDto,
         @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
-        User user = userService.updateUser(profileImage, userInputDto, userPrincipal.getUser());
+        User user = userService.updateUser(userInputDto, userPrincipal.getUser());
         return SuccessResponse.of(ApiStatus._OK, UserResponse.from(user));
     }
 
