@@ -20,11 +20,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,6 +41,43 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserController {
 
     private final UserService userService;
+
+    @PostMapping(value = "/me/profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(
+        summary = "프로필 이미지 업로드",
+        description = "현재 사용자의 프로필 이미지를 업로드합니다.",
+        security = @SecurityRequirement(name = "JWT")
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "프로필 이미지 업로드 성공",
+            content = @Content(
+                schema = @Schema(implementation = UserSuccessResponse.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "잘못된 파일 형식 또는 크기 초과",
+            content = @Content(
+                schema = @Schema(implementation = ErrorResponse.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "인증되지 않은 사용자",
+            content = @Content(
+                schema = @Schema(implementation = ErrorResponse.class)
+            )
+        )
+    })
+    public ResponseEntity<BaseResponse<UserResponse>> uploadProfileImage(
+        @RequestPart("profileImage") MultipartFile profileImage,
+        @AuthenticationPrincipal UserPrincipal userPrincipal
+    ) {
+        User user = userService.uploadProfileImage(profileImage, userPrincipal.getUser());
+        return SuccessResponse.of(ApiStatus._OK, UserResponse.from(user));
+    }
 
     @GetMapping("/me")
     @Operation(
@@ -129,43 +168,6 @@ public class UserController {
         @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
         User user = userService.updateUser(userInputDto, userPrincipal.getUser());
-        return SuccessResponse.of(ApiStatus._OK, UserResponse.from(user));
-    }
-
-    @PostMapping(value = "/me/profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(
-        summary = "프로필 이미지 업로드",
-        description = "현재 사용자의 프로필 이미지를 업로드합니다.",
-        security = @SecurityRequirement(name = "JWT")
-    )
-    @ApiResponses({
-        @ApiResponse(
-            responseCode = "200",
-            description = "프로필 이미지 업로드 성공",
-            content = @Content(
-                schema = @Schema(implementation = UserSuccessResponse.class)
-            )
-        ),
-        @ApiResponse(
-            responseCode = "400",
-            description = "잘못된 파일 형식 또는 크기 초과",
-            content = @Content(
-                schema = @Schema(implementation = ErrorResponse.class)
-            )
-        ),
-        @ApiResponse(
-            responseCode = "401",
-            description = "인증되지 않은 사용자",
-            content = @Content(
-                schema = @Schema(implementation = ErrorResponse.class)
-            )
-        )
-    })
-    public ResponseEntity<BaseResponse<UserResponse>> updateProfileImage(
-        @RequestPart("profileImage") MultipartFile profileImage,
-        @AuthenticationPrincipal UserPrincipal userPrincipal
-    ) {
-        User user = userService.updateProfileImage(profileImage, userPrincipal.getUser());
         return SuccessResponse.of(ApiStatus._OK, UserResponse.from(user));
     }
 

@@ -96,8 +96,13 @@ public class UserService {
     }
 
     @Transactional
-    public User updateProfileImage(MultipartFile profileImage, User user) {
-        String newProfileImageUrl = uploadProfileImage(profileImage, user);
+    public User uploadProfileImage(MultipartFile profileImage, User user) {
+        if (user.getProfileImageUrl() != null) {
+            s3Service.deleteFile(user.getProfileImageUrl());
+        }
+
+        String newProfileImageUrl = s3Service.uploadFile(profileImage,
+            "user/profile_img/" + user.getId());
 
         user.updateProfileImageUrl(newProfileImageUrl);
         return userRepository.save(user);
@@ -287,13 +292,5 @@ public class UserService {
             return s3Service.uploadFile(profileImage, "user/profile_img/" + user.getId());
         }
         return null;
-    }
-
-    private String uploadProfileImage(MultipartFile profileImage, User user) {
-        if (user.getProfileImageUrl() != null) {
-            s3Service.deleteFile(user.getProfileImageUrl());
-        }
-
-        return s3Service.uploadFile(profileImage, "user/profile_img/" + user.getId());
     }
 }
