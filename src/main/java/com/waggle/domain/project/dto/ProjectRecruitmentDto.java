@@ -11,7 +11,7 @@ import jakarta.validation.constraints.PositiveOrZero;
 
 public record ProjectRecruitmentDto(
     @NotNull(message = "직무는 필수 입력 항목입니다")
-    @Schema(description = "직무", example = "JAVA")
+    @Schema(description = "직무", example = "BACKEND")
     @JsonProperty("position")
     Position position,
 

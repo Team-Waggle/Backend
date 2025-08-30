@@ -2,8 +2,8 @@ package com.waggle.domain.reference.controller;
 
 import com.waggle.domain.reference.enums.Industry;
 import com.waggle.domain.reference.enums.IntroductionType;
-import com.waggle.domain.reference.enums.Position;
 import com.waggle.domain.reference.enums.PortfolioType;
+import com.waggle.domain.reference.enums.Position;
 import com.waggle.domain.reference.enums.Sido;
 import com.waggle.domain.reference.enums.Skill;
 import com.waggle.domain.reference.enums.WorkPeriod;
@@ -16,8 +16,8 @@ import com.waggle.global.response.SuccessResponse;
 import com.waggle.global.response.swagger.DaysOfWeekSuccessResponse;
 import com.waggle.global.response.swagger.IndustriesSuccessResponse;
 import com.waggle.global.response.swagger.IntroductionsTypesSuccessResponse;
-import com.waggle.global.response.swagger.PositionsSuccessResponse;
 import com.waggle.global.response.swagger.PortfolioTypesSuccessResponse;
+import com.waggle.global.response.swagger.PositionsSuccessResponse;
 import com.waggle.global.response.swagger.SidosSuccessResponse;
 import com.waggle.global.response.swagger.SkillsSuccessResponse;
 import com.waggle.global.response.swagger.WorkPeriodSuccessResponse;
@@ -37,7 +37,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "참조 데이터", description = "참조 데이터 관련 API")
-@RestController
+@RestController("/api/static")
 @RequiredArgsConstructor
 public class ReferenceController {
 
@@ -61,7 +61,7 @@ public class ReferenceController {
         return SuccessResponse.of(ApiStatus._OK, List.of(Skill.values()));
     }
 
-    @GetMapping("/job-roles")
+    @GetMapping("/positions")
     @Operation(summary = "직무 조회", description = "직무를 전부 조회합니다.")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "직무 조회 성공", content = @Content(schema = @Schema(implementation = PositionsSuccessResponse.class))),

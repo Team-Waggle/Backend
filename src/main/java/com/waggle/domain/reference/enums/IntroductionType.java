@@ -1,8 +1,6 @@
 package com.waggle.domain.reference.enums;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -11,16 +9,12 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum IntroductionType {
-    COMMUNICATION_STYLE("소통 스타일", CommunicationStyle.class),
-    COLLABORATION_STYLE("협업 성향", CollaborationStyle.class),
-    WORK_STYLE("작업 방식", WorkStyle.class),
-    PROBLEM_SOLVING_APPROACH("문제 해결 방식", ProblemSolvingApproach.class),
-    MBTI("MBTI", Mbti.class);
-
-    @JsonProperty("display_name")
-    private final String displayName;
+    COMMUNICATION_STYLE(CommunicationStyle.class),
+    COLLABORATION_STYLE(CollaborationStyle.class),
+    WORK_STYLE(WorkStyle.class),
+    PROBLEM_SOLVING_APPROACH(ProblemSolvingApproach.class),
+    MBTI(Mbti.class);
 
     @JsonIgnore
     private final Class<? extends Enum<?>> enumClass;
@@ -28,20 +22,19 @@ public enum IntroductionType {
     public List<Map<String, String>> getValues() {
         return switch (this) {
             case COMMUNICATION_STYLE -> Arrays.stream(CommunicationStyle.values())
-                .map(style -> Map.of("name", style.name(), "display_name", style.getDisplayName()))
+                .map(style -> Map.of("name", style.name()))
                 .toList();
             case COLLABORATION_STYLE -> Arrays.stream(CollaborationStyle.values())
-                .map(style -> Map.of("name", style.name(), "display_name", style.getDisplayName()))
+                .map(style -> Map.of("name", style.name()))
                 .toList();
             case WORK_STYLE -> Arrays.stream(WorkStyle.values())
-                .map(style -> Map.of("name", style.name(), "display_name", style.getDisplayName()))
+                .map(style -> Map.of("name", style.name()))
                 .toList();
             case PROBLEM_SOLVING_APPROACH -> Arrays.stream(ProblemSolvingApproach.values())
-                .map(approach -> Map.of("name", approach.name(), "display_name",
-                    approach.getDisplayName()))
+                .map(approach -> Map.of("name", approach.name()))
                 .toList();
             case MBTI -> Arrays.stream(Mbti.values())
-                .map(mbti -> Map.of("name", mbti.name(), "display_name", mbti.getDisplayName()))
+                .map(mbti -> Map.of("name", mbti.name()))
                 .toList();
         };
     }

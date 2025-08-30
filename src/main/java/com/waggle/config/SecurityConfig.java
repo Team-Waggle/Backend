@@ -102,6 +102,7 @@ public class SecurityConfig {
                 .requestMatchers("/", "/login", "/error", "/favicon.ico").permitAll()
                 .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
                 .requestMatchers("/v2/auth/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/static/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/v1/projects/post/**").permitAll()
                 .anyRequest().authenticated()
             )
