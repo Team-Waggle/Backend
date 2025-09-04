@@ -64,7 +64,7 @@ public record UserInputDto(
     String detail,
 
     @Valid
-    @JsonProperty("portfolio_urls")
+    @JsonProperty("portfolios")
     @Schema(description = "포트폴리오 목록")
     List<UserPortfolioDto> portfolios
 ) {
