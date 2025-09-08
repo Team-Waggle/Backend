@@ -116,7 +116,7 @@ public class UserController {
         return SuccessResponse.of(ApiStatus._OK, UserResponseDto.from(userInfo));
     }
 
-    @GetMapping("/projects")
+    @GetMapping("/me/projects")
     @Operation(
         summary = "현재 사용자의 프로젝트 목록 조회",
         description = "현재 로그인된 사용자의 프로젝트 목록을 조회합니다.",
