@@ -1,5 +1,7 @@
 package com.waggle.domain.user.controller;
 
+import com.waggle.domain.project.dto.ProjectResponseDto;
+import com.waggle.domain.project.service.ProjectService;
 import com.waggle.domain.user.UserInfo;
 import com.waggle.domain.user.dto.UserInputDto;
 import com.waggle.domain.user.dto.UserResponseDto;
@@ -9,6 +11,7 @@ import com.waggle.global.response.ApiStatus;
 import com.waggle.global.response.BaseResponse;
 import com.waggle.global.response.ErrorResponse;
 import com.waggle.global.response.SuccessResponse;
+import com.waggle.global.response.swagger.ProjectSuccessResponse;
 import com.waggle.global.response.swagger.UserDtoSuccessResponse;
 import com.waggle.global.security.oauth2.UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,6 +22,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -41,6 +45,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class UserController {
 
+    private final ProjectService projectService;
     private final UserService userService;
 
     @PostMapping(value = "/me/profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -109,6 +114,43 @@ public class UserController {
         User user = userService.getUserById(userPrincipal.getUser().getId());
         UserInfo userInfo = userService.getUserInfoByUser(user);
         return SuccessResponse.of(ApiStatus._OK, UserResponseDto.from(userInfo));
+    }
+
+    @GetMapping("/projects")
+    @Operation(
+        summary = "현재 사용자의 프로젝트 목록 조회",
+        description = "현재 로그인된 사용자의 프로젝트 목록을 조회합니다.",
+        security = @SecurityRequirement(name = "JWT")
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "프로젝트 목록 조회 성공",
+            content = @Content(
+                schema = @Schema(implementation = ProjectSuccessResponse.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "인증되지 않은 사용자",
+            content = @Content(
+                schema = @Schema(implementation = ErrorResponse.class)
+            )
+        )
+    })
+    public ResponseEntity<BaseResponse<List<ProjectResponseDto>>> getMyProjects(
+        @AuthenticationPrincipal UserPrincipal userPrincipal
+    ) {
+        return SuccessResponse.of(
+            ApiStatus._OK,
+            projectService.getUserProjects(userPrincipal.getUser().getId()).stream()
+                .map(project -> projectService.getProjectInfoByProject(
+                    project,
+                    userPrincipal.getUser())
+                )
+                .map(ProjectResponseDto::from)
+                .toList()
+        );
     }
 
     @GetMapping("/{userId}")
