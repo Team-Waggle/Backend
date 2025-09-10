@@ -10,6 +10,7 @@ import com.waggle.global.response.ErrorResponse;
 import com.waggle.global.response.SuccessResponse;
 import com.waggle.global.response.swagger.ProjectSuccessResponse;
 import com.waggle.global.response.swagger.ProjectsSuccessResponse;
+import com.waggle.global.response.swagger.UserDtoSuccessResponse;
 import com.waggle.global.security.oauth2.UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -50,7 +51,7 @@ public class ProjectMemberController {
             responseCode = "200",
             description = "프로젝트 모집글 참여자 조회 성공",
             content = @Content(
-                schema = @Schema(implementation = ProjectSuccessResponse.class)
+                schema = @Schema(implementation = UserDtoSuccessResponse.class)
             )
         ),
         @ApiResponse(
