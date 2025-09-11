@@ -7,6 +7,7 @@ import com.waggle.domain.reference.enums.Industry;
 import com.waggle.domain.reference.enums.Skill;
 import com.waggle.domain.reference.enums.WorkPeriod;
 import com.waggle.domain.reference.enums.WorkWay;
+import com.waggle.domain.user.dto.UserResponseDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -66,6 +67,10 @@ public record ProjectResponseDto(
     @JsonProperty("bookmark_cnt")
     int bookmarkCnt,
 
+    @Schema(description = "작성자 정보")
+    @JsonProperty("user")
+    UserResponseDto user,
+
     @Schema(description = "사용자 북마크 여부", example = "true")
     @JsonProperty("bookmarked")
     Boolean bookmarked,
@@ -99,6 +104,7 @@ public record ProjectResponseDto(
             projectInfo.project().getContactUrl(),
             projectInfo.project().getReferenceUrl(),
             projectInfo.project().getBookmarkCount(),
+            projectInfo.userInfo() != null ? UserResponseDto.from(projectInfo.userInfo()) : null,
             projectInfo.bookmarked(),
             projectInfo.project().getCreatedAt(),
             projectInfo.project().getUpdatedAt()

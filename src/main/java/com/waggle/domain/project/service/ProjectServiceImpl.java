@@ -23,6 +23,7 @@ import com.waggle.domain.project.repository.ProjectRepository;
 import com.waggle.domain.project.repository.ProjectSkillRepository;
 import com.waggle.domain.reference.enums.Position;
 import com.waggle.domain.reference.enums.Skill;
+import com.waggle.domain.user.UserInfo;
 import com.waggle.domain.user.entity.User;
 import com.waggle.domain.user.service.UserService;
 import com.waggle.global.exception.AccessDeniedException;
@@ -111,6 +112,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     @Transactional(readOnly = true)
     public ProjectInfo getProjectInfoByProject(Project project, @Nullable User user) {
+        UserInfo userInfo = user != null ? userService.getUserInfoByUser(user) : null;
         Boolean bookmarked = user != null && projectBookmarkRepository.existsByProjectIdAndUserId(
             project.getId(),
             user.getId()
@@ -124,6 +126,7 @@ public class ProjectServiceImpl implements ProjectService {
             projectRecruitmentRepository.findByProjectId(project.getId());
 
         return ProjectInfo.of(
+            userInfo,
             bookmarked,
             project,
             projectSkills,

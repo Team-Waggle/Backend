@@ -5,11 +5,14 @@ import com.waggle.domain.project.entity.ProjectApplicant;
 import com.waggle.domain.project.entity.ProjectMember;
 import com.waggle.domain.project.entity.ProjectRecruitment;
 import com.waggle.domain.project.entity.ProjectSkill;
+import com.waggle.domain.user.UserInfo;
+import jakarta.annotation.Nullable;
 import java.util.List;
 import lombok.Builder;
 
 @Builder
 public record ProjectInfo(
+    @Nullable UserInfo userInfo,
     Boolean bookmarked,
     Project project,
     List<ProjectSkill> projectSkills,
@@ -19,6 +22,7 @@ public record ProjectInfo(
 ) {
 
     public static ProjectInfo of(
+        UserInfo userInfo,
         Boolean bookmarked,
         Project project,
         List<ProjectSkill> projectSkills,
@@ -27,6 +31,7 @@ public record ProjectInfo(
         List<ProjectRecruitment> projectRecruitments
     ) {
         return new ProjectInfo(
+            userInfo,
             bookmarked,
             project,
             projectSkills,
