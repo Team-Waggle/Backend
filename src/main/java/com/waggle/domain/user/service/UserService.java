@@ -110,7 +110,7 @@ public class UserService {
 
     @Transactional
     public void deleteUser(User user) {
-        s3Service.deleteFile(user.getProfileImageUrl());
+//        s3Service.deleteFile(user.getProfileImageUrl());
         userRepository.delete(user);
         userPositionRepository.deleteByUserId(user.getId());
         userIndustryRepository.deleteByUserId(user.getId());
