@@ -104,6 +104,7 @@ public class SecurityConfig {
                 .requestMatchers("/v2/auth/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/static/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/v1/projects/post/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/v1/projects/member/**").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterAfter(jwtAuthenticationFilter, OAuth2LoginAuthenticationFilter.class)
