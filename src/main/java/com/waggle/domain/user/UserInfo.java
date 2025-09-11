@@ -4,8 +4,8 @@ import com.waggle.domain.user.entity.User;
 import com.waggle.domain.user.entity.UserDayOfWeek;
 import com.waggle.domain.user.entity.UserIndustry;
 import com.waggle.domain.user.entity.UserIntroduction;
-import com.waggle.domain.user.entity.UserPosition;
 import com.waggle.domain.user.entity.UserPortfolio;
+import com.waggle.domain.user.entity.UserPosition;
 import com.waggle.domain.user.entity.UserSkill;
 import java.util.List;
 
