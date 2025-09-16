@@ -20,8 +20,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -52,7 +52,8 @@ public class AuthController {
     })
     public ResponseEntity<BaseResponse<Object>> reissueAccessToken(
         HttpServletResponse response,
-        @CookieValue(name = "refresh_token", required = false) String refreshToken
+        @RequestHeader("Refresh-Token") String refreshToken
+        // @CookieValue(name = "refresh_token", required = false) String refreshToken
     ) {
         if (refreshToken == null) {
             throw new JwtTokenException(ApiStatus._REFRESH_TOKEN_NOT_FOUND);
@@ -83,7 +84,9 @@ public class AuthController {
         @ApiResponse(responseCode = "401", description = "유효하지 않은 리프레시 토큰", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     public ResponseEntity<BaseResponse<Object>> logout(
-        @CookieValue(name = "refresh_token", required = false) String refreshToken) {
+        @RequestHeader("Refresh-Token") String refreshToken
+        // @CookieValue(name = "refresh_token", required = false) String refreshToken
+    ) {
         authService.deleteRefreshToken(refreshToken);
 
         return SuccessResponse.of(ApiStatus._NO_CONTENT, null);
