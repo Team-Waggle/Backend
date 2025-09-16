@@ -58,10 +58,10 @@ public class AuthController {
         if (refreshToken == null) {
             throw new JwtTokenException(ApiStatus._REFRESH_TOKEN_NOT_FOUND);
         }
-        jwtUtil.deleteTokenCookies(response);
+//        jwtUtil.deleteTokenCookies(response);
         try {
             AccessTokenVo accessToken = authService.reissueAccessToken(refreshToken);
-            jwtUtil.addAccessTokenCookie(response, accessToken.accessToken());
+//            jwtUtil.addAccessTokenCookie(response, accessToken.accessToken());
             return SuccessResponse.of(ApiStatus._REISSUE_ACCESS_TOKEN, accessToken);
         } catch (JwtTokenException e) {
             log.warn("Token reissue failed: {}", e.getMessage());
