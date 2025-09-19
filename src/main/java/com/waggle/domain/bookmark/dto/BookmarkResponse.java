@@ -8,7 +8,7 @@ import com.waggle.domain.bookmark.Bookmarkable.BookmarkType;
 import com.waggle.domain.post.Post;
 import com.waggle.domain.projectV2.ProjectV2;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Schema(description = "북마크 응답 DTO")
 public record BookmarkResponse(
@@ -22,7 +22,7 @@ public record BookmarkResponse(
     Object target,
 
     @Schema(description = "북마크 시간", example = "2025-06-08T10:30:00Z")
-    Instant bookmarkedAt
+    LocalDateTime bookmarkedAt
 ) {
 
     public static BookmarkResponse from(Bookmarkable bookmarkable) {

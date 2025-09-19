@@ -6,7 +6,7 @@ import com.waggle.domain.reference.enums.WorkTime;
 import com.waggle.domain.reference.enums.WorkWay;
 import com.waggle.domain.user.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record UserResponse(
@@ -44,11 +44,11 @@ public record UserResponse(
 
     @Schema(description = "생성일자", example = "2025-07-27T10:30:00Z")
     @JsonProperty("created_at")
-    Instant createdAt,
+    LocalDateTime createdAt,
 
     @Schema(description = "수정일자", example = "2025-07-27T10:30:00Z")
     @JsonProperty("updated_at")
-    Instant updatedAt
+    LocalDateTime updatedAt
 ) {
 
     public static UserResponse from(User user) {

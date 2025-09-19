@@ -5,7 +5,7 @@ import com.waggle.domain.project.dto.ProjectResponseDto;
 import com.waggle.domain.reference.enums.Position;
 import com.waggle.domain.user.dto.UserResponseDto;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Schema(description = "멤버 응답 DTO")
 public record MemberResponse(
@@ -22,10 +22,10 @@ public record MemberResponse(
     ProjectResponseDto project,
 
     @Schema(description = "멤버 합류 시간", example = "2025-06-08T10:30:00Z")
-    Instant createdAt,
+    LocalDateTime createdAt,
 
     @Schema(description = "멤버 직무 변경 시간", example = "2025-06-08T10:35:00Z")
-    Instant updatedAt
+    LocalDateTime updatedAt
 ) {
 
     public static MemberResponse from(Member member) {

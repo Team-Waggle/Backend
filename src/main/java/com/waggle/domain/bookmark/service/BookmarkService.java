@@ -9,7 +9,7 @@ import com.waggle.domain.post.repository.PostRepository;
 import com.waggle.domain.projectV2.ProjectV2;
 import com.waggle.domain.projectV2.repository.ProjectV2Repository;
 import com.waggle.domain.user.entity.User;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -83,9 +83,9 @@ public class BookmarkService {
             .map(bookmark -> bookmarkableMap.get(bookmark.getBookmarkableId()))
             .filter(Objects::nonNull)
             .sorted((a, b) -> {
-                Instant aCreatedAt = a instanceof Post ?
+                LocalDateTime aCreatedAt = a instanceof Post ?
                     ((Post) a).getCreatedAt() : ((ProjectV2) a).getCreatedAt();
-                Instant bCreatedAt = b instanceof Post ?
+                LocalDateTime bCreatedAt = b instanceof Post ?
                     ((Post) b).getCreatedAt() : ((ProjectV2) b).getCreatedAt();
 
                 int result = bCreatedAt.compareTo(aCreatedAt);

@@ -13,7 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,13 +39,13 @@ public class Member extends BaseEntity {
     @JoinColumn(name = "project_id", nullable = false, updatable = false)
     private ProjectV2 project;
 
-    private Instant deletedAt;
+    private LocalDateTime deletedAt;
 
     public void updatePosition(Position position) {
         this.position = position;
     }
 
     public void delete() {
-        deletedAt = Instant.now();
+        deletedAt = LocalDateTime.now();
     }
 }

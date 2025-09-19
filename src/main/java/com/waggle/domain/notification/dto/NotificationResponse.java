@@ -3,7 +3,7 @@ package com.waggle.domain.notification.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.waggle.domain.notification.entity.Notification;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Schema(description = "알림 응답 DTO")
 public record NotificationResponse(
@@ -29,11 +29,11 @@ public record NotificationResponse(
 
     @Schema(description = "생성일자", example = "2025-07-27T10:30:00")
     @JsonProperty("created_at")
-    Instant createdAt,
+    LocalDateTime createdAt,
 
     @Schema(description = "수정일자", example = "2025-07-27T10:30:00")
     @JsonProperty("updated_at")
-    Instant updatedAt
+    LocalDateTime updatedAt
 ) {
 
     public static NotificationResponse from(Notification notification) {

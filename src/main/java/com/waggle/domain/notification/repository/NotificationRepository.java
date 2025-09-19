@@ -1,7 +1,7 @@
 package com.waggle.domain.notification.repository;
 
 import com.waggle.domain.notification.entity.Notification;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -16,7 +16,7 @@ public interface NotificationRepository extends JpaRepository<Notification, UUID
     int countByUserIdAndIsReadFalse(UUID userId);
 
     @Query("SELECT n.createdAt FROM Notification n WHERE n.id = :id")
-    Optional<Instant> findCreatedAtById(@Param("id") Long notificationId);
+    Optional<LocalDateTime> findCreatedAtById(@Param("id") Long notificationId);
 
     @Query("""
         SELECT n FROM Notification n
@@ -29,7 +29,7 @@ public interface NotificationRepository extends JpaRepository<Notification, UUID
     List<Notification> findByUserIdWithCursor(
         @Param("userId") UUID userId,
         @Param("cursor") Long cursor,
-        @Param("cursorCreatedAt") Instant cursorCreatedAt,
+        @Param("cursorCreatedAt") LocalDateTime cursorCreatedAt,
         Pageable pageable
     );
 

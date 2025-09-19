@@ -14,7 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -45,7 +45,7 @@ public class Application extends BaseEntity {
     @JoinColumn(name = "project_id", nullable = false, updatable = false)
     private ProjectV2 project;
 
-    private Instant deletedAt;
+    private LocalDateTime deletedAt;
 
     @Builder
     private Application(Position position, User user, ProjectV2 project) {
@@ -74,6 +74,6 @@ public class Application extends BaseEntity {
             throw new IllegalStateException("Only pending application can be cancelled");
         }
         this.status = ApplicationStatus.CANCELLED;
-        this.deletedAt = Instant.now();
+        this.deletedAt = LocalDateTime.now();
     }
 }

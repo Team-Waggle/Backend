@@ -1,7 +1,7 @@
 package com.waggle.global.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import lombok.Getter;
 
 @Getter
@@ -21,13 +21,13 @@ public abstract class BaseResponse<T> {
     protected final T payload;
 
     @Schema(description = "응답 시간", example = "2021-08-01T00:00:00Z")
-    protected final Instant timestamp;
+    protected final LocalDateTime timestamp;
 
     protected BaseResponse(boolean isSuccess, int code, String message, T payload) {
         this.isSuccess = isSuccess;
         this.code = code;
         this.message = message;
         this.payload = payload;
-        this.timestamp = Instant.now();
+        this.timestamp = LocalDateTime.now();
     }
 }

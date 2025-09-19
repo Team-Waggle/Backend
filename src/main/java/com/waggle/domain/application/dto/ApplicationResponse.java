@@ -6,7 +6,7 @@ import com.waggle.domain.projectV2.dto.ProjectResponse;
 import com.waggle.domain.reference.enums.Position;
 import com.waggle.domain.user.dto.UserResponseDto;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Schema(description = "지원 응답 DTO")
 public record ApplicationResponse(
@@ -26,10 +26,10 @@ public record ApplicationResponse(
     ProjectResponse project,
 
     @Schema(description = "지원 시간", example = "2025-06-08T10:30:00Z")
-    Instant createdAt,
+    LocalDateTime createdAt,
 
     @Schema(description = "지원 상태 변경 시간", example = "2025-06-08T10:35:00Z")
-    Instant updatedAt
+    LocalDateTime updatedAt
 ) {
 
     public static ApplicationResponse from(Application application) {

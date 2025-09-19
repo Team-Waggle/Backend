@@ -4,7 +4,7 @@ import com.waggle.domain.post.Post;
 import com.waggle.domain.projectV2.dto.ProjectResponse;
 import com.waggle.domain.user.dto.UserResponseDto;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Schema(description = "게시글 응답 DTO")
 public record PostResponse(
@@ -24,10 +24,10 @@ public record PostResponse(
     ProjectResponse project,
 
     @Schema(description = "게시글 생성 시간", example = "2025-06-08T10:30:00Z")
-    Instant createdAt,
+    LocalDateTime createdAt,
 
     @Schema(description = "게시글 수정 시간", example = "2025-06-08T10:35:00Z")
-    Instant updatedAt
+    LocalDateTime updatedAt
 ) {
 
     public static PostResponse from(Post post) {

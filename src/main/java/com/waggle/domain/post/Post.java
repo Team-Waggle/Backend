@@ -14,7 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -43,7 +43,7 @@ public class Post extends BaseEntity implements Bookmarkable {
     @JoinColumn(name = "project_id")
     private ProjectV2 project;
 
-    private Instant deletedAt;
+    private LocalDateTime deletedAt;
 
     @Builder
     private Post(String title, String content, User user, ProjectV2 project) {
@@ -60,7 +60,7 @@ public class Post extends BaseEntity implements Bookmarkable {
     }
 
     public void delete() {
-        this.deletedAt = Instant.now();
+        this.deletedAt = LocalDateTime.now();
     }
 
     @Override

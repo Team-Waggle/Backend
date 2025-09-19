@@ -12,7 +12,7 @@ import com.waggle.domain.user.entity.UserIndustry;
 import com.waggle.domain.user.entity.UserSkill;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.DayOfWeek;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -106,11 +106,11 @@ public record UserResponseDto(
 
     @Schema(description = "생성일자", example = "2021-07-01T00:00:00")
     @JsonProperty("created_at")
-    Instant createdAt,
+    LocalDateTime createdAt,
 
     @Schema(description = "수정일자", example = "2021-07-01T00:00:00")
     @JsonProperty("updated_at")
-    Instant updatedAt
+    LocalDateTime updatedAt
 ) {
 
     public static UserResponseDto from(UserInfo userInfo) {
