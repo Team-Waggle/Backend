@@ -1,7 +1,9 @@
 package com.waggle.domain.user.controller;
 
+import com.waggle.domain.follow.service.FollowService;
 import com.waggle.domain.project.dto.ProjectResponseDto;
 import com.waggle.domain.project.service.ProjectService;
+import com.waggle.domain.user.SimpleUserInfo;
 import com.waggle.domain.user.UserInfo;
 import com.waggle.domain.user.dto.UserInputDto;
 import com.waggle.domain.user.dto.UserResponseDto;
@@ -45,6 +47,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class UserController {
 
+    private final FollowService followService;
     private final ProjectService projectService;
     private final UserService userService;
 
@@ -150,6 +153,26 @@ public class UserController {
                 )
                 .map(ProjectResponseDto::from)
                 .toList()
+        );
+    }
+
+    @GetMapping("/me/followees")
+    public ResponseEntity<BaseResponse<List<SimpleUserInfo>>> getMyFollowees(
+        @AuthenticationPrincipal UserPrincipal userPrincipal
+    ) {
+        return SuccessResponse.of(
+            ApiStatus._OK,
+            followService.getUserFollowees(userPrincipal.getUser())
+        );
+    }
+
+    @GetMapping("/me/followers")
+    public ResponseEntity<BaseResponse<List<SimpleUserInfo>>> getMyFollowers(
+        @AuthenticationPrincipal UserPrincipal userPrincipal
+    ) {
+        return SuccessResponse.of(
+            ApiStatus._OK,
+            followService.getUserFollowers(userPrincipal.getUser())
         );
     }
 
