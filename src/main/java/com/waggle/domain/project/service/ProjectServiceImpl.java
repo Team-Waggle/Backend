@@ -69,6 +69,7 @@ public class ProjectServiceImpl implements ProjectService {
             .contactUrl(projectInputDto.contactUrl())
             .referenceUrl(projectInputDto.referenceUrl())
             .bookmarkCount(0)
+            .user(user)
             .build();
         project = projectRepository.save(project);
 
