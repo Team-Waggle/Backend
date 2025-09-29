@@ -94,6 +94,7 @@ public class ProjectPostController {
         );
     }
 
+    @GetMapping
     public ResponseEntity<BaseResponse<List<SimpleProjectInfo>>> searchProjects(
         @RequestParam String query
     ) {
