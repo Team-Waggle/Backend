@@ -24,19 +24,19 @@ public record ProjectResponseDto(
     @JsonProperty("title")
     String title,
 
-    @Schema(description = "산업 분야", example = "{\"display_name\": \"금융\"}")
+    @Schema(description = "산업 분야", example = "FINANCE")
     @JsonProperty("industry")
     Industry industry,
 
-    @Schema(description = "진행 방식", example = "{\"display_name\": \"온라인\"}")
-    @JsonProperty("ways_of_working")
+    @Schema(description = "진행 방식", example = "ONLINE")
+    @JsonProperty("work_way")
     WorkWay workWay,
 
     @Schema(description = "마감 일자", example = "2021-07-01")
     @JsonProperty("recruitment_end_date")
     LocalDate recruitmentEndDate,
 
-    @Schema(description = "진행 기간", example = "{\"display_name\": \"미정\"}")
+    @Schema(description = "진행 기간", example = "SHORT_TERM")
     @JsonProperty("work_period")
     WorkPeriod workPeriod,
 
@@ -46,7 +46,7 @@ public record ProjectResponseDto(
 
     @Schema(
         description = "사용 스킬 목록",
-        example = "[{\"display_name\": \"Java\", \"image_url\": \"https://logo.clearbit.com/Java.com\"}, {\"display_name\": \"Spring\", \"image_url\": \"https://logo.clearbit.com/Spring.io\"}]"
+        example = "[\"JAVA\", \"SPRING\"]"
     )
     @JsonProperty("skills")
     List<Skill> skills,
@@ -64,8 +64,8 @@ public record ProjectResponseDto(
     String referenceUrl,
 
     @Schema(description = "북마크 수", example = "0")
-    @JsonProperty("bookmark_cnt")
-    int bookmarkCnt,
+    @JsonProperty("bookmark_count")
+    int bookmarkCount,
 
     @Schema(description = "작성자 정보")
     @JsonProperty("user")
