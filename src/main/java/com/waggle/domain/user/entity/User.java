@@ -1,11 +1,14 @@
 package com.waggle.domain.user.entity;
 
+import com.waggle.domain.reference.enums.Position;
 import com.waggle.domain.reference.enums.Sido;
 import com.waggle.domain.reference.enums.WorkTime;
 import com.waggle.domain.reference.enums.WorkWay;
 import com.waggle.global.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -60,6 +63,13 @@ public class User extends BaseEntity {
     @Column(name = "detail")
     private String detail;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "position", nullable = false)
+    private Position position;
+
+    @Column(name = "year_count", nullable = false)
+    private int yearCount;
+
     @Builder
     public User(
         String provider,
@@ -70,7 +80,9 @@ public class User extends BaseEntity {
         WorkTime workTime,
         WorkWay workWay,
         Sido sido,
-        String detail
+        String detail,
+        Position position,
+        int yearCount
     ) {
         this.provider = provider;
         this.providerId = providerId;
@@ -81,6 +93,8 @@ public class User extends BaseEntity {
         this.workWay = workWay;
         this.sido = sido;
         this.detail = detail;
+        this.position = position;
+        this.yearCount = yearCount;
     }
 
     public void update(
@@ -88,13 +102,17 @@ public class User extends BaseEntity {
         WorkTime workTime,
         WorkWay workWay,
         Sido sido,
-        String detail
+        String detail,
+        Position position,
+        int yearCount
     ) {
         this.name = name;
         this.workTime = workTime;
         this.workWay = workWay;
         this.sido = sido;
         this.detail = detail;
+        this.position = position;
+        this.yearCount = yearCount;
     }
 
     public void updateProfileImageUrl(String profileImageUrl) {

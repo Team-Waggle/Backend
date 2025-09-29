@@ -5,15 +5,10 @@ import com.waggle.domain.follow.dto.ToggleFollowRequest;
 import com.waggle.domain.follow.repository.FollowRepository;
 import com.waggle.domain.user.SimpleUserInfo;
 import com.waggle.domain.user.entity.User;
-import com.waggle.domain.user.entity.UserPosition;
-import com.waggle.domain.user.repository.UserPositionRepository;
 import com.waggle.domain.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class FollowService {
 
     private final FollowRepository followRepository;
-    private final UserPositionRepository userPositionRepository;
     private final UserRepository userRepository;
 
     @Transactional
@@ -56,25 +50,11 @@ public class FollowService {
     @Transactional(readOnly = true)
     public List<SimpleUserInfo> getUserFollowees(User user) {
         List<Follow> follows = followRepository.findFolloweesWithUser(user);
-        List<UUID> userIds = follows.stream()
-            .map(follow -> follow.getFollowee().getId())
-            .toList();
-
-        List<UserPosition> userPositions = userPositionRepository.findByUserIdIn(userIds);
-
-        Map<UUID, List<UserPosition>> positionsByUserId = userPositions.stream()
-            .collect(Collectors.groupingBy(
-                userPosition -> userPosition.getUser().getId(),
-                LinkedHashMap::new,
-                Collectors.toList()
-            ));
 
         return follows.stream()
             .map(follow -> {
                 User followee = follow.getFollowee();
-                List<UserPosition> positions = positionsByUserId.getOrDefault(followee.getId(),
-                    List.of());
-                return SimpleUserInfo.of(followee, positions);
+                return SimpleUserInfo.from(followee);
             })
             .toList();
     }
@@ -82,25 +62,11 @@ public class FollowService {
     @Transactional(readOnly = true)
     public List<SimpleUserInfo> getUserFollowers(User user) {
         List<Follow> follows = followRepository.findFollowersWithUser(user);
-        List<UUID> userIds = follows.stream()
-            .map(follow -> follow.getFollower().getId())
-            .toList();
-
-        List<UserPosition> userPositions = userPositionRepository.findByUserIdIn(userIds);
-
-        Map<UUID, List<UserPosition>> positionsByUserId = userPositions.stream()
-            .collect(Collectors.groupingBy(
-                userPosition -> userPosition.getUser().getId(),
-                LinkedHashMap::new,
-                Collectors.toList()
-            ));
 
         return follows.stream()
             .map(follow -> {
                 User follower = follow.getFollower();
-                List<UserPosition> positions = positionsByUserId.getOrDefault(follower.getId(),
-                    List.of());
-                return SimpleUserInfo.of(follower, positions);
+                return SimpleUserInfo.from(follower);
             })
             .toList();
     }

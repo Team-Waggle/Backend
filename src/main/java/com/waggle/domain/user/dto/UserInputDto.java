@@ -2,13 +2,16 @@ package com.waggle.domain.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.waggle.domain.reference.enums.Industry;
+import com.waggle.domain.reference.enums.Position;
 import com.waggle.domain.reference.enums.Sido;
 import com.waggle.domain.reference.enums.Skill;
 import com.waggle.domain.reference.enums.WorkTime;
 import com.waggle.domain.reference.enums.WorkWay;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.DayOfWeek;
 import java.util.List;
@@ -22,11 +25,6 @@ public record UserInputDto(
     @JsonProperty("name")
     @Schema(description = "사용자 이름", example = "홍길동")
     String name,
-
-    @Valid
-    @JsonProperty("positions")
-    @Schema(description = "직무 및 경력 목록")
-    List<UserPositionDto> positions,
 
     @Size(max = 5, message = "관심 산업 분야는 최대 5개까지 선택 가능합니다")
     @JsonProperty("industries")
@@ -62,6 +60,16 @@ public record UserInputDto(
     @JsonProperty("detail")
     @Schema(description = "자기소개 텍스트", example = "안녕하세요.")
     String detail,
+
+    @NotNull(message = "직무는 필수 항목입니다")
+    @JsonProperty("position")
+    @Schema(description = "직무", example = "BACKEND")
+    Position position,
+
+    @Min(value = 0, message = "경력은 0년 이상이어야 합니다")
+    @JsonProperty("year_count")
+    @Schema(description = "경력", example = "3")
+    int yearCount,
 
     @Valid
     @JsonProperty("portfolios")

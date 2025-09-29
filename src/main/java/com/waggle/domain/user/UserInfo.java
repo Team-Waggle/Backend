@@ -5,13 +5,11 @@ import com.waggle.domain.user.entity.UserDayOfWeek;
 import com.waggle.domain.user.entity.UserIndustry;
 import com.waggle.domain.user.entity.UserIntroduction;
 import com.waggle.domain.user.entity.UserPortfolio;
-import com.waggle.domain.user.entity.UserPosition;
 import com.waggle.domain.user.entity.UserSkill;
 import java.util.List;
 
 public record UserInfo(
     User user,
-    List<UserPosition> userPositions,
     List<UserIndustry> userIndustries,
     List<UserSkill> userSkills,
     List<UserDayOfWeek> userDaysOfWeek,
@@ -21,7 +19,6 @@ public record UserInfo(
 
     public static UserInfo of(
         User user,
-        List<UserPosition> userPositions,
         List<UserIndustry> userIndustries,
         List<UserSkill> userSkills,
         List<UserDayOfWeek> userDaysOfWeek,
@@ -30,7 +27,6 @@ public record UserInfo(
     ) {
         return new UserInfo(
             user,
-            userPositions,
             userIndustries,
             userSkills,
             userDaysOfWeek,

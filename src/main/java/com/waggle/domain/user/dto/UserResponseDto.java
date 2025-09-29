@@ -2,6 +2,7 @@ package com.waggle.domain.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.waggle.domain.reference.enums.Industry;
+import com.waggle.domain.reference.enums.Position;
 import com.waggle.domain.reference.enums.Sido;
 import com.waggle.domain.reference.enums.Skill;
 import com.waggle.domain.reference.enums.WorkTime;
@@ -44,11 +45,18 @@ public record UserResponseDto(
     String email,
 
     @Schema(
-        description = "사용자 직무 정보",
-        example = "[{\"position\": {\"display_name\": \"백엔드\"}, \"year_count\": 3}, {\"position\": {\"display_name\": \"프론트엔드\"}, \"year_count\": 2}]"
+        description = "사용자 직무",
+        example = "BACKEND"
     )
-    @JsonProperty("positions")
-    List<UserPositionDto> userPositionDtos,
+    @JsonProperty("position")
+    Position position,
+
+    @Schema(
+        description = "사용자 경력",
+        example = "3"
+    )
+    @JsonProperty("year_count")
+    int yearCount,
 
     @Schema(
         description = "사용자 관심 산업 정보",
@@ -121,10 +129,8 @@ public record UserResponseDto(
             userInfo.user().getProfileImageUrl(),
             userInfo.user().getName(),
             userInfo.user().getEmail(),
-            userInfo.userPositions().stream()
-                .map(UserPositionDto::from)
-                .sorted(Comparator.comparing(UserPositionDto::position))
-                .toList(),
+            userInfo.user().getPosition(),
+            userInfo.user().getYearCount(),
             userInfo.userIndustries().stream()
                 .map(UserIndustry::getIndustry)
                 .sorted(Comparator.comparing(Enum::name))

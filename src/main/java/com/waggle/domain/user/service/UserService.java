@@ -7,19 +7,16 @@ import com.waggle.domain.user.UserInfo;
 import com.waggle.domain.user.dto.UserInputDto;
 import com.waggle.domain.user.dto.UserIntroductionDto;
 import com.waggle.domain.user.dto.UserPortfolioDto;
-import com.waggle.domain.user.dto.UserPositionDto;
 import com.waggle.domain.user.entity.User;
 import com.waggle.domain.user.entity.UserDayOfWeek;
 import com.waggle.domain.user.entity.UserIndustry;
 import com.waggle.domain.user.entity.UserIntroduction;
 import com.waggle.domain.user.entity.UserPortfolio;
-import com.waggle.domain.user.entity.UserPosition;
 import com.waggle.domain.user.entity.UserSkill;
 import com.waggle.domain.user.repository.UserDayOfWeekRepository;
 import com.waggle.domain.user.repository.UserIndustryRepository;
 import com.waggle.domain.user.repository.UserIntroductionRepository;
 import com.waggle.domain.user.repository.UserPortfolioRepository;
-import com.waggle.domain.user.repository.UserPositionRepository;
 import com.waggle.domain.user.repository.UserRepository;
 import com.waggle.domain.user.repository.UserSkillRepository;
 import com.waggle.global.aws.service.S3Service;
@@ -44,7 +41,6 @@ public class UserService {
     private final UserDayOfWeekRepository userDayOfWeekRepository;
     private final UserIndustryRepository userIndustryRepository;
     private final UserIntroductionRepository userIntroductionRepository;
-    private final UserPositionRepository userPositionRepository;
     private final UserPortfolioRepository userPortfolioRepository;
     private final UserSkillRepository userSkillRepository;
 
@@ -56,7 +52,6 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserInfo getUserInfoByUser(User user) {
-        List<UserPosition> userPositions = userPositionRepository.findByUserId(user.getId());
         List<UserIndustry> userIndustries = userIndustryRepository.findByUserId(user.getId());
         List<UserSkill> userSkills = userSkillRepository.findByUserId(user.getId());
         List<UserDayOfWeek> userDaysOfWeek = userDayOfWeekRepository.findByUserId(user.getId());
@@ -66,13 +61,17 @@ public class UserService {
 
         return UserInfo.of(
             user,
-            userPositions,
             userIndustries,
             userSkills,
             userDaysOfWeek,
             userIntroductions,
             userPortfolios
         );
+    }
+
+    @Transactional(readOnly = true)
+    public List<User> searchUsers(String query) {
+        return userRepository.searchByNameOrEmail(query);
     }
 
     @Transactional
@@ -82,10 +81,11 @@ public class UserService {
             userInputDto.workTime(),
             userInputDto.workWay(),
             userInputDto.sido(),
-            userInputDto.detail()
+            userInputDto.detail(),
+            userInputDto.position(),
+            userInputDto.yearCount()
         );
 
-        updateUserPositions(user.getId(), userInputDto.positions());
         updateUserIndustries(user.getId(), userInputDto.industries());
         updateUserSkills(user.getId(), userInputDto.skills());
         updateUserDaysOfWeek(user.getId(), userInputDto.daysOfWeek());
@@ -112,32 +112,11 @@ public class UserService {
     public void deleteUser(User user) {
 //        s3Service.deleteFile(user.getProfileImageUrl());
         userRepository.delete(user);
-        userPositionRepository.deleteByUserId(user.getId());
         userIndustryRepository.deleteByUserId(user.getId());
         userSkillRepository.deleteByUserId(user.getId());
         userDayOfWeekRepository.deleteByUserId(user.getId());
         userIntroductionRepository.deleteByUserId(user.getId());
         userPortfolioRepository.deleteByUserId(user.getId());
-    }
-
-
-    private void updateUserPositions(UUID userId, List<UserPositionDto> userPositions) {
-        if (userPositions == null) {
-            return;
-        }
-
-        userPositionRepository.deleteByUserId(userId);
-
-        User user = userRepository.getReferenceById(userId);
-        List<UserPosition> entities = userPositions.stream()
-            .map(dto -> UserPosition.builder()
-                .user(user)
-                .position(dto.position())
-                .yearCount(dto.yearCount())
-                .build())
-            .toList();
-
-        userPositionRepository.saveAll(entities);
     }
 
     private void updateUserIndustries(UUID userId, List<Industry> industries) {
