@@ -3,7 +3,6 @@ package com.waggle.domain.project.controller;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
 import com.waggle.domain.project.ProjectInfo;
-import com.waggle.domain.project.SimpleProjectInfo;
 import com.waggle.domain.project.dto.ProjectFilterDto;
 import com.waggle.domain.project.dto.ProjectInputDto;
 import com.waggle.domain.project.dto.ProjectResponseDto;
@@ -25,7 +24,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -42,7 +40,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 //get: 조회, post: 생성, put: 수정, delete: 삭제
@@ -91,18 +88,6 @@ public class ProjectPostController {
         return SuccessResponse.of(
             ApiStatus._OK,
             projectInfos.map(ProjectResponseDto::from)
-        );
-    }
-
-    @GetMapping
-    public ResponseEntity<BaseResponse<List<SimpleProjectInfo>>> searchProjects(
-        @RequestParam String query
-    ) {
-        List<Project> projects = projectService.searchProjects(query);
-
-        return SuccessResponse.of(
-            ApiStatus._OK,
-            projects.stream().map(SimpleProjectInfo::from).toList()
         );
     }
 

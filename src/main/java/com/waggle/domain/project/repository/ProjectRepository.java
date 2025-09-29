@@ -33,6 +33,7 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
         AND (:industries IS NULL OR p.industry IN :industries)
         AND (:workPeriods IS NULL OR p.workPeriod IN :workPeriods)
         AND (:workWays IS NULL OR p.workWay IN :workWays)
+        AND p.title LIKE %:query%
         """)
     Page<Project> findWithFilter(
         @Param("positions") Set<Position> positions,
@@ -40,14 +41,9 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
         @Param("industries") Set<Industry> industries,
         @Param("workPeriods") Set<WorkPeriod> workPeriods,
         @Param("workWays") Set<WorkWay> workWays,
+        @Param("query") String query,
         Pageable pageable
     );
-
-    @Query("""
-        SELECT p FROM Project p
-        WHERE p.title LIKE %:query%
-        """)
-    List<Project> searchByTitle(@Param("query") String query);
 
     List<Project> findByRecruitmentEndDate(LocalDate date);
 }

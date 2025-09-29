@@ -97,15 +97,9 @@ public class ProjectServiceImpl implements ProjectService {
             projectFilterDto.industries(),
             projectFilterDto.workPeriods(),
             projectFilterDto.workWays(),
+            projectFilterDto.query(),
             pageable
         );
-    }
-
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<Project> searchProjects(String query) {
-        return projectRepository.searchByTitle(query);
     }
 
     @Override

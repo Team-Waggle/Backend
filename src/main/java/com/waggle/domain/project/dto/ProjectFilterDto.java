@@ -58,7 +58,10 @@ public record ProjectFilterDto(
         schema = @Schema(allowableValues = {"ONLINE", "OFFLINE", "ONLINE_OFFLINE"}
         )
     )
-    Set<WorkWay> workWays
+    Set<WorkWay> workWays,
+
+    @Parameter(description = "검색어")
+    String query
 ) {
 
 }

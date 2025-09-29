@@ -17,8 +17,6 @@ public interface ProjectService {
 
     Page<Project> getProjects(ProjectFilterDto projectFilterDto, Pageable pageable);
 
-    List<Project> searchProjects(String query);
-
     Project getProjectById(Long projectId);
 
     ProjectInfo getProjectInfoByProject(Project project, User user);
