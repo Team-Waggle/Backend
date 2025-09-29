@@ -1,6 +1,7 @@
 package com.waggle.domain.follow.service;
 
 import com.waggle.domain.follow.Follow;
+import com.waggle.domain.follow.dto.FollowResponse;
 import com.waggle.domain.follow.dto.ToggleFollowRequest;
 import com.waggle.domain.follow.repository.FollowRepository;
 import com.waggle.domain.user.SimpleUserInfo;
@@ -69,5 +70,13 @@ public class FollowService {
                 return SimpleUserInfo.from(follower);
             })
             .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public FollowResponse getUserFollowCount(User user) {
+        return FollowResponse.of(
+            followRepository.countByFollowee(user),
+            followRepository.countByFollower(user)
+        );
     }
 }

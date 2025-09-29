@@ -11,6 +11,10 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
 
     boolean existsByFollowerAndFollowee(User follower, User followee);
 
+    int countByFollower(User follower);
+
+    int countByFollowee(User followee);
+
     @Query("""
         SELECT f FROM Follow f
         JOIN FETCH f.followee

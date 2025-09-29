@@ -1,5 +1,6 @@
 package com.waggle.domain.user.controller;
 
+import com.waggle.domain.follow.dto.FollowResponse;
 import com.waggle.domain.follow.service.FollowService;
 import com.waggle.domain.project.dto.ProjectResponseDto;
 import com.waggle.domain.project.service.ProjectService;
@@ -209,6 +210,14 @@ public class UserController {
         User user = userService.getUserById(userId);
         UserInfo userInfo = userService.getUserInfoByUser(user);
         return SuccessResponse.of(ApiStatus._OK, UserResponseDto.from(userInfo));
+    }
+
+    @GetMapping("/{userId}/follow-count")
+    public ResponseEntity<BaseResponse<FollowResponse>> getUserFollowCount(
+        @PathVariable UUID userId) {
+        User user = userService.getUserById(userId);
+        FollowResponse followResponse = followService.getUserFollowCount(user);
+        return SuccessResponse.of(ApiStatus._OK, followResponse);
     }
 
     @GetMapping
