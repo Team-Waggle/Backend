@@ -43,5 +43,11 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
         Pageable pageable
     );
 
+    @Query("""
+        SELECT p FROM Project p
+        WHERE p.title LIKE %:query%
+        """)
+    List<Project> searchByTitle(@Param("query") String query);
+
     List<Project> findByRecruitmentEndDate(LocalDate date);
 }

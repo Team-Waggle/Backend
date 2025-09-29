@@ -101,6 +101,13 @@ public class ProjectServiceImpl implements ProjectService {
         );
     }
 
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Project> searchProjects(String query) {
+        return projectRepository.searchByTitle(query);
+    }
+
     @Override
     @Transactional(readOnly = true)
     public Project getProjectById(Long projectId) {
