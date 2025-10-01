@@ -25,6 +25,7 @@ import com.waggle.domain.reference.enums.Position;
 import com.waggle.domain.reference.enums.Skill;
 import com.waggle.domain.user.UserInfo;
 import com.waggle.domain.user.entity.User;
+import com.waggle.domain.user.repository.UserRepository;
 import com.waggle.domain.user.service.UserService;
 import com.waggle.global.exception.AccessDeniedException;
 import com.waggle.global.exception.ProjectException;
@@ -55,6 +56,7 @@ public class ProjectServiceImpl implements ProjectService {
     private final ProjectMemberRepository projectMemberRepository;
     private final ProjectRecruitmentRepository projectRecruitmentRepository;
     private final ProjectSkillRepository projectSkillRepository;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional
@@ -71,21 +73,32 @@ public class ProjectServiceImpl implements ProjectService {
             .bookmarkCount(0)
             .user(user)
             .build();
-        project = projectRepository.save(project);
+        Project savedProject = projectRepository.save(project);
 
-        ProjectMember projectMember = createProjectMember(project, user, Position.PLANNER, true);
+        ProjectMember projectMember = createProjectMember(savedProject, user, Position.PLANNER,
+            true);
+        List<ProjectMember> projectMembers = userRepository.findByEmailIn(
+                projectInputDto.memberEmails()).stream().map(
+                (memberUser) ->
+                    createProjectMember(savedProject, memberUser, memberUser.getPosition(), false))
+            .toList();
+
         projectMemberRepository.save(projectMember);
+        projectMemberRepository.saveAll(projectMembers);
 
-        List<ProjectSkill> projectSkills = createProjectSkills(project, projectInputDto.skills());
+        List<ProjectSkill> projectSkills = createProjectSkills(
+            savedProject,
+            projectInputDto.skills()
+        );
         projectSkillRepository.saveAll(projectSkills);
 
         List<ProjectRecruitment> projectRecruitments = createProjectRecruitments(
-            project,
+            savedProject,
             projectInputDto.projectRecruitmentDtos()
         );
         projectRecruitmentRepository.saveAll(projectRecruitments);
 
-        return project;
+        return savedProject;
     }
 
     @Override

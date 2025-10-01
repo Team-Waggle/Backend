@@ -16,6 +16,8 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     Optional<User> findByProviderId(String providerId);
 
+    List<User> findByEmailIn(List<String> emails);
+
     @Query("""
         SELECT u FROM User u
         WHERE u.name LIKE :query% OR u.email LIKE :query%

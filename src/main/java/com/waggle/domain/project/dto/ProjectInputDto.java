@@ -71,7 +71,9 @@ public record ProjectInputDto(
     @URL(message = "유효한 URL 형식이 아닙니다")
     @Schema(description = "참조 링크", example = "www.naver.com")
     @JsonProperty("reference_url")
-    String referenceUrl
+    String referenceUrl,
+
+    List<String> memberEmails
 ) {
 
 }
