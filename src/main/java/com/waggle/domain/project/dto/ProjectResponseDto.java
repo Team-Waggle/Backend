@@ -9,10 +9,12 @@ import com.waggle.domain.reference.enums.WorkPeriod;
 import com.waggle.domain.reference.enums.WorkWay;
 import com.waggle.domain.user.dto.UserResponseDto;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.annotation.Nullable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+
 
 @Schema(description = "프로젝트 응답 dto")
 public record ProjectResponseDto(
@@ -69,7 +71,7 @@ public record ProjectResponseDto(
 
     @Schema(description = "작성자 정보")
     @JsonProperty("user")
-    UserResponseDto user,
+    @Nullable UserResponseDto user,
 
     @Schema(description = "사용자 북마크 여부", example = "true")
     @JsonProperty("bookmarked")

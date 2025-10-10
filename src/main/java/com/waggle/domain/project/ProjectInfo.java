@@ -23,7 +23,7 @@ public record ProjectInfo(
 ) {
 
     public static ProjectInfo of(
-        UserInfo userInfo,
+        @Nullable UserInfo userInfo,
         Boolean bookmarked,
         Boolean applied,
         Project project,
