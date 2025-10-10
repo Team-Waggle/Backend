@@ -118,7 +118,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     @Transactional(readOnly = true)
     public Project getProjectById(Long projectId) {
-        return projectRepository.findById(projectId)
+        return projectRepository.findByIdWithUser(projectId)
             .orElseThrow(() -> new EntityNotFoundException(
                 "Project not found with id: " + projectId));
 

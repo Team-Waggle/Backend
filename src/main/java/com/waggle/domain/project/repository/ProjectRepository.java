@@ -25,7 +25,15 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     Optional<LocalDateTime> findCreatedAtById(@Param("id") Long projectId);
 
     @Query("""
+        SELECT p from Project p
+        LEFT JOIN FETCH p.user
+        WHERE p.id = :projectId
+        """)
+    Optional<Project> findByIdWithUser(@Param("projectId") Long projectId);
+
+    @Query("""
         SELECT DISTINCT p FROM Project p
+        LEFT JOIN FETCH p.user
         LEFT JOIN ProjectRecruitment pr ON p = pr.project
         LEFT JOIN ProjectSkill ps ON p = ps.project
         WHERE (:positions IS NULL OR pr.position IN :positions)
@@ -33,7 +41,7 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
         AND (:industries IS NULL OR p.industry IN :industries)
         AND (:workPeriods IS NULL OR p.workPeriod IN :workPeriods)
         AND (:workWays IS NULL OR p.workWay IN :workWays)
-        AND p.title LIKE %:query%
+        AND p.title LIKE CONCAT('%', :query, '%')
         """)
     Page<Project> findWithFilter(
         @Param("positions") Set<Position> positions,
