@@ -127,7 +127,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     @Transactional(readOnly = true)
     public ProjectInfo getProjectInfoByProject(Project project, @Nullable User user) {
-        UserInfo userInfo = user != null ? userService.getUserInfoByUser(user) : null;
+        UserInfo userInfo = userService.getUserInfoByUser(project.getUser());
         Boolean bookmarked = user != null && projectBookmarkRepository.existsByProjectIdAndUserId(
             project.getId(),
             user.getId()
