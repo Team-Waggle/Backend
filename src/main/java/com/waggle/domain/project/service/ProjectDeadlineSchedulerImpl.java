@@ -47,7 +47,7 @@ public class ProjectDeadlineSchedulerImpl implements ProjectDeadlineScheduler {
 
     private void sendDeadlineNotifications(LocalDate date, NotificationType type) {
         LocalDate today = LocalDate.now();
-        long daysRemaining = ChronoUnit.DAYS.between(date, today);
+        long daysRemaining = ChronoUnit.DAYS.between(today, date);
 
         projectRepository.findByRecruitmentEndDate(date)
             .forEach(project -> {
