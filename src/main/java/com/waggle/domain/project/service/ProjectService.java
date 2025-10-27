@@ -2,6 +2,7 @@ package com.waggle.domain.project.service;
 
 import com.waggle.domain.project.ProjectInfo;
 import com.waggle.domain.project.dto.ProjectApplicationDto;
+import com.waggle.domain.project.dto.ProjectConfirmApplicationDto;
 import com.waggle.domain.project.dto.ProjectFilterDto;
 import com.waggle.domain.project.dto.ProjectInputDto;
 import com.waggle.domain.project.entity.Project;
@@ -42,6 +43,12 @@ public interface ProjectService {
     void withdrawFromProject(Long projectId, User user);
 
     Project applyProject(Long projectId, ProjectApplicationDto projectApplicationDto, User user);
+
+    Project confirmProject(
+        Long projectId,
+        ProjectConfirmApplicationDto projectConfirmApplicationDto,
+        User user
+    );
 
     void cancelProjectApplication(Long projectId, User user);
 

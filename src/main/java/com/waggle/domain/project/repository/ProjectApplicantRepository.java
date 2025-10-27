@@ -22,4 +22,10 @@ public interface ProjectApplicantRepository extends JpaRepository<ProjectApplica
         UUID userId,
         ApplicationStatus status
     );
+
+    boolean existsByProjectIdAndUserIdAndStatus(
+        Long projectId,
+        UUID userId,
+        ApplicationStatus status
+    );
 }

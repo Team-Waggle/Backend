@@ -6,6 +6,7 @@ import com.waggle.domain.notification.dto.CreateNotificationRequest;
 import com.waggle.domain.notification.service.NotificationService;
 import com.waggle.domain.project.ProjectInfo;
 import com.waggle.domain.project.dto.ProjectApplicationDto;
+import com.waggle.domain.project.dto.ProjectConfirmApplicationDto;
 import com.waggle.domain.project.dto.ProjectFilterDto;
 import com.waggle.domain.project.dto.ProjectInputDto;
 import com.waggle.domain.project.dto.ProjectRecruitmentDto;
@@ -253,22 +254,6 @@ public class ProjectServiceImpl implements ProjectService {
                 "Applicant not found for project id: " + projectId + " and user id: " + userId));
         projectApplicant.updateStatus(ApplicationStatus.APPROVED);
 
-        Position position = projectApplicant.getPosition();
-        ProjectRecruitment recruitment = projectRecruitmentRepository
-            .findByProjectIdAndPosition(projectId, position)
-            .orElseThrow(() -> new EntityNotFoundException(
-                "Recruitment not found for project id: " + projectId + "and position: "
-                    + position));
-        recruitment.addMember();
-
-        ProjectMember member = createProjectMember(
-            project,
-            projectApplicant.getUser(),
-            position,
-            false
-        );
-        projectMemberRepository.save(member);
-
         notificationService.createNotification(
             CreateNotificationRequest.of(
                 NotificationType.APPLICATION_ACCEPTED,
@@ -448,6 +433,66 @@ public class ProjectServiceImpl implements ProjectService {
             CreateNotificationRequest.of(
                 NotificationType.APPLICATION_RECEIVED,
                 "/projects/" + project.getId() + "/applications",
+                user.getName(),
+                project.getTitle()
+            ),
+            getLeaderByProjectId(projectId)
+        );
+
+        return project;
+    }
+
+    @Override
+    @Transactional
+    public Project confirmProject(
+        Long projectId,
+        ProjectConfirmApplicationDto projectConfirmApplicationDto,
+        User user
+    ) {
+        Position position = user.getPosition();
+        ProjectRecruitment recruitment = projectRecruitmentRepository
+            .findByProjectIdAndPosition(projectId, position)
+            .orElseThrow(() -> new EntityNotFoundException(
+                "Recruitment not found for project id: " + projectId + "and position: "
+                    + position));
+
+        if (!recruitment.isRecruitable()) {
+            throw new IllegalStateException(
+                "Not allowed to apply the project for position: " + position);
+        }
+
+        if (projectMemberRepository.existsByProjectIdAndUserId(projectId, user.getId())) {
+            throw new ProjectException(ApiStatus._ALREADY_JOINED_PROJECT);
+        }
+
+        ProjectApplicant projectApplicant = projectApplicantRepository.findByProjectIdAndUserId(
+                projectId, user.getId())
+            .orElseThrow(() -> new EntityNotFoundException("Project applicant not found"));
+
+        if (projectApplicant.getStatus() != ApplicationStatus.APPROVED) {
+            throw new IllegalStateException("Applicant not approved");
+        }
+
+        projectApplicant.updateStatus(ApplicationStatus.CONFIRMED);
+
+        Project project = projectRepository.findById(projectId)
+            .orElseThrow(() -> new EntityNotFoundException(
+                "Project not found with id: " + projectId));
+
+        ProjectMember member = createProjectMember(
+            project,
+            projectApplicant.getUser(),
+            position,
+            false
+        );
+        projectMemberRepository.save(member);
+
+        recruitment.addMember();
+
+        notificationService.createNotification(
+            CreateNotificationRequest.of(
+                NotificationType.APPLICATION_CONFIRMED,
+                "/projects/" + project.getId(),
                 user.getName(),
                 project.getTitle()
             ),

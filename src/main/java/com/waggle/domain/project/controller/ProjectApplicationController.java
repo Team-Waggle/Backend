@@ -2,6 +2,7 @@ package com.waggle.domain.project.controller;
 
 import com.waggle.domain.project.ProjectInfo;
 import com.waggle.domain.project.dto.ProjectApplicationDto;
+import com.waggle.domain.project.dto.ProjectConfirmApplicationDto;
 import com.waggle.domain.project.dto.ProjectResponseDto;
 import com.waggle.domain.project.entity.Project;
 import com.waggle.domain.project.service.ProjectService;
@@ -252,6 +253,52 @@ public class ProjectApplicationController {
         Project project = projectService.applyProject(
             projectId,
             projectApplicationDto,
+            userPrincipal.getUser()
+        );
+        ProjectInfo projectInfo = projectService.getProjectInfoByProject(
+            project,
+            userPrincipal.getUser()
+        );
+        return SuccessResponse.of(ApiStatus._CREATED, ProjectResponseDto.from(projectInfo));
+    }
+
+    @PutMapping("/{projectId}")
+    @Operation(
+        summary = "프로젝트 지원",
+        description = "프로젝트에 지원합니다. 성공 시 지원한 프로젝트 정보를 반환합니다.",
+        security = @SecurityRequirement(name = "JWT")
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "201",
+            description = "프로젝트 지원 성공",
+            content = @Content(
+                schema = @Schema(implementation = ProjectSuccessResponse.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "인증되지 않은 사용자",
+            content = @Content(
+                schema = @Schema(implementation = ErrorResponse.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "프로젝트를 찾을 수 없음",
+            content = @Content(
+                schema = @Schema(implementation = ErrorResponse.class)
+            )
+        )
+    })
+    public ResponseEntity<BaseResponse<ProjectResponseDto>> confirmProject(
+        @PathVariable Long projectId,
+        @Valid @RequestBody ProjectConfirmApplicationDto projectConfirmApplicationDto,
+        @AuthenticationPrincipal UserPrincipal userPrincipal
+    ) {
+        Project project = projectService.confirmProject(
+            projectId,
+            projectConfirmApplicationDto,
             userPrincipal.getUser()
         );
         ProjectInfo projectInfo = projectService.getProjectInfoByProject(
