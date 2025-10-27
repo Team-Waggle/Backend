@@ -264,14 +264,13 @@ public class ProjectApplicationController {
 
     @PutMapping("/{projectId}")
     @Operation(
-        summary = "프로젝트 지원",
-        description = "프로젝트에 지원합니다. 성공 시 지원한 프로젝트 정보를 반환합니다.",
+        summary = "프로젝트 지원 확정",
         security = @SecurityRequirement(name = "JWT")
     )
     @ApiResponses({
         @ApiResponse(
             responseCode = "201",
-            description = "프로젝트 지원 성공",
+            description = "프로젝트 지원 확정 성공",
             content = @Content(
                 schema = @Schema(implementation = ProjectSuccessResponse.class)
             )
