@@ -6,7 +6,6 @@ import com.waggle.domain.notification.dto.CreateNotificationRequest;
 import com.waggle.domain.notification.service.NotificationService;
 import com.waggle.domain.project.ProjectInfo;
 import com.waggle.domain.project.dto.ProjectApplicationDto;
-import com.waggle.domain.project.dto.ProjectConfirmApplicationDto;
 import com.waggle.domain.project.dto.ProjectFilterDto;
 import com.waggle.domain.project.dto.ProjectInputDto;
 import com.waggle.domain.project.dto.ProjectRecruitmentDto;
@@ -444,11 +443,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional
-    public Project confirmProject(
-        Long projectId,
-        ProjectConfirmApplicationDto projectConfirmApplicationDto,
-        User user
-    ) {
+    public Project confirmProject(Long projectId, User user) {
         Position position = user.getPosition();
         ProjectRecruitment recruitment = projectRecruitmentRepository
             .findByProjectIdAndPosition(projectId, position)

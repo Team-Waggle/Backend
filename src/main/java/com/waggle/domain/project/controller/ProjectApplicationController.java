@@ -2,7 +2,6 @@ package com.waggle.domain.project.controller;
 
 import com.waggle.domain.project.ProjectInfo;
 import com.waggle.domain.project.dto.ProjectApplicationDto;
-import com.waggle.domain.project.dto.ProjectConfirmApplicationDto;
 import com.waggle.domain.project.dto.ProjectResponseDto;
 import com.waggle.domain.project.entity.Project;
 import com.waggle.domain.project.service.ProjectService;
@@ -262,14 +261,14 @@ public class ProjectApplicationController {
         return SuccessResponse.of(ApiStatus._CREATED, ProjectResponseDto.from(projectInfo));
     }
 
-    @PutMapping("/{projectId}")
+    @PutMapping("/{projectId}/confirm")
     @Operation(
         summary = "프로젝트 지원 확정",
         security = @SecurityRequirement(name = "JWT")
     )
     @ApiResponses({
         @ApiResponse(
-            responseCode = "201",
+            responseCode = "200",
             description = "프로젝트 지원 확정 성공",
             content = @Content(
                 schema = @Schema(implementation = ProjectSuccessResponse.class)
@@ -292,12 +291,10 @@ public class ProjectApplicationController {
     })
     public ResponseEntity<BaseResponse<ProjectResponseDto>> confirmProject(
         @PathVariable Long projectId,
-        @Valid @RequestBody ProjectConfirmApplicationDto projectConfirmApplicationDto,
         @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
         Project project = projectService.confirmProject(
             projectId,
-            projectConfirmApplicationDto,
             userPrincipal.getUser()
         );
         ProjectInfo projectInfo = projectService.getProjectInfoByProject(
