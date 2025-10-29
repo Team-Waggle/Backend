@@ -11,7 +11,10 @@ public interface ProjectApplicantRepository extends JpaRepository<ProjectApplica
 
     Optional<ProjectApplicant> findByProjectIdAndUserId(Long projectId, UUID userId);
 
-    List<ProjectApplicant> findByProjectIdOrderByAppliedAtDesc(Long projectId);
+    List<ProjectApplicant> findByProjectIdAndStatusNotInOrderByAppliedAtDesc(
+        Long projectId,
+        List<ApplicationStatus> status
+    );
 
     List<ProjectApplicant> findByUserIdOrderByAppliedAtDesc(UUID userId);
 

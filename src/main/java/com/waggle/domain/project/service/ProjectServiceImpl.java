@@ -144,7 +144,10 @@ public class ProjectServiceImpl implements ProjectService {
         List<ProjectMember> projectMembers =
             projectMemberRepository.findByProjectIdOrderByJoinedAtDesc(project.getId());
         List<ProjectApplicant> projectApplicants =
-            projectApplicantRepository.findByProjectIdOrderByAppliedAtDesc(project.getId());
+            projectApplicantRepository.findByProjectIdAndStatusNotInOrderByAppliedAtDesc(
+                project.getId(),
+                List.of(ApplicationStatus.CANCELLED, ApplicationStatus.REJECTED)
+            );
         List<ProjectRecruitment> projectRecruitments =
             projectRecruitmentRepository.findByProjectId(project.getId());
 
@@ -229,7 +232,10 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public List<User> getAppliedUsersByProjectId(Long projectId) {
         List<ProjectApplicant> projectApplicants =
-            projectApplicantRepository.findByProjectIdOrderByAppliedAtDesc(projectId);
+            projectApplicantRepository.findByProjectIdAndStatusNotInOrderByAppliedAtDesc(
+                projectId,
+                List.of(ApplicationStatus.CANCELLED, ApplicationStatus.REJECTED)
+            );
 
         return projectApplicants.stream()
             .map(ProjectApplicant::getUser)
