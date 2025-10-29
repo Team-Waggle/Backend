@@ -2,6 +2,7 @@ package com.waggle.domain.project.controller;
 
 import com.waggle.domain.project.ProjectInfo;
 import com.waggle.domain.project.dto.ProjectApplicationDto;
+import com.waggle.domain.project.dto.ProjectAppliedUserResponseDto;
 import com.waggle.domain.project.dto.ProjectResponseDto;
 import com.waggle.domain.project.entity.Project;
 import com.waggle.domain.project.service.ProjectService;
@@ -11,6 +12,7 @@ import com.waggle.global.response.ApiStatus;
 import com.waggle.global.response.BaseResponse;
 import com.waggle.global.response.ErrorResponse;
 import com.waggle.global.response.SuccessResponse;
+import com.waggle.global.response.swagger.ProjectAppliedUserSuccessResponse;
 import com.waggle.global.response.swagger.ProjectSuccessResponse;
 import com.waggle.global.response.swagger.ProjectsSuccessResponse;
 import com.waggle.global.security.oauth2.UserPrincipal;
@@ -55,7 +57,7 @@ public class ProjectApplicationController {
             responseCode = "200",
             description = "프로젝트 지원자 조회 성공",
             content = @Content(
-                schema = @Schema(implementation = ProjectSuccessResponse.class)
+                schema = @Schema(implementation = ProjectAppliedUserSuccessResponse.class)
             )
         ),
         @ApiResponse(
@@ -66,15 +68,12 @@ public class ProjectApplicationController {
             )
         )
     })
-    public ResponseEntity<BaseResponse<List<UserResponseDto>>> fetchAppliedUsers(
+    public ResponseEntity<BaseResponse<List<ProjectAppliedUserResponseDto>>> fetchAppliedUsers(
         @PathVariable Long projectId
     ) {
         return SuccessResponse.of(
             ApiStatus._OK,
-            projectService.getAppliedUsersByProjectId(projectId).stream()
-                .map(userService::getUserInfoByUser)
-                .map(UserResponseDto::from)
-                .toList()
+            projectService.getAppliedUsersByProjectId(projectId)
         );
     }
 

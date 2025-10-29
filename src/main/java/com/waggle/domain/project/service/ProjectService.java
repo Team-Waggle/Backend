@@ -2,6 +2,7 @@ package com.waggle.domain.project.service;
 
 import com.waggle.domain.project.ProjectInfo;
 import com.waggle.domain.project.dto.ProjectApplicationDto;
+import com.waggle.domain.project.dto.ProjectAppliedUserResponseDto;
 import com.waggle.domain.project.dto.ProjectFilterDto;
 import com.waggle.domain.project.dto.ProjectInputDto;
 import com.waggle.domain.project.entity.Project;
@@ -27,7 +28,7 @@ public interface ProjectService {
 
     List<User> getUsersByProjectId(Long projectId);
 
-    List<User> getAppliedUsersByProjectId(Long projectId);
+    List<ProjectAppliedUserResponseDto> getAppliedUsersByProjectId(Long projectId);
 
     List<User> approveAppliedUser(Long projectId, UUID userId, User user);
 

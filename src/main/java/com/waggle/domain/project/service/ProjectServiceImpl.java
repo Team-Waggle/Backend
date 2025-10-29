@@ -6,6 +6,7 @@ import com.waggle.domain.notification.dto.CreateNotificationRequest;
 import com.waggle.domain.notification.service.NotificationService;
 import com.waggle.domain.project.ProjectInfo;
 import com.waggle.domain.project.dto.ProjectApplicationDto;
+import com.waggle.domain.project.dto.ProjectAppliedUserResponseDto;
 import com.waggle.domain.project.dto.ProjectFilterDto;
 import com.waggle.domain.project.dto.ProjectInputDto;
 import com.waggle.domain.project.dto.ProjectRecruitmentDto;
@@ -210,12 +211,13 @@ public class ProjectServiceImpl implements ProjectService {
             throw new AccessDeniedException(ApiStatus._NOT_LEADER);
         }
 
-        projectRepository.delete(project);
         projectApplicantRepository.deleteByProjectId(projectId);
         projectBookmarkRepository.deleteByProjectId(projectId);
         projectMemberRepository.deleteByProjectId(projectId);
         projectRecruitmentRepository.deleteByProjectId(projectId);
         projectSkillRepository.deleteByProjectId(projectId);
+
+        projectRepository.delete(project);
     }
 
     @Override
@@ -230,7 +232,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public List<User> getAppliedUsersByProjectId(Long projectId) {
+    public List<ProjectAppliedUserResponseDto> getAppliedUsersByProjectId(Long projectId) {
         List<ProjectApplicant> projectApplicants =
             projectApplicantRepository.findByProjectIdAndStatusNotInOrderByAppliedAtDesc(
                 projectId,
@@ -238,7 +240,10 @@ public class ProjectServiceImpl implements ProjectService {
             );
 
         return projectApplicants.stream()
-            .map(ProjectApplicant::getUser)
+            .map(projectApplicant ->
+                ProjectAppliedUserResponseDto.of(projectApplicant.getUser(),
+                    projectApplicant)
+            )
             .toList();
     }
 
