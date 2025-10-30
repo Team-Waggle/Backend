@@ -62,6 +62,16 @@ public class ProjectApplicant {
     private LocalDateTime updatedAt;
 
     public void updateStatus(ApplicationStatus status) {
+        if (status == ApplicationStatus.CONFIRMED) {
+            if (this.status != ApplicationStatus.APPROVED) {
+                throw new IllegalStateException(
+                    "Cannot update status: only APPROVED status can be updated");
+            }
+
+            this.status = status;
+            return;
+        }
+
         if (this.status != ApplicationStatus.PENDING) {
             throw new IllegalStateException(
                 "Cannot update status: only PENDING status can be updated");
