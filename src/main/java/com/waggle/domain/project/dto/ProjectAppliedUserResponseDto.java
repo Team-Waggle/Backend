@@ -37,7 +37,7 @@ public record ProjectAppliedUserResponseDto(
         example = "3"
     )
     @JsonProperty("year_count")
-    int yearCount,
+    Integer yearCount,
 
     @JsonProperty("project_applicant_id")
     UUID projectApplicantId,

@@ -64,11 +64,11 @@ public class User extends BaseEntity {
     private String detail;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "position", nullable = false)
+    @Column(name = "position")
     private Position position;
 
-    @Column(name = "year_count", nullable = false)
-    private int yearCount;
+    @Column(name = "year_count")
+    private Integer yearCount;
 
     @Builder
     public User(
@@ -82,7 +82,7 @@ public class User extends BaseEntity {
         Sido sido,
         String detail,
         Position position,
-        int yearCount
+        Integer yearCount
     ) {
         this.provider = provider;
         this.providerId = providerId;
@@ -104,7 +104,7 @@ public class User extends BaseEntity {
         Sido sido,
         String detail,
         Position position,
-        int yearCount
+        Integer yearCount
     ) {
         this.name = name;
         this.workTime = workTime;

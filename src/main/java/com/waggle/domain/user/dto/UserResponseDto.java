@@ -56,7 +56,7 @@ public record UserResponseDto(
         example = "3"
     )
     @JsonProperty("year_count")
-    int yearCount,
+    Integer yearCount,
 
     @Schema(
         description = "사용자 관심 산업 정보",

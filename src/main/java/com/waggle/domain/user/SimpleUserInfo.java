@@ -10,7 +10,7 @@ public record SimpleUserInfo(
     String email,
     String profileImageUrl,
     Position position,
-    int yearCount
+    Integer yearCount
 ) {
 
     public static SimpleUserInfo from(User user) {
