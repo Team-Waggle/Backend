@@ -52,8 +52,18 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         jwtUtil.addRefreshTokenCookie(response, refreshToken);
 
 //        String redirectUri = frontendUrl + "/auth/callback?success=true";
-        String redirectUri = frontendUrl + "/auth/callback?success=true&access_token=" + accessToken
-            + "&refresh_token=" + refreshToken;
+        String origin = request.getHeader("Origin");
+        String redirectBase;
+
+        if ("http://localhost:5173".equals(origin)) {
+            redirectBase = "http://localhost:5173";
+        } else {
+            redirectBase = frontendUrl;
+        }
+
+        String redirectUri =
+            redirectBase + "/auth/callback?success=true&access_token=" + accessToken
+                + "&refresh_token=" + refreshToken;
         response.sendRedirect(redirectUri);
     }
 }
