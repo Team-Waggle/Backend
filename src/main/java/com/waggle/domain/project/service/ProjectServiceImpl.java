@@ -105,6 +105,18 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     @Transactional(readOnly = true)
     public Page<Project> getProjects(ProjectFilterDto projectFilterDto, Pageable pageable) {
+        if (pageable.getSort().getOrderFor("recruitmentEndDate") != null) {
+            return projectRepository.findWithFilterOrderByRecruitmentEndDate(
+                projectFilterDto.positions(),
+                projectFilterDto.skills(),
+                projectFilterDto.industries(),
+                projectFilterDto.workPeriods(),
+                projectFilterDto.workWays(),
+                projectFilterDto.query(),
+                pageable
+            );
+        }
+
         return projectRepository.findWithFilter(
             projectFilterDto.positions(),
             projectFilterDto.skills(),
@@ -138,12 +150,12 @@ public class ProjectServiceImpl implements ProjectService {
         Position appliedPosition = null;
         if (user != null) {
             appliedPosition = projectApplicantRepository.findByProjectIdAndUserIdAndStatusNot(
-                project.getId(),
-                user.getId(),
-                ApplicationStatus.CANCELLED
-            )
-            .map(ProjectApplicant::getPosition)
-            .orElse(null);
+                    project.getId(),
+                    user.getId(),
+                    ApplicationStatus.CANCELLED
+                )
+                .map(ProjectApplicant::getPosition)
+                .orElse(null);
         }
         List<ProjectSkill> projectSkills = projectSkillRepository.findByProjectId(project.getId());
         List<ProjectMember> projectMembers =
@@ -525,9 +537,16 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Project> getAppliedProjects(User user) {
-        List<ProjectApplicant> projectApplicants = projectApplicantRepository.findByUserIdWithRelationsOrderByAppliedAtDesc(
-            user.getId());
+    public List<Project> getAppliedProjects(ApplicationStatus status, User user) {
+        List<ProjectApplicant> projectApplicants;
+
+        if (status == null) {
+            projectApplicants = projectApplicantRepository.findByUserIdWithRelationsOrderByAppliedAtDesc(
+                user.getId());
+        } else {
+            projectApplicants = projectApplicantRepository.findByUserIdAndStatusWithRelationsOrderByAppliedAtDesc(
+                user.getId(), status);
+        }
 
         return projectApplicants.stream()
             .map(ProjectApplicant::getProject)

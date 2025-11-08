@@ -53,5 +53,30 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
         Pageable pageable
     );
 
+    @Query("""
+        SELECT DISTINCT p FROM Project p
+        LEFT JOIN FETCH p.user
+        LEFT JOIN ProjectRecruitment pr ON p = pr.project
+        LEFT JOIN ProjectSkill ps ON p = ps.project
+        WHERE (:positions IS NULL OR (pr.position IN :positions AND pr.remainingCount > 0))
+        AND (:skills IS NULL OR ps.skill IN :skills)
+        AND (:industries IS NULL OR p.industry IN :industries)
+        AND (:workPeriods IS NULL OR p.workPeriod IN :workPeriods)
+        AND (:workWays IS NULL OR p.workWay IN :workWays)
+        AND p.title LIKE CONCAT('%', :query, '%')
+        ORDER BY
+            CASE WHEN p.recruitmentEndDate >= CURRENT_DATE THEN 0 ELSE 1 END,
+            p.recruitmentEndDate ASC
+        """)
+    Page<Project> findWithFilterOrderByRecruitmentEndDate(
+        @Param("positions") Set<Position> positions,
+        @Param("skills") Set<Skill> skills,
+        @Param("industries") Set<Industry> industries,
+        @Param("workPeriods") Set<WorkPeriod> workPeriods,
+        @Param("workWays") Set<WorkWay> workWays,
+        @Param("query") String query,
+        Pageable pageable
+    );
+
     List<Project> findByRecruitmentEndDate(LocalDate date);
 }
