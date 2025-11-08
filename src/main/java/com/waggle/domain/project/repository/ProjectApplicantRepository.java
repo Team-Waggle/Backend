@@ -36,6 +36,19 @@ public interface ProjectApplicantRepository extends JpaRepository<ProjectApplica
         @Param("userId") UUID userId
     );
 
+    @Query("""
+        SELECT pa FROM ProjectApplicant pa
+        JOIN FETCH pa.project p
+        JOIN FETCH p.user
+        WHERE pa.user.id = :userId
+        AND pa.status = :status
+        ORDER BY pa.appliedAt DESC
+        """)
+    List<ProjectApplicant> findByUserIdAndStatusWithRelationsOrderByAppliedAtDesc(
+        @Param("userId") UUID userId,
+        @Param("status") ApplicationStatus status
+    );
+
     void deleteByProjectId(Long projectId);
 
     boolean existsByProjectIdAndUserIdAndStatusNot(

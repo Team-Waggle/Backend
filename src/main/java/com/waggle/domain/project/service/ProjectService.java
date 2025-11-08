@@ -1,5 +1,6 @@
 package com.waggle.domain.project.service;
 
+import com.waggle.domain.application.ApplicationStatus;
 import com.waggle.domain.project.ProjectInfo;
 import com.waggle.domain.project.dto.ProjectApplicationDto;
 import com.waggle.domain.project.dto.ProjectAppliedUserResponseDto;
@@ -48,7 +49,7 @@ public interface ProjectService {
 
     void cancelProjectApplication(Long projectId, User user);
 
-    List<Project> getAppliedProjects(User user);
+    List<Project> getAppliedProjects(ApplicationStatus status, User user);
 
     boolean toggleCurrentUserBookmark(Long projectId, User user);
 

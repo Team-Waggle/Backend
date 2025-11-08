@@ -1,5 +1,6 @@
 package com.waggle.domain.project.controller;
 
+import com.waggle.domain.application.ApplicationStatus;
 import com.waggle.domain.project.ProjectInfo;
 import com.waggle.domain.project.dto.ProjectApplicationDto;
 import com.waggle.domain.project.dto.ProjectAppliedUserResponseDto;
@@ -36,6 +37,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "프로젝트 지원", description = "프로젝트 지원 관련 API")
@@ -200,11 +202,12 @@ public class ProjectApplicationController {
         )
     })
     public ResponseEntity<BaseResponse<List<ProjectResponseDto>>> getAppliedProjects(
+        @RequestParam(required = false) ApplicationStatus status,
         @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
         return SuccessResponse.of(
             ApiStatus._OK,
-            projectService.getAppliedProjects(userPrincipal.getUser()).stream()
+            projectService.getAppliedProjects(status, userPrincipal.getUser()).stream()
                 .map(project -> projectService.getProjectInfoByProject(
                     project,
                     userPrincipal.getUser())
