@@ -36,7 +36,7 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
         LEFT JOIN FETCH p.user
         LEFT JOIN ProjectRecruitment pr ON p = pr.project
         LEFT JOIN ProjectSkill ps ON p = ps.project
-        WHERE (:positions IS NULL OR pr.position IN :positions)
+        WHERE (:positions IS NULL OR (pr.position IN :positions AND pr.remainingCount > 0))
         AND (:skills IS NULL OR ps.skill IN :skills)
         AND (:industries IS NULL OR p.industry IN :industries)
         AND (:workPeriods IS NULL OR p.workPeriod IN :workPeriods)
