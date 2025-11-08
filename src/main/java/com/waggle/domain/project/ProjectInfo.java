@@ -5,6 +5,7 @@ import com.waggle.domain.project.entity.ProjectApplicant;
 import com.waggle.domain.project.entity.ProjectMember;
 import com.waggle.domain.project.entity.ProjectRecruitment;
 import com.waggle.domain.project.entity.ProjectSkill;
+import com.waggle.domain.reference.enums.Position;
 import com.waggle.domain.user.UserInfo;
 import jakarta.annotation.Nullable;
 import java.util.List;
@@ -14,7 +15,7 @@ import lombok.Builder;
 public record ProjectInfo(
     @Nullable UserInfo userInfo,
     Boolean bookmarked,
-    Boolean applied,
+    @Nullable Position appliedPosition,
     Project project,
     List<ProjectSkill> projectSkills,
     List<ProjectMember> projectMembers,
@@ -25,7 +26,7 @@ public record ProjectInfo(
     public static ProjectInfo of(
         @Nullable UserInfo userInfo,
         Boolean bookmarked,
-        Boolean applied,
+        Position appliedPosition,
         Project project,
         List<ProjectSkill> projectSkills,
         List<ProjectMember> projectMembers,
@@ -35,7 +36,7 @@ public record ProjectInfo(
         return new ProjectInfo(
             userInfo,
             bookmarked,
-            applied,
+            appliedPosition,
             project,
             projectSkills,
             projectMembers,

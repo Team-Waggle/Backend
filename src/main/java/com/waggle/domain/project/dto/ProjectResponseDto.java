@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.waggle.domain.project.ProjectInfo;
 import com.waggle.domain.project.entity.ProjectSkill;
 import com.waggle.domain.reference.enums.Industry;
+import com.waggle.domain.reference.enums.Position;
 import com.waggle.domain.reference.enums.Skill;
 import com.waggle.domain.reference.enums.WorkPeriod;
 import com.waggle.domain.reference.enums.WorkWay;
@@ -77,9 +78,9 @@ public record ProjectResponseDto(
     @JsonProperty("bookmarked")
     Boolean bookmarked,
 
-    @Schema(description = "사용자 지원 여부", example = "true")
-    @JsonProperty("applied")
-    Boolean applied,
+    @Schema(description = "사용자 지원 포지션", example = "FRONTEND")
+    @JsonProperty("applied_position")
+    Position appliedPosition,
 
     @Schema(description = "생성 일자", example = "2001-05-21T00:00:00")
     @JsonProperty("created_at")
@@ -112,7 +113,7 @@ public record ProjectResponseDto(
             projectInfo.project().getBookmarkCount(),
             projectInfo.userInfo() != null ? UserResponseDto.from(projectInfo.userInfo()) : null,
             projectInfo.bookmarked(),
-            projectInfo.applied(),
+            projectInfo.appliedPosition(),
             projectInfo.project().getCreatedAt(),
             projectInfo.project().getUpdatedAt()
         );

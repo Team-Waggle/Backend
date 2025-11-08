@@ -135,12 +135,12 @@ public class ProjectServiceImpl implements ProjectService {
             project.getId(),
             user.getId()
         );
-        Boolean applied =
+        Position appliedPosition =
             user != null && projectApplicantRepository.existsByProjectIdAndUserIdAndStatusNot(
                 project.getId(),
                 user.getId(),
                 ApplicationStatus.CANCELLED
-            );
+            ) ? user.getPosition() : null;
         List<ProjectSkill> projectSkills = projectSkillRepository.findByProjectId(project.getId());
         List<ProjectMember> projectMembers =
             projectMemberRepository.findByProjectIdOrderByJoinedAtDesc(project.getId());
@@ -155,7 +155,7 @@ public class ProjectServiceImpl implements ProjectService {
         return ProjectInfo.of(
             userInfo,
             bookmarked,
-            applied,
+            appliedPosition,
             project,
             projectSkills,
             projectMembers,
