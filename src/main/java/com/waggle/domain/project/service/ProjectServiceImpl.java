@@ -522,7 +522,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     @Transactional(readOnly = true)
     public List<Project> getAppliedProjects(User user) {
-        List<ProjectApplicant> projectApplicants = projectApplicantRepository.findByUserIdOrderByAppliedAtDesc(
+        List<ProjectApplicant> projectApplicants = projectApplicantRepository.findByUserIdWithRelationsOrderByAppliedAtDesc(
             user.getId());
 
         return projectApplicants.stream()

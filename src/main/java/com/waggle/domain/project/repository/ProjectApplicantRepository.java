@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 public interface ProjectApplicantRepository extends JpaRepository<ProjectApplicant, UUID> {
 
@@ -16,7 +17,15 @@ public interface ProjectApplicantRepository extends JpaRepository<ProjectApplica
         List<ApplicationStatus> status
     );
 
-    List<ProjectApplicant> findByUserIdOrderByAppliedAtDesc(UUID userId);
+
+    @Query("""
+        SELECT pa FROM ProjectApplicant pa
+        JOIN FETCH pa.project p
+        JOIN FETCH p.user
+        WHERE pa.user.id = :userId
+        ORDER BY pa.appliedAt DESC
+        """)
+    List<ProjectApplicant> findByUserIdWithRelationsOrderByAppliedAtDesc(UUID userId);
 
     void deleteByProjectId(Long projectId);
 
