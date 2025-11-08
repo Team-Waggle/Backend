@@ -13,6 +13,12 @@ public interface ProjectApplicantRepository extends JpaRepository<ProjectApplica
 
     Optional<ProjectApplicant> findByProjectIdAndUserId(Long projectId, UUID userId);
 
+    Optional<ProjectApplicant> findByProjectIdAndUserIdAndStatusNot(
+        Long projectId,
+        UUID userId,
+        ApplicationStatus status
+    );
+
     List<ProjectApplicant> findByProjectIdAndStatusNotInOrderByAppliedAtDesc(
         Long projectId,
         List<ApplicationStatus> status

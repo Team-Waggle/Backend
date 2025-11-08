@@ -52,7 +52,7 @@ public record ProjectAppliedUserResponseDto(
             user.getProfileImageUrl(),
             user.getName(),
             user.getEmail(),
-            user.getPosition(),
+            projectApplicant.getPosition(),
             user.getYearCount(),
             projectApplicant.getId(),
             projectApplicant.getStatus()

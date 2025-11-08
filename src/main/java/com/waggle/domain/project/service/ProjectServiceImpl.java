@@ -135,12 +135,16 @@ public class ProjectServiceImpl implements ProjectService {
             project.getId(),
             user.getId()
         );
-        Position appliedPosition =
-            user != null && projectApplicantRepository.existsByProjectIdAndUserIdAndStatusNot(
+        Position appliedPosition = null;
+        if (user != null) {
+            appliedPosition = projectApplicantRepository.findByProjectIdAndUserIdAndStatusNot(
                 project.getId(),
                 user.getId(),
                 ApplicationStatus.CANCELLED
-            ) ? user.getPosition() : null;
+            )
+            .map(ProjectApplicant::getPosition)
+            .orElse(null);
+        }
         List<ProjectSkill> projectSkills = projectSkillRepository.findByProjectId(project.getId());
         List<ProjectMember> projectMembers =
             projectMemberRepository.findByProjectIdOrderByJoinedAtDesc(project.getId());
@@ -455,7 +459,11 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     @Transactional
     public Project confirmProject(Long projectId, User user) {
-        Position position = user.getPosition();
+        ProjectApplicant projectApplicant = projectApplicantRepository.findByProjectIdAndUserId(
+                projectId, user.getId())
+            .orElseThrow(() -> new EntityNotFoundException("Project applicant not found"));
+
+        Position position = projectApplicant.getPosition();
         ProjectRecruitment recruitment = projectRecruitmentRepository
             .findByProjectIdAndPosition(projectId, position)
             .orElseThrow(() -> new EntityNotFoundException(
@@ -470,10 +478,6 @@ public class ProjectServiceImpl implements ProjectService {
         if (projectMemberRepository.existsByProjectIdAndUserId(projectId, user.getId())) {
             throw new ProjectException(ApiStatus._ALREADY_JOINED_PROJECT);
         }
-
-        ProjectApplicant projectApplicant = projectApplicantRepository.findByProjectIdAndUserId(
-                projectId, user.getId())
-            .orElseThrow(() -> new EntityNotFoundException("Project applicant not found"));
 
         if (projectApplicant.getStatus() != ApplicationStatus.APPROVED) {
             throw new IllegalStateException("Applicant not approved");
