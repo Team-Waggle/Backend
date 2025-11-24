@@ -542,10 +542,14 @@ public class ProjectServiceImpl implements ProjectService {
 
         if (status == null) {
             projectApplicants = projectApplicantRepository.findByUserIdWithRelationsOrderByAppliedAtDesc(
-                user.getId());
+                user.getId(),
+                List.of(ApplicationStatus.CANCELLED, ApplicationStatus.REJECTED)
+            );
         } else {
             projectApplicants = projectApplicantRepository.findByUserIdAndStatusWithRelationsOrderByAppliedAtDesc(
-                user.getId(), status);
+                user.getId(),
+                status
+            );
         }
 
         return projectApplicants.stream()

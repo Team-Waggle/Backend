@@ -29,11 +29,12 @@ public interface ProjectApplicantRepository extends JpaRepository<ProjectApplica
         SELECT pa FROM ProjectApplicant pa
         JOIN FETCH pa.project p
         JOIN FETCH p.user
-        WHERE pa.user.id = :userId
+        WHERE pa.user.id = :userId AND pa.status NOT IN :excludedStatuses
         ORDER BY pa.appliedAt DESC
         """)
     List<ProjectApplicant> findByUserIdWithRelationsOrderByAppliedAtDesc(
-        @Param("userId") UUID userId
+        @Param("userId") UUID userId,
+        @Param("excludedStatuses") List<ApplicationStatus> excludedStatuses
     );
 
     @Query("""
