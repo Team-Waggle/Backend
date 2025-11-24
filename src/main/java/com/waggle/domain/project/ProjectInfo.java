@@ -13,6 +13,7 @@ import lombok.Builder;
 
 @Builder
 public record ProjectInfo(
+    int applicantCount,
     @Nullable UserInfo userInfo,
     Boolean bookmarked,
     @Nullable Position appliedPosition,
@@ -24,6 +25,7 @@ public record ProjectInfo(
 ) {
 
     public static ProjectInfo of(
+        int applicantCount,
         @Nullable UserInfo userInfo,
         Boolean bookmarked,
         Position appliedPosition,
@@ -34,6 +36,7 @@ public record ProjectInfo(
         List<ProjectRecruitment> projectRecruitments
     ) {
         return new ProjectInfo(
+            applicantCount,
             userInfo,
             bookmarked,
             appliedPosition,

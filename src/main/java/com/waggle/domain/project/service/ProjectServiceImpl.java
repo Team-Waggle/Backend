@@ -140,6 +140,11 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     @Transactional(readOnly = true)
     public ProjectInfo getProjectInfoByProject(Project project, @Nullable User user) {
+        int applicantCount = projectApplicantRepository.countByProjectIdAndStatusNotIn(
+            project.getId(),
+            List.of(ApplicationStatus.CANCELLED)
+        );
+
         User projectUser = project.getUser();
         UserInfo userInfo =
             projectUser != null ? userService.getUserInfoByUser(project.getUser()) : null;
@@ -169,6 +174,7 @@ public class ProjectServiceImpl implements ProjectService {
             projectRecruitmentRepository.findByProjectId(project.getId());
 
         return ProjectInfo.of(
+            applicantCount,
             userInfo,
             bookmarked,
             appliedPosition,

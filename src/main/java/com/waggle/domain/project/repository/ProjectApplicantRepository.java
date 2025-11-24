@@ -11,17 +11,19 @@ import org.springframework.data.repository.query.Param;
 
 public interface ProjectApplicantRepository extends JpaRepository<ProjectApplicant, UUID> {
 
+    int countByProjectIdAndStatusNotIn(Long projectId, List<ApplicationStatus> statuses);
+
     Optional<ProjectApplicant> findByProjectIdAndUserId(Long projectId, UUID userId);
 
     Optional<ProjectApplicant> findByProjectIdAndUserIdAndStatusNot(
         Long projectId,
         UUID userId,
-        ApplicationStatus status
+        ApplicationStatus statuses
     );
 
     List<ProjectApplicant> findByProjectIdAndStatusNotInOrderByAppliedAtDesc(
         Long projectId,
-        List<ApplicationStatus> status
+        List<ApplicationStatus> statuses
     );
 
 
