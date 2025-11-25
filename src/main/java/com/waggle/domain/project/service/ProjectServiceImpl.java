@@ -5,6 +5,7 @@ import com.waggle.domain.notification.NotificationType;
 import com.waggle.domain.notification.dto.CreateNotificationRequest;
 import com.waggle.domain.notification.service.NotificationService;
 import com.waggle.domain.project.ProjectInfo;
+import com.waggle.domain.project.dto.PositionApplicantCountDto;
 import com.waggle.domain.project.dto.ProjectApplicationDto;
 import com.waggle.domain.project.dto.ProjectAppliedUserResponseDto;
 import com.waggle.domain.project.dto.ProjectFilterDto;
@@ -140,10 +141,18 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     @Transactional(readOnly = true)
     public ProjectInfo getProjectInfoByProject(Project project, @Nullable User user) {
-        int applicantCount = projectApplicantRepository.countByProjectIdAndStatusNotIn(
-            project.getId(),
-            List.of(ApplicationStatus.CANCELLED)
-        );
+        List<Object[]> applicantCountsByPosition = projectApplicantRepository
+            .countByProjectIdAndStatusNotInGroupByPosition(
+                project.getId(),
+                List.of(ApplicationStatus.CANCELLED)
+            );
+
+        List<PositionApplicantCountDto> applicantCounts = applicantCountsByPosition.stream()
+            .map(result -> PositionApplicantCountDto.of(
+                (Position) result[0],
+                ((Long) result[1]).intValue()
+            ))
+            .toList();
 
         User projectUser = project.getUser();
         UserInfo userInfo =
@@ -174,7 +183,7 @@ public class ProjectServiceImpl implements ProjectService {
             projectRecruitmentRepository.findByProjectId(project.getId());
 
         return ProjectInfo.of(
-            applicantCount,
+            applicantCounts,
             userInfo,
             bookmarked,
             appliedPosition,

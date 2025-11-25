@@ -70,9 +70,9 @@ public record ProjectResponseDto(
     @JsonProperty("bookmark_count")
     int bookmarkCount,
 
-    @Schema(description = "지원자 수", example = "1")
-    @JsonProperty("applicant_count")
-    int applicantCount,
+    @Schema(description = "포지션별 지원자 수")
+    @JsonProperty("applicant_counts")
+    List<PositionApplicantCountDto> applicantCounts,
 
     @Schema(description = "작성자 정보")
     @JsonProperty("user")
@@ -115,7 +115,7 @@ public record ProjectResponseDto(
             projectInfo.project().getContactUrl(),
             projectInfo.project().getReferenceUrl(),
             projectInfo.project().getBookmarkCount(),
-            projectInfo.applicantCount(),
+            projectInfo.applicantCounts(),
             projectInfo.userInfo() != null ? UserResponseDto.from(projectInfo.userInfo()) : null,
             projectInfo.bookmarked(),
             projectInfo.appliedPosition(),

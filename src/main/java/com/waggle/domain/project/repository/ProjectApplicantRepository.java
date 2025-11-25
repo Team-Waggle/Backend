@@ -2,6 +2,7 @@ package com.waggle.domain.project.repository;
 
 import com.waggle.domain.application.ApplicationStatus;
 import com.waggle.domain.project.entity.ProjectApplicant;
+import com.waggle.domain.reference.enums.Position;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -12,6 +13,18 @@ import org.springframework.data.repository.query.Param;
 public interface ProjectApplicantRepository extends JpaRepository<ProjectApplicant, UUID> {
 
     int countByProjectIdAndStatusNotIn(Long projectId, List<ApplicationStatus> statuses);
+
+    @Query("""
+        SELECT pa.position, COUNT(pa)
+        FROM ProjectApplicant pa
+        WHERE pa.project.id = :projectId
+        AND pa.status NOT IN :excludedStatuses
+        GROUP BY pa.position
+        """)
+    List<Object[]> countByProjectIdAndStatusNotInGroupByPosition(
+        @Param("projectId") Long projectId,
+        @Param("excludedStatuses") List<ApplicationStatus> excludedStatuses
+    );
 
     Optional<ProjectApplicant> findByProjectIdAndUserId(Long projectId, UUID userId);
 

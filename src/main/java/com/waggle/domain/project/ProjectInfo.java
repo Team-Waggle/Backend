@@ -1,5 +1,6 @@
 package com.waggle.domain.project;
 
+import com.waggle.domain.project.dto.PositionApplicantCountDto;
 import com.waggle.domain.project.entity.Project;
 import com.waggle.domain.project.entity.ProjectApplicant;
 import com.waggle.domain.project.entity.ProjectMember;
@@ -13,7 +14,7 @@ import lombok.Builder;
 
 @Builder
 public record ProjectInfo(
-    int applicantCount,
+    List<PositionApplicantCountDto> applicantCounts,
     @Nullable UserInfo userInfo,
     Boolean bookmarked,
     @Nullable Position appliedPosition,
@@ -25,7 +26,7 @@ public record ProjectInfo(
 ) {
 
     public static ProjectInfo of(
-        int applicantCount,
+        List<PositionApplicantCountDto> applicantCounts,
         @Nullable UserInfo userInfo,
         Boolean bookmarked,
         Position appliedPosition,
@@ -36,7 +37,7 @@ public record ProjectInfo(
         List<ProjectRecruitment> projectRecruitments
     ) {
         return new ProjectInfo(
-            applicantCount,
+            applicantCounts,
             userInfo,
             bookmarked,
             appliedPosition,
