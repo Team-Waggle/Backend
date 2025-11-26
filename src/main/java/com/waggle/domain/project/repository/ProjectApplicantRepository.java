@@ -2,7 +2,6 @@ package com.waggle.domain.project.repository;
 
 import com.waggle.domain.application.ApplicationStatus;
 import com.waggle.domain.project.entity.ProjectApplicant;
-import com.waggle.domain.reference.enums.Position;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -26,12 +25,10 @@ public interface ProjectApplicantRepository extends JpaRepository<ProjectApplica
         @Param("excludedStatuses") List<ApplicationStatus> excludedStatuses
     );
 
-    Optional<ProjectApplicant> findByProjectIdAndUserId(Long projectId, UUID userId);
-
-    Optional<ProjectApplicant> findByProjectIdAndUserIdAndStatusNot(
+    Optional<ProjectApplicant> findByProjectIdAndUserIdAndStatus(
         Long projectId,
         UUID userId,
-        ApplicationStatus statuses
+        ApplicationStatus status
     );
 
     List<ProjectApplicant> findByProjectIdAndStatusNotInOrderByAppliedAtDesc(

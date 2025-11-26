@@ -163,10 +163,10 @@ public class ProjectServiceImpl implements ProjectService {
         );
         Position appliedPosition = null;
         if (user != null) {
-            appliedPosition = projectApplicantRepository.findByProjectIdAndUserIdAndStatusNot(
+            appliedPosition = projectApplicantRepository.findByProjectIdAndUserIdAndStatus(
                     project.getId(),
                     user.getId(),
-                    ApplicationStatus.CANCELLED
+                    ApplicationStatus.PENDING
                 )
                 .map(ProjectApplicant::getPosition)
                 .orElse(null);
@@ -290,7 +290,7 @@ public class ProjectServiceImpl implements ProjectService {
         }
 
         ProjectApplicant projectApplicant = projectApplicantRepository
-            .findByProjectIdAndUserIdAndStatusNot(projectId, userId, ApplicationStatus.CANCELLED)
+            .findByProjectIdAndUserIdAndStatus(projectId, userId, ApplicationStatus.PENDING)
             .orElseThrow(() -> new EntityNotFoundException(
                 "Applicant not found for project id: " + projectId + " and user id: " + userId));
         projectApplicant.updateStatus(ApplicationStatus.APPROVED);
@@ -319,7 +319,7 @@ public class ProjectServiceImpl implements ProjectService {
         }
 
         ProjectApplicant projectApplicant = projectApplicantRepository
-            .findByProjectIdAndUserIdAndStatusNot(projectId, userId, ApplicationStatus.CANCELLED)
+            .findByProjectIdAndUserIdAndStatus(projectId, userId, ApplicationStatus.PENDING)
             .orElseThrow(() -> new EntityNotFoundException(
                 "Applicant not found for project id: " + projectId + " and user id: " + userId));
         projectApplicant.updateStatus(ApplicationStatus.REJECTED);
@@ -492,8 +492,8 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     @Transactional
     public Project confirmProject(Long projectId, User user) {
-        ProjectApplicant projectApplicant = projectApplicantRepository.findByProjectIdAndUserIdAndStatusNot(
-                projectId, user.getId(), ApplicationStatus.CANCELLED)
+        ProjectApplicant projectApplicant = projectApplicantRepository.findByProjectIdAndUserIdAndStatus(
+                projectId, user.getId(), ApplicationStatus.APPROVED)
             .orElseThrow(() -> new EntityNotFoundException("Project applicant not found"));
 
         Position position = projectApplicant.getPosition();
@@ -549,8 +549,8 @@ public class ProjectServiceImpl implements ProjectService {
     @Transactional
     public void cancelProjectApplication(Long projectId, User user) {
         ProjectApplicant applicant = projectApplicantRepository
-            .findByProjectIdAndUserIdAndStatusNot(projectId, user.getId(),
-                ApplicationStatus.CANCELLED)
+            .findByProjectIdAndUserIdAndStatus(projectId, user.getId(),
+                ApplicationStatus.PENDING)
             .orElseThrow(() -> new EntityNotFoundException(
                 "Applicant not found for project id: " + projectId + " and user id: "
                     + user.getId()));
