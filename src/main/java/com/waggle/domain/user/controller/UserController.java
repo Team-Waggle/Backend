@@ -158,6 +158,22 @@ public class UserController {
         );
     }
 
+    @GetMapping("/me/posts")
+    public ResponseEntity<BaseResponse<List<ProjectResponseDto>>> getMyPosts(
+        @AuthenticationPrincipal UserPrincipal userPrincipal
+    ) {
+        return SuccessResponse.of(
+            ApiStatus._OK,
+            projectService.getUserProjectPosts(userPrincipal.getUser().getId()).stream()
+                .map(project -> projectService.getProjectInfoByProject(
+                    project,
+                    userPrincipal.getUser())
+                )
+                .map(ProjectResponseDto::from)
+                .toList()
+        );
+    }
+
     @GetMapping("/me/followees")
     public ResponseEntity<BaseResponse<List<SimpleUserInfo>>> getMyFollowees(
         @AuthenticationPrincipal UserPrincipal userPrincipal

@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -30,6 +31,14 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
         WHERE p.id = :projectId
         """)
     Optional<Project> findByIdWithUser(@Param("projectId") Long projectId);
+
+    @Query("""
+        SELECT p FROM Project p
+        LEFT JOIN FETCH p.user
+        WHERE p.user.id = :userId
+        ORDER BY p.createdAt DESC
+        """)
+    List<Project> findByUserIdWithRelations(@Param("userId") UUID userId);
 
     @Query("""
         SELECT DISTINCT p FROM Project p

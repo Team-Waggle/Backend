@@ -41,6 +41,8 @@ public interface ProjectService {
 
     List<Project> getUserProjects(UUID userId);
 
+    List<Project> getUserProjectPosts(UUID userId);
+
     void withdrawFromProject(Long projectId, User user);
 
     Project applyProject(Long projectId, ProjectApplicationDto projectApplicationDto, User user);
