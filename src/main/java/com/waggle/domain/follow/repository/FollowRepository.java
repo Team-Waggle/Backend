@@ -30,4 +30,8 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
     List<Follow> findFollowersWithUser(@Param("user") User user);
 
     void deleteByFollowerAndFollowee(User follower, User followee);
+
+    void deleteByFollower(User follower);
+
+    void deleteByFollowee(User followee);
 }

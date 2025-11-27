@@ -39,4 +39,6 @@ public interface NotificationRepository extends JpaRepository<Notification, UUID
         @Param("userId") UUID userId,
         @Param("isRead") boolean isRead
     );
+
+    void deleteByUserId(UUID userId);
 }

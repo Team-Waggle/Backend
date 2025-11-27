@@ -1,5 +1,13 @@
 package com.waggle.domain.user.service;
 
+import com.waggle.domain.application.repository.ApplicationRepository;
+import com.waggle.domain.bookmark.repository.BookmarkRepository;
+import com.waggle.domain.follow.repository.FollowRepository;
+import com.waggle.domain.member.repository.MemberRepository;
+import com.waggle.domain.notification.repository.NotificationRepository;
+import com.waggle.domain.post.repository.PostRepository;
+import com.waggle.domain.project.repository.ProjectRepository;
+import com.waggle.domain.projectV2.repository.ProjectV2Repository;
 import com.waggle.domain.reference.enums.Industry;
 import com.waggle.domain.reference.enums.IntroductionType;
 import com.waggle.domain.reference.enums.Skill;
@@ -43,6 +51,14 @@ public class UserService {
     private final UserIntroductionRepository userIntroductionRepository;
     private final UserPortfolioRepository userPortfolioRepository;
     private final UserSkillRepository userSkillRepository;
+    private final NotificationRepository notificationRepository;
+    private final FollowRepository followRepository;
+    private final BookmarkRepository bookmarkRepository;
+    private final PostRepository postRepository;
+    private final MemberRepository memberRepository;
+    private final ApplicationRepository applicationRepository;
+    private final ProjectRepository projectRepository;
+    private final ProjectV2Repository projectV2Repository;
 
     @Transactional(readOnly = true)
     public User getUserById(UUID userId) {
@@ -111,11 +127,26 @@ public class UserService {
     @Transactional
     public void deleteUser(User user) {
 //        s3Service.deleteFile(user.getProfileImageUrl());
+
+        // Delete all related data
+        notificationRepository.deleteByUserId(user.getId());
+        followRepository.deleteByFollower(user);  // User가 팔로우한 사람들
+        followRepository.deleteByFollowee(user);  // User를 팔로우한 사람들
+        bookmarkRepository.deleteByUserId(user.getId());
+        postRepository.deleteByUserId(user.getId());
+        memberRepository.deleteByUserId(user.getId());  // v2
+        applicationRepository.deleteByUserId(user.getId());  // v2
+        projectRepository.deleteByUserId(user.getId());  // v1
+        projectV2Repository.deleteByLeaderId(user.getId());  // v2
+
+        // Delete user profile data
         userIndustryRepository.deleteByUserId(user.getId());
         userSkillRepository.deleteByUserId(user.getId());
         userDayOfWeekRepository.deleteByUserId(user.getId());
         userIntroductionRepository.deleteByUserId(user.getId());
         userPortfolioRepository.deleteByUserId(user.getId());
+
+        // Finally delete user
         userRepository.delete(user);
     }
 

@@ -65,4 +65,6 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
         @Param("status") ApplicationStatus status,
         @Param("projectId") UUID projectId
     );
+
+    void deleteByUserId(UUID userId);
 }

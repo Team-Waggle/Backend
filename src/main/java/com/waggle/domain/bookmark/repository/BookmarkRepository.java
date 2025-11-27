@@ -24,4 +24,6 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
         BookmarkType bookmarkType,
         UUID userId
     );
+
+    void deleteByUserId(UUID userId);
 }

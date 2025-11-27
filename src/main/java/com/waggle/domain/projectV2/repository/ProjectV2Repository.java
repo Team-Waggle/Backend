@@ -40,4 +40,6 @@ public interface ProjectV2Repository extends JpaRepository<ProjectV2, UUID> {
         ORDER BY p.createdAt DESC, p.sequenceId DESC
         """)
     List<ProjectV2> findAllByIdInWithRelations(@Param("ids") List<UUID> ids);
+
+    void deleteByLeaderId(UUID leaderId);
 }

@@ -88,4 +88,6 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     );
 
     List<Project> findByRecruitmentEndDate(LocalDate date);
+
+    void deleteByUserId(UUID userId);
 }

@@ -48,4 +48,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
         ORDER BY m.createdAt DESC, m.id DESC
         """)
     List<ProjectV2> findProjectsWithLeaderByUserId(@Param("userId") UUID userId);
+
+    void deleteByUserId(UUID userId);
 }
