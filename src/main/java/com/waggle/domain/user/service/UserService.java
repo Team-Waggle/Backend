@@ -111,12 +111,12 @@ public class UserService {
     @Transactional
     public void deleteUser(User user) {
 //        s3Service.deleteFile(user.getProfileImageUrl());
-        userRepository.delete(user);
         userIndustryRepository.deleteByUserId(user.getId());
         userSkillRepository.deleteByUserId(user.getId());
         userDayOfWeekRepository.deleteByUserId(user.getId());
         userIntroductionRepository.deleteByUserId(user.getId());
         userPortfolioRepository.deleteByUserId(user.getId());
+        userRepository.delete(user);
     }
 
     private void updateUserIndustries(UUID userId, List<Industry> industries) {
