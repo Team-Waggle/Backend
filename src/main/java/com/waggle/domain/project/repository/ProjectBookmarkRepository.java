@@ -13,6 +13,8 @@ public interface ProjectBookmarkRepository extends JpaRepository<ProjectBookmark
 
     @Query("""
         SELECT m FROM ProjectBookmark m
+        JOIN FETCH m.project p
+        JOIN FETCH p.user
         WHERE m.user.id = :userId
         AND (:cursor IS NULL OR
              (m.project.createdAt < :cursorCreatedAt OR
