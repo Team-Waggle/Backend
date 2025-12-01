@@ -7,6 +7,7 @@ import com.waggle.domain.project.service.ProjectService;
 import com.waggle.domain.user.SimpleUserInfo;
 import com.waggle.domain.user.UserInfo;
 import com.waggle.domain.user.dto.UserInputDto;
+import com.waggle.domain.user.dto.UserProfileCompletedResponseDto;
 import com.waggle.domain.user.dto.UserResponseDto;
 import com.waggle.domain.user.entity.User;
 import com.waggle.domain.user.service.UserService;
@@ -119,6 +120,16 @@ public class UserController {
         User user = userService.getUserById(userPrincipal.getUser().getId());
         UserInfo userInfo = userService.getUserInfoByUser(user);
         return SuccessResponse.of(ApiStatus._OK, UserResponseDto.from(userInfo));
+    }
+
+    @GetMapping("/me/profile-complete")
+    public ResponseEntity<BaseResponse<UserProfileCompletedResponseDto>> getCompleteMe(
+        @AuthenticationPrincipal UserPrincipal userPrincipal
+    ) {
+        UserProfileCompletedResponseDto response = userService.getUserProfileCompletion(
+            userPrincipal.getUser().getId()
+        );
+        return SuccessResponse.of(ApiStatus._OK, response);
     }
 
     @GetMapping("/me/projects")

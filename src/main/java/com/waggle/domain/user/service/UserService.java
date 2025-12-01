@@ -15,6 +15,7 @@ import com.waggle.domain.user.UserInfo;
 import com.waggle.domain.user.dto.UserInputDto;
 import com.waggle.domain.user.dto.UserIntroductionDto;
 import com.waggle.domain.user.dto.UserPortfolioDto;
+import com.waggle.domain.user.dto.UserProfileCompletedResponseDto;
 import com.waggle.domain.user.entity.User;
 import com.waggle.domain.user.entity.UserDayOfWeek;
 import com.waggle.domain.user.entity.UserIndustry;
@@ -82,6 +83,16 @@ public class UserService {
             userDaysOfWeek,
             userIntroductions,
             userPortfolios
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public UserProfileCompletedResponseDto getUserProfileCompletion(UUID userId) {
+        User user = getUserById(userId);
+        return new UserProfileCompletedResponseDto(
+            user.getWorkTime() != null && user.getWorkWay() != null && user.getSido() != null
+                && user.getDetail() != null && user.getPosition() != null
+                && user.getYearCount() != null
         );
     }
 
