@@ -6,6 +6,8 @@ import com.waggle.domain.follow.repository.FollowRepository;
 import com.waggle.domain.member.repository.MemberRepository;
 import com.waggle.domain.notification.repository.NotificationRepository;
 import com.waggle.domain.post.repository.PostRepository;
+import com.waggle.domain.project.repository.ProjectApplicantRepository;
+import com.waggle.domain.project.repository.ProjectMemberRepository;
 import com.waggle.domain.project.repository.ProjectRepository;
 import com.waggle.domain.projectV2.repository.ProjectV2Repository;
 import com.waggle.domain.reference.enums.Industry;
@@ -59,6 +61,8 @@ public class UserService {
     private final MemberRepository memberRepository;
     private final ApplicationRepository applicationRepository;
     private final ProjectRepository projectRepository;
+    private final ProjectMemberRepository projectMemberRepository;
+    private final ProjectApplicantRepository projectApplicantRepository;
     private final ProjectV2Repository projectV2Repository;
 
     @Transactional(readOnly = true)
@@ -147,6 +151,8 @@ public class UserService {
         postRepository.deleteByUserId(user.getId());
         memberRepository.deleteByUserId(user.getId());  // v2
         applicationRepository.deleteByUserId(user.getId());  // v2
+        projectMemberRepository.deleteByUserId(user.getId());  // v1 프로젝트 멤버
+        projectApplicantRepository.deleteByUserId(user.getId());  // v1 프로젝트 지원자
         projectRepository.deleteByUserId(user.getId());  // v1
         projectV2Repository.deleteByLeaderId(user.getId());  // v2
 

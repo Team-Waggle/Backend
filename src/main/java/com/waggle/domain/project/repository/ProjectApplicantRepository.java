@@ -64,6 +64,8 @@ public interface ProjectApplicantRepository extends JpaRepository<ProjectApplica
 
     void deleteByProjectId(Long projectId);
 
+    void deleteByUserId(UUID userId);
+
     boolean existsByProjectIdAndUserIdAndStatusNot(
         Long projectId,
         UUID userId,
