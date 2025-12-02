@@ -4,15 +4,15 @@ import com.waggle.domain.notification.NotificationType;
 
 public record CreateNotificationRequest(
     NotificationType type,
-    String redirectUrl,
-    Object[] contentArgs
+    Long projectId,
+    String redirectUrl
 ) {
 
     public static CreateNotificationRequest of(
         NotificationType type,
-        String redirectUrl,
-        Object... contentArgs
+        Long projectId,
+        String redirectUrl
     ) {
-        return new CreateNotificationRequest(type, redirectUrl, contentArgs);
+        return new CreateNotificationRequest(type, projectId, redirectUrl);
     }
 }

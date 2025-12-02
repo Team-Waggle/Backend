@@ -9,10 +9,7 @@ import com.waggle.domain.project.repository.ProjectBookmarkRepository;
 import com.waggle.domain.project.repository.ProjectRepository;
 import com.waggle.domain.user.entity.User;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -47,22 +44,14 @@ public class ProjectDeadlineSchedulerImpl implements ProjectDeadlineScheduler {
 
     private void sendDeadlineNotifications(LocalDate date, NotificationType type) {
         LocalDate today = LocalDate.now();
-        long daysRemaining = ChronoUnit.DAYS.between(today, date);
 
         projectRepository.findByRecruitmentEndDate(date)
-            .forEach(project -> {
-                switch (type) {
-                    case DEADLINE_CLOSED -> sendNotificationsToBookmarkedUsers(project, type);
-                    case DEADLINE_APPROACHING ->
-                        sendNotificationsToBookmarkedUsers(project, type, daysRemaining);
-                }
-            });
+            .forEach(project -> sendNotificationsToBookmarkedUsers(project, type));
     }
 
     private void sendNotificationsToBookmarkedUsers(
         Project project,
-        NotificationType type,
-        Object... args
+        NotificationType type
     ) {
         List<ProjectBookmark> bookmarks = projectBookmarkRepository.findByProjectId(
             project.getId()
@@ -72,15 +61,10 @@ public class ProjectDeadlineSchedulerImpl implements ProjectDeadlineScheduler {
             User user = bookmark.getUser();
             String redirectUrl = "/projects/" + project.getId();
 
-            Object[] contentArgs = Stream.concat(
-                Stream.of(project.getTitle()),
-                Arrays.stream(args)
-            ).toArray();
-
             CreateNotificationRequest createNotificationRequest = CreateNotificationRequest.of(
                 type,
-                redirectUrl,
-                contentArgs
+                project.getId(),
+                redirectUrl
             );
 
             notificationService.createNotification(createNotificationRequest, user);

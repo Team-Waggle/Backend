@@ -298,8 +298,8 @@ public class ProjectServiceImpl implements ProjectService {
         notificationService.createNotification(
             CreateNotificationRequest.of(
                 NotificationType.APPLICATION_ACCEPTED,
-                "/projects/" + projectId,
-                project.getTitle()
+                projectId,
+                "/projects/" + projectId
             ),
             userService.getUserById(userId)
         );
@@ -327,8 +327,8 @@ public class ProjectServiceImpl implements ProjectService {
         notificationService.createNotification(
             CreateNotificationRequest.of(
                 NotificationType.APPLICATION_REJECTED,
-                "/projects/",
-                project.getTitle()
+                projectId,
+                "/projects/"
             ),
             userService.getUserById(userId)
         );
@@ -479,9 +479,8 @@ public class ProjectServiceImpl implements ProjectService {
         notificationService.createNotification(
             CreateNotificationRequest.of(
                 NotificationType.APPLICATION_RECEIVED,
-                "/projects/" + project.getId() + "/applications",
-                user.getName(),
-                project.getTitle()
+                projectId,
+                "/projects/" + project.getId() + "/applications"
             ),
             getLeaderByProjectId(projectId)
         );
@@ -535,9 +534,8 @@ public class ProjectServiceImpl implements ProjectService {
         notificationService.createNotification(
             CreateNotificationRequest.of(
                 NotificationType.APPLICATION_CONFIRMED,
-                "/projects/" + project.getId(),
-                user.getName(),
-                project.getTitle()
+                projectId,
+                "/projects/" + projectId
             ),
             getLeaderByProjectId(projectId)
         );

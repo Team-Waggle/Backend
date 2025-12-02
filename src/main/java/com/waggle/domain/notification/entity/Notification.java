@@ -1,9 +1,12 @@
 package com.waggle.domain.notification.entity;
 
+import com.waggle.domain.notification.NotificationType;
 import com.waggle.domain.user.entity.User;
 import com.waggle.global.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -25,11 +28,12 @@ public class Notification extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "title", nullable = false)
-    private String title;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false, columnDefinition = "VARCHAR(32)")
+    private NotificationType type;
 
-    @Column(name = "content", nullable = false)
-    private String content;
+    @Column(name = "project_id")
+    private Long projectId;
 
     @Column(name = "redirect_url")
     private String redirectUrl;
@@ -42,9 +46,9 @@ public class Notification extends BaseEntity {
     private User user;
 
     @Builder
-    public Notification(String title, String content, String redirectUrl, User user) {
-        this.title = title;
-        this.content = content;
+    public Notification(NotificationType type, Long projectId, String redirectUrl, User user) {
+        this.type = type;
+        this.projectId = projectId;
         this.redirectUrl = redirectUrl;
         this.user = user;
     }

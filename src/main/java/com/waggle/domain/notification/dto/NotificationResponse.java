@@ -1,9 +1,12 @@
 package com.waggle.domain.notification.dto;
 
+import java.time.LocalDateTime;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.waggle.domain.notification.entity.Notification;
+import com.waggle.domain.project.SimpleProjectInfo;
+
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.time.LocalDateTime;
 
 @Schema(description = "알림 응답 DTO")
 public record NotificationResponse(
@@ -11,13 +14,9 @@ public record NotificationResponse(
     @JsonProperty("id")
     Long id,
 
-    @Schema(description = "알림 제목", example = "새로운 프로젝트 신청이 있습니다")
-    @JsonProperty("title")
-    String title,
-
-    @Schema(description = "알림 내용", example = "홍길동님이 'Waggle 백엔드 개발' 프로젝트에 참여 신청을 했습니다.")
-    @JsonProperty("content")
-    String content,
+    @Schema(description = "프로젝트 정보")
+    @JsonProperty("project")
+    SimpleProjectInfo project,
 
     @Schema(description = "리다이렉트 URL", example = "/waggle")
     @JsonProperty("redirect_url")
@@ -36,11 +35,10 @@ public record NotificationResponse(
     LocalDateTime updatedAt
 ) {
 
-    public static NotificationResponse from(Notification notification) {
+    public static NotificationResponse of(Notification notification, SimpleProjectInfo project) {
         return new NotificationResponse(
             notification.getId(),
-            notification.getTitle(),
-            notification.getContent(),
+            project,
             notification.getRedirectUrl(),
             notification.isRead(),
             notification.getCreatedAt(),

@@ -1,7 +1,6 @@
 package com.waggle.domain.notification.controller;
 
 import com.waggle.domain.notification.dto.NotificationResponse;
-import com.waggle.domain.notification.entity.Notification;
 import com.waggle.domain.notification.service.NotificationService;
 import com.waggle.global.response.ApiStatus;
 import com.waggle.global.response.BaseResponse;
@@ -64,7 +63,7 @@ public class NotificationController {
         @RequestParam(required = false) Long cursor,
         @RequestParam(defaultValue = "5") int size
     ) {
-        List<Notification> notifications = notificationService.getNotifications(
+        List<NotificationResponse> notifications = notificationService.getNotifications(
             userPrincipal.getUser(), cursor, size
         );
 
@@ -73,8 +72,8 @@ public class NotificationController {
             CursorResponse.of(
                 notifications,
                 size,
-                NotificationResponse::from,
-                Notification::getId
+                notificationResponse -> notificationResponse,
+                NotificationResponse::id
             )
         );
     }
