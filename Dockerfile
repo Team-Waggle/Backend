@@ -1,5 +1,5 @@
 # 1. Base image로 OpenJDK를 사용
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jre
 
 # 2. 환경 변수 설정
 ARG ENV_FILE_PATH=.env
